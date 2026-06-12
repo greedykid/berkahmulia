@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+@source "../views/**/*.blade.php";
+@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
+@source "../../storage/framework/views/*.php";
+
+@theme {
+    --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-primary-50: #eef7f6;
+    --color-primary-100: #b8e4d3; /* Pale Mint */
+    --color-primary-200: #add6d0; /* Light Teal */
+    --color-primary-300: #78999c; /* Grayish Teal */
+    --color-primary-400: #528c94;
+    --color-primary-500: #3c7c94; /* Deep Teal */
+    --color-primary-600: #2d6276;
+    --color-primary-700: #214958;
+    --color-primary-850: #142d38;
+    --color-primary-900: #0d1f27;
+
+    --color-secondary-50: #f7f8f3;
+    --color-secondary-100: #dfe2c5; /* Soft Sage Beige */
+    --color-secondary-200: #7dbad9; /* Light Sky Blue */
+    --color-secondary-300: #6d93b4; /* Soft Medium Blue */
+    --color-secondary-400: #7f8c78; /* Sage Green */
+    --color-secondary-500: #c49486; /* Terracotta */
+    --color-secondary-600: #b07d6f;
+    --color-secondary-700: #936254;
+    --color-secondary-800: #784d41;
+    --color-secondary-900: #445153; /* Dark Charcoal */
+}
+
+/* Custom Styles for Berkah Mulia - Carter's Inspired */
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Hide horizontal scrollbar for navigation */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Thin scrollbar for filter panels */
+.thin-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+.thin-scrollbar::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #94a3b8;
+    border-radius: 10px;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #64748b;
+}
+.thin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 #f1f5f9;
+}
+
+/* Image zoom effect on hover for catalog grid cards */
+.product-card-zoom img {
+    transition: transform 0.5s ease;
+}
+.product-card-zoom:hover img {
+    transform: scale(1.06);
+}
+
+/* Custom shadow transition */
+.product-card-shadow {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.product-card-shadow:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.08);
+}
+
+/* Active gallery thumbnail indicator */
+.thumbnail-active {
+    border-color: #3c7c94 !important; /* primary-500 */
+    box-shadow: 0 0 0 2px rgba(60, 124, 148, 0.2);
+}
+
+/* Hero Carousel animation */
+.carousel-slide {
+    transition: opacity 0.8s ease-in-out;
+}
+
+/* Input range slider styling helper */
+input[type="range"]::-webkit-slider-thumb {
+    background: #3c7c94;
+    cursor: pointer;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease forwards;
+}
