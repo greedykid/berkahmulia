@@ -48,7 +48,7 @@
     <!-- Top Announcement Bar -->
     <div id="announcement-bar" class="bg-primary-600 text-white text-xs py-2 px-4 text-center font-medium tracking-wide relative">
         <i class="fa-solid fa-gift mr-1 animate-pulse"></i>
-        Selamat datang di Berkah Mulia! Koleksi Pakaian Bayi, Anak-anak & Pakaian Dalam Terbaik.
+        {{ \App\Models\Setting::get('store_announcement_text', 'Selamat datang di Berkah Mulia! Koleksi Pakaian Bayi, Anak-anak & Pakaian Dalam Terbaik.') }}
         <button onclick="document.getElementById('announcement-bar').style.display='none'" class="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-slate-200 transition-colors" aria-label="Tutup">
             <i class="fa-solid fa-xmark text-sm"></i>
         </button>

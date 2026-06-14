@@ -171,7 +171,7 @@
 <section class="bg-white border-y border-slate-100 py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center max-w-xl mx-auto mb-12">
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Belanja Berdasarkan Kategori</h2>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Kategori Pilihan Terbaik</h2>
         <p class="mt-2 text-slate-500 text-sm">Temukan pakaian yang tepat berdasarkan kategori produk khusus kami</p>
     </div>
     
@@ -314,11 +314,11 @@
 <!-- Store Location Section -->
 <section class="bg-gradient-to-br from-white via-primary-50/5 to-white py-16 border-b border-slate-100">
     @php
-        $storeAddress = \App\Models\Setting::get('store_address', 'Jl. Berkah Mulia Raya No. 88, Central Business District, Kota Surakarta, Jawa Tengah 57132');
+        $storeAddress = \App\Models\Setting::get('store_address', 'Jl. Poin Mas 40, Sawangan , Kota Depok, Jawa Barat');
         $storeHours = \App\Models\Setting::get('store_hours', 'Senin - Sabtu: 08.00 - 17.00 WIB (Minggu Libur)');
         $storePhone = \App\Models\Setting::get('store_phone', '628123456789');
-        $storeMapIframe = \App\Models\Setting::get('store_map_iframe', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.0863812739343!2d110.82583857500171!3d-7.56555549244837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a16f2c3d0b2f5%3A0x86da51ccbf56bc2e!2sSurakarta%2C%20Surakarta%20City%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1718000000000!5m2!1sen!2sid');
-        $storeMapLink = \App\Models\Setting::get('store_map_link', 'https://maps.google.com/?q=Berkah+Mulia+Surakarta');
+        $storeMapIframe = \App\Models\Setting::get('store_map_iframe', 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3964.9688145288073!2d106.79495617499184!3d-6.398020293592605!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNsKwMjMnNTIuOSJTIDEwNsKwNDcnNTEuMSJF!5e0!3m2!1sid!2sid!4v1781447494862!5m2!1sid!2sid');
+        $storeMapLink = \App\Models\Setting::get('store_map_link', 'https://maps.app.goo.gl/mYnJQ52kxqzy784y8');
         $storeImage = \App\Models\Setting::get('store_image');
         $storeImagePath = $storeImage ? asset('storage/' . $storeImage) : asset('storefront_location.webp');
     @endphp

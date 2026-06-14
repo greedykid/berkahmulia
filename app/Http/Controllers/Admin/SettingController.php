@@ -7,6 +7,7 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class SettingController extends Controller
 {
@@ -24,7 +25,8 @@ class SettingController extends Controller
             'title_line2' => Setting::get('hero_title_line2', 'Untuk Buah Hati Anda'),
             'description' => Setting::get('hero_description', 'Dapatkan koleksi pakaian bayi, baju anak, setelan gemas, hingga pakaian dalam dengan bahan katun premium yang lembut, aman, dan menyerap keringat.'),
         ];
-        return view('admin.settings.banner', compact('banners', 'heroText'));
+        $announcementText = Setting::get('store_announcement_text', 'Selamat datang di Berkah Mulia! Koleksi Pakaian Bayi, Anak-anak & Pakaian Dalam Terbaik.');
+        return view('admin.settings.banner', compact('banners', 'heroText', 'announcementText'));
     }
 
     public function lokasi()
@@ -35,11 +37,11 @@ class SettingController extends Controller
             'description' => Setting::get('location_description', 'Silakan datang langsung to toko fisik kami untuk melihat kualitas produk pakaian bayi secara langsung, berkonsultasi mengenai pembelian grosir/partai besar, serta mendapatkan penawaran spesial reseller.'),
         ];
         $storeInfo = [
-            'address' => Setting::get('store_address', 'Jl. Berkah Mulia Raya No. 88, Central Business District, Kota Surakarta, Jawa Tengah 57132'),
+            'address' => Setting::get('store_address', 'Jl. Poin Mas 40, Sawangan , Kota Depok, Jawa Barat'),
             'hours' => Setting::get('store_hours', 'Senin - Sabtu: 08.00 - 17.00 WIB (Minggu Libur)'),
             'phone' => Setting::get('store_phone', '628123456789'),
-            'map_iframe' => Setting::get('store_map_iframe', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.0863812739343!2d110.82583857500171!3d-7.56555549244837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a16f2c3d0b2f5%3A0x86da51ccbf56bc2e!2sSurakarta%2C%20Surakarta%20City%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1718000000000!5m2!1sen!2sid'),
-            'map_link' => Setting::get('store_map_link', 'https://maps.google.com/?q=Berkah+Mulia+Surakarta'),
+            'map_iframe' => Setting::get('store_map_iframe', 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3964.9688145288073!2d106.79495617499184!3d-6.398020293592605!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNsKwMjMnNTIuOSJTIDEwNsKwNDcnNTEuMSJF!5e0!3m2!1sid!2sid!4v1781447494862!5m2!1sid!2sid'),
+            'map_link' => Setting::get('store_map_link', 'https://maps.app.goo.gl/mYnJQ52kxqzy784y8'),
         ];
         return view('admin.settings.lokasi', compact('locationText', 'storeInfo'));
     }
@@ -235,13 +237,20 @@ class SettingController extends Controller
         Setting::set('hero_title_line2', $request->input('hero_title_line2'));
         Setting::set('hero_description', $request->input('hero_description'));
 
-        
-        
-        
-        
-
         return redirect()->route('admin.settings.banner')
             ->with('success', 'Teks hero banner berhasil diperbarui!');
+    }
+
+    public function updateAnnouncementText(Request $request)
+    {
+        $request->validate([
+            'store_announcement_text' => 'required|string|max:255',
+        ]);
+
+        Setting::set('store_announcement_text', $request->input('store_announcement_text'));
+
+        return redirect()->route('admin.settings.banner')
+            ->with('success', 'Teks pengumuman top bar berhasil diperbarui!');
     }
 
     public function updateLocationText(Request $request)

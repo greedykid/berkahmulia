@@ -45,6 +45,7 @@ Route::middleware(['auth', 'admin', 'throttle:30,1'])->prefix('admin')->name('ad
     Route::get('/settings/panduan-ukuran', [SettingController::class, 'panduanUkuran'])->name('settings.panduanUkuran');
     Route::post('/settings/hero-banners', [SettingController::class, 'updateHeroBanners'])->name('settings.updateHeroBanners');
     Route::post('/settings/hero-text', [SettingController::class, 'updateHeroText'])->name('settings.updateHeroText');
+    Route::post('/settings/announcement-text', [SettingController::class, 'updateAnnouncementText'])->name('settings.updateAnnouncementText');
     Route::post('/settings/location-text', [SettingController::class, 'updateLocationText'])->name('settings.updateLocationText');
     Route::post('/settings/store-info', [SettingController::class, 'updateStoreInfo'])->name('settings.updateStoreInfo');
     Route::post('/settings/panduan-ukuran', [SettingController::class, 'updatePanduanUkuran'])->name('settings.updatePanduanUkuran');

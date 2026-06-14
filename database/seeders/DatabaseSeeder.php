@@ -498,5 +498,11 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+
+        // 4. Seed Offline Location Settings
+        \App\Models\Setting::set('store_address', 'Jl. Poin Mas 40, Sawangan , Kota Depok, Jawa Barat');
+        \App\Models\Setting::set('store_map_iframe', 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3964.9688145288073!2d106.79495617499184!3d-6.398020293592605!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNsKwMjMnNTIuOSJTIDEwNsKwNDcnNTEuMSJF!5e0!3m2!1sid!2sid!4v1781447494862!5m2!1sid!2sid');
+        \App\Models\Setting::set('store_map_link', 'https://maps.app.goo.gl/mYnJQ52kxqzy784y8');
+        \App\Models\Setting::set('store_announcement_text', 'Selamat datang di Berkah Mulia! Koleksi Pakaian Bayi, Anak-anak & Pakaian Dalam Terbaik.');
     }
 }
