@@ -46,7 +46,8 @@ class DatabaseSeeder extends Seeder
             'Rok',
             'Gendongan',
             'Underwear',
-            'Singlet'
+            'Singlet',
+            'Gurita'
         ];
 
         $categories = [];
@@ -456,7 +457,7 @@ class DatabaseSeeder extends Seeder
         // Seed products, images, and variants
         foreach ($productsMock as $pData) {
             $cat = $categories[$pData['category']];
-            
+
             $product = Product::create([
                 'category_id' => $cat->id,
                 'name' => $pData['name'],

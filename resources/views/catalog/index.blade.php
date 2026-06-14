@@ -25,24 +25,34 @@
         <div class="flex flex-col lg:flex-row gap-4 sm:gap-8">
             
             <!-- Sidebar Filters (Left side 1/4) -->
-            <aside class="w-full lg:w-64 shrink-0 space-y-4">
-                <!-- Mobile Filter Header Toggle (visible on mobile only) -->
-                <div class="lg:hidden">
-                    <button type="button" id="mobile-filter-toggle" class="w-full flex items-center justify-between bg-white border border-slate-200 px-4 py-3 rounded-xl shadow-sm transition-all hover:border-primary-200 active:scale-[0.99]">
+            <aside class="w-full lg:w-64 shrink-0">
+
+                <!-- Drawer Backdrop (Mobile Only) -->
+                <div id="filter-drawer-backdrop" class="fixed inset-x-0 bottom-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden lg:hidden transition-opacity duration-300 opacity-0 top-[108px] sm:top-[128px]"></div>
+
+                <!-- Filters Wrapper (Drawer on Mobile, Sidebar on Desktop) -->
+                <div id="filters-container" class="fixed bottom-0 left-0 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white shadow-2xl flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto lg:translate-x-0 lg:sticky lg:top-36 lg:w-auto lg:h-auto lg:bg-transparent lg:shadow-none lg:z-auto lg:space-y-4 lg:flex lg:overflow-y-visible top-[108px] sm:top-[128px]">
+                    
+                    <!-- Drawer Header (Mobile Only) -->
+                    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 lg:hidden shrink-0">
                         <span class="font-bold text-slate-800 text-sm flex items-center gap-2">
                             <i class="fa-solid fa-sliders text-primary-500 text-xs"></i>
                             Filter Produk
                         </span>
-                        <i class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform duration-300" id="filter-chevron-icon"></i>
-                    </button>
-                </div>
+                        <button type="button" id="mobile-filter-close" class="text-slate-400 hover:text-slate-655 p-1.5 rounded-lg hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
 
-                <!-- Filters Wrapper -->
-                <div id="filters-container" class="lg:block overflow-hidden transition-all duration-300 ease-out max-h-0 lg:max-h-none opacity-0 lg:opacity-100 sticky top-24 space-y-4">
-                    
+                    <!-- Sidebar Header (Desktop Only) -->
+                    <div class="hidden lg:flex items-center gap-2.5 pb-1 pl-1 shrink-0 select-none">
+                        <i class="fa-solid fa-sliders text-primary-500 text-sm"></i>
+                        <span class="font-bold text-slate-800 text-xs uppercase tracking-wider">Filter Produk</span>
+                    </div>
+
                     <!-- Unified Filter Card -->
-                    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
-                        <div class="p-5 sm:p-6 space-y-6">
+                    <div class="bg-white border-0 lg:border border-slate-200 rounded-none lg:rounded-2xl shadow-none lg:shadow-sm overflow-hidden flex flex-col grow lg:grow-0">
+                        <div class="p-5 sm:p-6 space-y-6 overflow-y-auto lg:overflow-visible grow">
                             <!-- Categories list -->
                             <details class="group select-none" open>
                                 <summary class="flex items-center justify-between font-bold text-slate-800 text-xs uppercase tracking-wider cursor-pointer list-none pb-2 border-b border-slate-100 [&::-webkit-details-marker]:hidden">
@@ -120,7 +130,7 @@
                         </div>
                         
                         <!-- Apply Filter Footer (Visible on both mobile & desktop) -->
-                        <div class="p-4 bg-slate-50 border-t border-slate-100">
+                        <div class="p-4 bg-slate-50 border-t border-slate-100 shrink-0">
                             <button type="submit" class="w-full bg-primary-500 hover:bg-primary-600 active:scale-[0.98] text-white font-bold py-3.5 rounded-xl text-xs transition-all shadow-sm flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-circle-check text-xs"></i>
                                 <span>Terapkan Filter</span>
@@ -130,11 +140,13 @@
 
                     <!-- Reset Filters Button -->
                     @if(request('category') || request('price_min') || request('price_max') || request('sizes') || request('search'))
-                        <a href="{{ route('catalog.index') }}" 
-                           class="w-full flex items-center justify-center gap-2 border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold py-3.5 rounded-2xl text-xs transition-all shadow-sm group">
-                            <i class="fa-solid fa-trash-can group-hover:rotate-12 transition-transform duration-200"></i>
-                            <span>Bersihkan Semua Filter</span>
-                        </a>
+                        <div class="px-4 pb-4 lg:p-0 shrink-0">
+                            <a href="{{ route('catalog.index') }}" 
+                               class="w-full flex items-center justify-center gap-2 border border-slate-200 hover:bg-slate-50 bg-white text-slate-600 font-bold py-3.5 rounded-2xl text-xs transition-all shadow-sm group">
+                                <i class="fa-solid fa-trash-can group-hover:rotate-12 transition-transform duration-200"></i>
+                                <span>Bersihkan Semua Filter</span>
+                            </a>
+                        </div>
                     @endif
                 </div>
             </aside>
@@ -153,48 +165,56 @@
                         </span>
                     </div>
                     
-                    <div class="flex items-center gap-2 self-stretch sm:self-auto justify-end relative">
-                        <label class="text-xs font-bold text-slate-700 whitespace-nowrap flex items-center gap-1.5">
-                            <i class="fa-solid fa-arrow-down-wide-short text-slate-400 text-sm"></i>
-                            <span>Urutkan:</span>
-                        </label>
-                        <!-- Hidden native select for form submission -->
-                        <select name="sort" id="sort" class="hidden">
-                            <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Terbaru</option>
-                            <option value="price_asc" {{ request('sort') === 'price_asc' ? 'selected' : '' }}>Harga: Terendah ke Tertinggi</option>
-                            <option value="price_desc" {{ request('sort') === 'price_desc' ? 'selected' : '' }}>Harga: Tertinggi ke Terendah</option>
-                        </select>
-                        <!-- Custom Dropdown -->
-                        <div id="sort-dropdown" class="relative">
-                            <button type="button" id="sort-btn"
-                                class="flex items-center gap-2 bg-white border border-slate-200 hover:border-primary-300 text-slate-700 pl-4 pr-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary-400/30 focus:border-primary-400 cursor-pointer transition-all shadow-sm hover:shadow min-w-[180px] justify-between">
-                                <span id="sort-btn-text">
-                                    @if(request('sort') === 'price_asc') Harga: Terendah ke Tertinggi
-                                    @elseif(request('sort') === 'price_desc') Harga: Tertinggi ke Terendah
-                                    @else Terbaru
-                                    @endif
-                                </span>
-                                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-200" id="sort-chevron"></i>
-                            </button>
-                            <div id="sort-menu" class="absolute right-0 top-full mt-2 w-full min-w-[220px] bg-white border border-slate-100 rounded-xl shadow-lg shadow-slate-200/50 z-50 py-1.5 transition-all duration-200 ease-out origin-top scale-95 opacity-0 pointer-events-none">
-                                <button type="button" data-value="latest"
-                                    class="sort-option w-full text-left px-4 py-2.5 text-xs font-medium hover:bg-primary-50 hover:text-primary-600 transition-colors flex items-center gap-2.5 {{ request('sort', 'latest') === 'latest' ? 'text-primary-600 bg-primary-50/50' : 'text-slate-600' }}">
-                                    <i class="fa-solid fa-clock text-sm {{ request('sort', 'latest') === 'latest' ? 'text-primary-500' : 'text-slate-300' }}"></i>
-                                    <span>Terbaru</span>
-                                    @if(request('sort', 'latest') === 'latest')<i class="fa-solid fa-check text-primary-500 ml-auto text-[10px]"></i>@endif
+                    <div class="flex items-center gap-2 self-stretch sm:self-auto justify-between sm:justify-end relative grow sm:grow-0">
+                        <!-- Mobile Filter Button (Visible on mobile only) -->
+                        <button type="button" id="mobile-filter-toggle" class="lg:hidden flex items-center gap-2 bg-white border border-slate-200 hover:border-primary-300 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer transition-all shadow-sm hover:shadow active:scale-[0.99] grow sm:grow-0 justify-center">
+                            <i class="fa-solid fa-sliders text-primary-500 text-xs"></i>
+                            <span>Filter</span>
+                        </button>
+
+                        <div class="flex items-center gap-2 grow sm:grow-0 justify-end">
+                            <label class="hidden sm:flex text-xs font-bold text-slate-700 whitespace-nowrap items-center gap-1.5">
+                                <i class="fa-solid fa-arrow-down-wide-short text-slate-400 text-sm"></i>
+                                <span>Urutkan:</span>
+                            </label>
+                            <!-- Hidden native select for form submission -->
+                            <select name="sort" id="sort" class="hidden">
+                                <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Terbaru</option>
+                                <option value="price_asc" {{ request('sort') === 'price_asc' ? 'selected' : '' }}>Harga: Terendah ke Tertinggi</option>
+                                <option value="price_desc" {{ request('sort') === 'price_desc' ? 'selected' : '' }}>Harga: Tertinggi ke Terendah</option>
+                            </select>
+                            <!-- Custom Dropdown -->
+                            <div id="sort-dropdown" class="relative grow sm:grow-0">
+                                <button type="button" id="sort-btn"
+                                    class="flex items-center gap-2 bg-white border border-slate-200 hover:border-primary-300 text-slate-700 pl-4 pr-3 py-2.5 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary-400/30 focus:border-primary-400 cursor-pointer transition-all shadow-sm hover:shadow w-full sm:min-w-[180px] justify-between">
+                                    <span id="sort-btn-text">
+                                        @if(request('sort') === 'price_asc') Harga: Terendah ke Tertinggi
+                                        @elseif(request('sort') === 'price_desc') Harga: Tertinggi ke Terendah
+                                        @else Terbaru
+                                        @endif
+                                    </span>
+                                    <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-200" id="sort-chevron"></i>
                                 </button>
-                                <button type="button" data-value="price_asc"
-                                    class="sort-option w-full text-left px-4 py-2.5 text-xs font-medium hover:bg-primary-50 hover:text-primary-600 transition-colors flex items-center gap-2.5 {{ request('sort') === 'price_asc' ? 'text-primary-600 bg-primary-50/50' : 'text-slate-600' }}">
-                                    <i class="fa-solid fa-arrow-up-1-9 text-sm {{ request('sort') === 'price_asc' ? 'text-primary-500' : 'text-slate-300' }}"></i>
-                                    <span>Harga: Terendah ke Tertinggi</span>
-                                    @if(request('sort') === 'price_asc')<i class="fa-solid fa-check text-primary-500 ml-auto text-[10px]"></i>@endif
-                                </button>
-                                <button type="button" data-value="price_desc"
-                                    class="sort-option w-full text-left px-4 py-2.5 text-xs font-medium hover:bg-primary-50 hover:text-primary-600 transition-colors flex items-center gap-2.5 {{ request('sort') === 'price_desc' ? 'text-primary-600 bg-primary-50/50' : 'text-slate-600' }}">
-                                    <i class="fa-solid fa-arrow-down-9-1 text-sm {{ request('sort') === 'price_desc' ? 'text-primary-500' : 'text-slate-300' }}"></i>
-                                    <span>Harga: Tertinggi ke Terendah</span>
-                                    @if(request('sort') === 'price_desc')<i class="fa-solid fa-check text-primary-500 ml-auto text-[10px]"></i>@endif
-                                </button>
+                                <div id="sort-menu" class="absolute right-0 top-full mt-2 w-full min-w-[220px] bg-white border border-slate-100 rounded-xl shadow-lg shadow-slate-200/50 z-50 py-1.5 transition-all duration-200 ease-out origin-top scale-95 opacity-0 pointer-events-none">
+                                    <button type="button" data-value="latest"
+                                        class="sort-option w-full text-left px-4 py-2.5 text-xs font-medium hover:bg-primary-50 hover:text-primary-600 transition-colors flex items-center gap-2.5 {{ request('sort', 'latest') === 'latest' ? 'text-primary-600 bg-primary-50/50' : 'text-slate-600' }}">
+                                        <i class="fa-solid fa-clock text-sm {{ request('sort', 'latest') === 'latest' ? 'text-primary-500' : 'text-slate-300' }}"></i>
+                                        <span>Terbaru</span>
+                                        @if(request('sort', 'latest') === 'latest')<i class="fa-solid fa-check text-primary-500 ml-auto text-[10px]"></i>@endif
+                                    </button>
+                                    <button type="button" data-value="price_asc"
+                                        class="sort-option w-full text-left px-4 py-2.5 text-xs font-medium hover:bg-primary-50 hover:text-primary-600 transition-colors flex items-center gap-2.5 {{ request('sort') === 'price_asc' ? 'text-primary-600 bg-primary-50/50' : 'text-slate-600' }}">
+                                        <i class="fa-solid fa-arrow-up-1-9 text-sm {{ request('sort') === 'price_asc' ? 'text-primary-500' : 'text-slate-300' }}"></i>
+                                        <span>Harga: Terendah ke Tertinggi</span>
+                                        @if(request('sort') === 'price_asc')<i class="fa-solid fa-check text-primary-500 ml-auto text-[10px]"></i>@endif
+                                    </button>
+                                    <button type="button" data-value="price_desc"
+                                        class="sort-option w-full text-left px-4 py-2.5 text-xs font-medium hover:bg-primary-50 hover:text-primary-600 transition-colors flex items-center gap-2.5 {{ request('sort') === 'price_desc' ? 'text-primary-600 bg-primary-50/50' : 'text-slate-600' }}">
+                                        <i class="fa-solid fa-arrow-down-9-1 text-sm {{ request('sort') === 'price_desc' ? 'text-primary-500' : 'text-slate-300' }}"></i>
+                                        <span>Harga: Tertinggi ke Terendah</span>
+                                        @if(request('sort') === 'price_desc')<i class="fa-solid fa-check text-primary-500 ml-auto text-[10px]"></i>@endif
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -386,24 +406,55 @@
         }
     }
 
-    // Collapsible filters on mobile with smooth animation
+    // Drawer Filter on mobile
     const toggleBtn = document.getElementById('mobile-filter-toggle');
     const container = document.getElementById('filters-container');
-    const filterChevron = document.getElementById('filter-chevron-icon');
-    
-    if (toggleBtn && container) {
-        toggleBtn.addEventListener('click', () => {
-            const isOpen = container.classList.contains('max-h-[2000px]');
-            if (isOpen) {
-                container.classList.remove('max-h-[2000px]', 'opacity-100');
-                container.classList.add('max-h-0', 'opacity-0');
-                filterChevron.classList.remove('rotate-180');
-            } else {
-                container.classList.remove('max-h-0', 'opacity-0');
-                container.classList.add('max-h-[2000px]', 'opacity-100');
-                filterChevron.classList.add('rotate-180');
+    const backdrop = document.getElementById('filter-drawer-backdrop');
+    const closeBtn = document.getElementById('mobile-filter-close');
+
+    function openDrawer() {
+        if (backdrop && container) {
+            if (window.innerWidth < 1024) {
+                const header = document.querySelector('header');
+                if (header) {
+                    const headerRect = header.getBoundingClientRect();
+                    const headerBottom = headerRect.bottom;
+                    container.style.top = `${headerBottom}px`;
+                    backdrop.style.top = `${headerBottom}px`;
+                }
             }
-        });
+            backdrop.classList.remove('hidden');
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                backdrop.classList.add('opacity-100');
+            }, 10);
+            container.classList.remove('-translate-x-full');
+            document.body.classList.add('overflow-hidden');
+        }
+    }
+
+    function closeDrawer() {
+        if (backdrop && container) {
+            backdrop.classList.remove('opacity-100');
+            backdrop.classList.add('opacity-0');
+            container.classList.add('-translate-x-full');
+            document.body.classList.remove('overflow-hidden');
+            setTimeout(() => {
+                backdrop.classList.add('hidden');
+                container.style.top = '';
+                backdrop.style.top = '';
+            }, 300);
+        }
+    }
+
+    if (toggleBtn && container) {
+        toggleBtn.addEventListener('click', openDrawer);
+    }
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeDrawer);
+    }
+    if (backdrop) {
+        backdrop.addEventListener('click', closeDrawer);
     }
 
     // Custom sort dropdown

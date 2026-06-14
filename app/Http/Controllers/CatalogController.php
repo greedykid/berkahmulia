@@ -61,6 +61,18 @@ class CatalogController extends Controller
 
         $banners = \App\Models\Setting::get('hero_banners', []);
 
+        // Get 2 random product images
+        $randomBanners = Product::with('images')
+            ->where('status', 'ready')
+            ->whereHas('images')
+            ->inRandomOrder()
+            ->take(2)
+            ->get()
+            ->map(function($prod) {
+                return 'storage/' . $prod->images->first()->image_path;
+            })
+            ->toArray();
+
         // Hero text settings
         $heroBadge = \App\Models\Setting::get('hero_badge', 'Koleksi Baru 2026');
         $heroTitleLine1 = \App\Models\Setting::get('hero_title_line1', 'Pakaian Lembut & Nyaman');
@@ -70,9 +82,9 @@ class CatalogController extends Controller
         // Location section text settings
         $locationBadge = \App\Models\Setting::get('location_badge', 'Kunjungi Kami');
         $locationTitle = \App\Models\Setting::get('location_title', 'Lokasi Toko Offline');
-        $locationDescription = \App\Models\Setting::get('location_description', 'Silakan datang langsung to toko fisik kami untuk melihat kualitas produk pakaian bayi secara langsung, berkonsultasi mengenai pembelian grosir/partai besar, serta mendapatkan penawaran spesial reseller.');
+        $locationDescription = \App\Models\Setting::get('location_description', 'Silakan datang langsung ke toko fisik kami untuk melihat kualitas produk pakaian bayi secara langsung, berkonsultasi mengenai pembelian grosir/partai besar, serta mendapatkan penawaran spesial reseller.');
 
-        return view('home', compact('categories', 'featuredProducts', 'banners', 'heroBadge', 'heroTitleLine1', 'heroTitleLine2', 'heroDescription', 'locationBadge', 'locationTitle', 'locationDescription'));
+        return view('home', compact('categories', 'featuredProducts', 'banners', 'randomBanners', 'heroBadge', 'heroTitleLine1', 'heroTitleLine2', 'heroDescription', 'locationBadge', 'locationTitle', 'locationDescription'));
     }
 
     /**

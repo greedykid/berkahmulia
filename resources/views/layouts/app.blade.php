@@ -74,7 +74,7 @@
                     <form action="{{ route('catalog.index') }}" method="GET" class="relative">
                         <input type="text" name="search" placeholder="Cari pakaian anak, kode SKU..." value="{{ request('search') }}"
                                class="w-full bg-slate-50 border border-slate-200 text-slate-700 pl-10 pr-12 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-400 focus:bg-white transition-all text-sm">
-                        <div class="absolute left-3.5 top-3 text-slate-400">
+                        <div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 flex items-center">
                             <i class="fa-solid fa-magnifying-glass text-sm"></i>
                         </div>
                         <button type="submit" class="absolute right-1.5 top-1.5 bg-primary-500 hover:bg-primary-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold transition-all">
@@ -101,15 +101,17 @@
 
             <!-- Mobile Search Bar (Expandable) -->
             <div id="mobile-search-bar" class="sm:hidden transition-all duration-300 ease-out max-h-0 opacity-0 overflow-hidden px-3">
-                <form action="{{ route('catalog.index') }}" method="GET" class="relative mt-2 pb-3">
-                    <input type="text" name="search" id="mobile-search-input" placeholder="Cari pakaian anak, kode SKU..." value="{{ request('search') }}"
-                           class="w-full bg-slate-50 border border-slate-200 text-slate-700 pl-10 pr-16 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-400 focus:bg-white transition-all text-sm">
-                    <div class="absolute left-4 top-3 text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                <form action="{{ route('catalog.index') }}" method="GET" class="mt-2 pb-3">
+                    <div class="relative">
+                        <input type="text" name="search" id="mobile-search-input" placeholder="Cari pakaian anak, kode SKU..." value="{{ request('search') }}"
+                               class="w-full bg-slate-50 border border-slate-200 text-slate-700 pl-10 pr-16 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-400 focus:bg-white transition-all text-sm">
+                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 flex items-center">
+                            <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                        </div>
+                        <button type="submit" class="absolute right-2 top-1.5 bg-primary-500 hover:bg-primary-600 text-white px-4 py-1.5 rounded-full text-xs font-semibold transition-all">
+                            Cari
+                        </button>
                     </div>
-                    <button type="submit" class="absolute right-2 top-1.5 bg-primary-500 hover:bg-primary-600 text-white px-4 py-1.5 rounded-full text-xs font-semibold transition-all">
-                        Cari
-                    </button>
                 </form>
             </div>
         </div>
@@ -117,17 +119,28 @@
         <!-- Category Main Navigation (Carter's-inspired) -->
         <div class="bg-white border-t border-slate-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <nav class="flex items-center justify-start md:justify-center overflow-x-auto no-scrollbar py-3 gap-2 sm:gap-6 text-sm font-medium">
-                    <a href="{{ route('catalog.index') }}" 
-                       class="shrink-0 px-3 py-1.5 rounded-full {{ !request('category') ? 'bg-primary-500 text-white shadow-sm' : 'text-slate-600 hover:text-primary-500 hover:bg-slate-50' }} transition-all">
-                        Semua Koleksi
-                    </a>
-                    @foreach($navCategories as $cat)
-                        <a href="{{ route('catalog.index', ['category' => $cat->slug]) }}" 
-                           class="shrink-0 px-3 py-1.5 rounded-full {{ request('category') === $cat->slug ? 'bg-primary-500 text-white shadow-sm' : 'text-slate-600 hover:text-primary-500 hover:bg-slate-50' }} transition-all">
-                            {{ $cat->name }}
+                <nav class="overflow-x-auto no-scrollbar py-2.5 px-1">
+                    <div class="flex items-center justify-start gap-1.5 sm:gap-4 text-sm font-medium w-max max-w-full md:mx-auto">
+                        <a href="{{ route('home') }}" 
+                           class="shrink-0 px-2.5 py-1 rounded-full flex items-center gap-1.5 {{ request()->routeIs('home') ? 'bg-primary-500 text-white shadow-sm font-semibold' : 'text-slate-800 hover:text-primary-500 hover:bg-slate-50 font-semibold' }} transition-all">
+                            <i class="fa-solid fa-house text-xs"></i>
+                            <span>Beranda</span>
                         </a>
-                    @endforeach
+                        <a href="{{ route('catalog.index') }}" 
+                           class="shrink-0 px-2.5 py-1 rounded-full flex items-center gap-1.5 {{ (request()->routeIs('catalog.index') && !request('category')) ? 'bg-primary-500 text-white shadow-sm font-semibold' : 'text-slate-800 hover:text-primary-500 hover:bg-slate-50 font-semibold' }} transition-all">
+                            <i class="fa-solid fa-store text-xs"></i>
+                            <span>Katalog</span>
+                        </a>
+                        
+                        <div class="h-5 w-px bg-slate-200 shrink-0 mx-2 self-center"></div>
+
+                        @foreach($navCategories as $cat)
+                            <a href="{{ route('catalog.index', ['category' => $cat->slug]) }}" 
+                               class="shrink-0 px-2.5 py-1 rounded-full {{ request('category') === $cat->slug ? 'bg-primary-500 text-white shadow-sm font-semibold' : 'text-slate-600 hover:text-primary-500 hover:bg-slate-50' }} transition-all">
+                                {{ $cat->name }}
+                            </a>
+                        @endforeach
+                    </div>
                 </nav>
             </div>
         </div>

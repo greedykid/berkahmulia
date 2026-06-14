@@ -22,7 +22,8 @@
 
     <div class="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-lg animate-fade-in">
         <!-- Brand Header -->
-        <div class="text-center mb-8">
+        <div class="text-center mb-8 flex flex-col items-center">
+            <img src="{{ asset('logo.webp') }}" alt="Berkah Mulia Logo" class="h-16 w-16 rounded-2xl shadow-md border border-slate-100 object-cover mb-4">
             <span class="text-3xl font-extrabold bg-linear-to-r from-pink-500 to-indigo-500 bg-clip-text text-transparent">
                 Berkah Mulia
             </span>
@@ -116,6 +117,19 @@ function toggleLoginPassword() {
         icon.classList.remove('fa-eye-slash');
         icon.classList.add('fa-eye');
     }
+}
+
+// Form loading state (prevent double-click and show loader)
+const loginForm = document.querySelector('form');
+if (loginForm) {
+    loginForm.addEventListener('submit', function() {
+        const btn = this.querySelector('button[type="submit"]');
+        if (btn && !btn.disabled) {
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Masuk ke Dashboard...';
+        }
+    });
 }
 </script>
 </body>

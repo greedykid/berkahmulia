@@ -108,12 +108,19 @@
                             {!! getSortIcon('name', $sort, $direction) !!}
                         </a>
                     </th>
+                    <th class="py-3 px-4 text-slate-500">
+                        <a href="{{ getSortLink('created_at', $sort, $direction) }}" class="flex items-center hover:text-indigo-600 transition-colors cursor-pointer">
+                            <span>Tanggal Dibuat</span>
+                            {!! getSortIcon('created_at', $sort, $direction) !!}
+                        </a>
+                    </th>
                     <th class="py-3 px-4 text-center text-slate-500">
                         <a href="{{ getSortLink('products_count', $sort, $direction) }}" class="flex items-center justify-center hover:text-indigo-600 transition-colors cursor-pointer">
                             <span>Jumlah Produk</span>
                             {!! getSortIcon('products_count', $sort, $direction) !!}
                         </a>
                     </th>
+                    <th class="py-3 px-4 text-center text-slate-500">Link Toko</th>
                     <th class="py-3 px-4 text-right text-slate-500">Aksi</th>
                 </tr>
             </thead>
@@ -138,10 +145,20 @@
                                 <span class="font-bold text-slate-800" id="cat-name-{{ $cat->id }}">{{ $cat->name }}</span>
                             </div>
                         </td>
+                        <td class="py-4 px-4 text-slate-500 text-xs">
+                            {{ $cat->created_at ? $cat->created_at->translatedFormat('d M Y') : '-' }}
+                        </td>
                         <td class="py-4 px-4 text-center">
                             <span class="bg-indigo-50 text-indigo-700 font-semibold text-xs px-3 py-1 rounded-full border border-indigo-100">
                                 {{ $cat->products_count }} Produk
                             </span>
+                        </td>
+                        <td class="py-4 px-4 text-center">
+                            <a href="{{ route('catalog.index', ['category' => $cat->slug]) }}" target="_blank"
+                               class="inline-flex items-center gap-1.5 text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer">
+                                <i class="fa-solid fa-up-right-from-square text-[10px]"></i>
+                                <span>Buka</span>
+                            </a>
                         </td>
                         <td class="py-4 px-4 text-right">
                             <div class="flex items-center justify-end gap-2">
@@ -165,7 +182,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="py-12 text-center text-slate-400">Belum ada data kategori.</td>
+                        <td colspan="6" class="py-12 text-center text-slate-400">Belum ada data kategori.</td>
                     </tr>
                 @endforelse
             </tbody>

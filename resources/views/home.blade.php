@@ -33,12 +33,17 @@
             <div class="lg:col-span-6 h-64 sm:h-80 lg:h-auto relative bg-slate-100 flex items-stretch overflow-hidden">
                 @php
                     $customSlides = array_map(fn($b) => 'storage/' . $b, $banners);
-                    $defaultSlides = [
-                        'storage/assets/hero_banner.webp',
-                        'storage/assets/product_bedong.webp',
-                        'storage/assets/product_aksesoris.webp',
-                        'storage/assets/product_baju.webp'
-                    ];
+                    $defaultSlides = $randomBanners;
+                    
+                    // Fallback to static assets if there are not enough product images in database
+                    if (count($defaultSlides) < 2) {
+                        $fallbacks = [
+                            'storage/assets/hero_banner.webp',
+                            'storage/assets/product_bedong.webp'
+                        ];
+                        $defaultSlides = array_merge($defaultSlides, array_slice($fallbacks, 0, 2 - count($defaultSlides)));
+                    }
+                    
                     $slides = array_merge($customSlides, $defaultSlides);
                 @endphp
                 <!-- Carousel Track -->
@@ -112,11 +117,11 @@
                         $imgName = $catImages[$cat->slug] ?? 'product_baju.webp';
                     @endphp
                     <a href="{{ route('catalog.index', ['category' => $cat->slug]) }}" class="category-item group text-center flex flex-col items-center shrink-0 px-3 sm:px-4">
-                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white shadow-sm flex items-center justify-center overflow-hidden border-2 border-slate-100 group-hover:border-primary-400 group-hover:shadow-md transition-all duration-300 relative">
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white shadow-sm flex items-center justify-center overflow-hidden border-2 border-slate-100 group-hover:border-primary-400 group-hover:shadow-md transition-all duration-300 relative">
                             @if(isset($cat->image_path) && $cat->image_path)
-                                <img src="{{ asset('storage/' . $cat->image_path) }}" alt="{{ $cat->name }}" width="80" height="80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                                <img src="{{ asset('storage/' . $cat->image_path) }}" alt="{{ $cat->name }}" width="96" height="96" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
                             @else
-                                <img src="{{ asset('storage/assets/' . $imgName) }}" alt="{{ $cat->name }}" width="80" height="80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                                <img src="{{ asset('storage/assets/' . $imgName) }}" alt="{{ $cat->name }}" width="96" height="96" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
                             @endif
                             <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
                                 <i class="fa-regular fa-image text-lg sm:text-xl"></i>
@@ -223,7 +228,7 @@
 </section>
 
 <!-- Store Location Section -->
-<section class="bg-slate-50 py-16 border-t border-slate-100">
+<section class="bg-gradient-to-br from-slate-50 via-primary-50/10 to-slate-50 py-16 border-t border-slate-100">
     @php
         $storeAddress = \App\Models\Setting::get('store_address', 'Jl. Berkah Mulia Raya No. 88, Central Business District, Kota Surakarta, Jawa Tengah 57132');
         $storeHours = \App\Models\Setting::get('store_hours', 'Senin - Sabtu: 08.00 - 17.00 WIB (Minggu Libur)');
@@ -235,101 +240,78 @@
     @endphp
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <!-- Left Side: Interactive Photo / Map Tab Switcher -->
-            <div class="bg-white rounded-3xl p-3 shadow-md border border-slate-100/80 flex flex-col h-[320px] sm:h-[380px] transition-all duration-300">
-                <!-- Tab Headers -->
-                <div class="flex bg-slate-100 p-1 rounded-2xl mb-3">
-                    <button type="button" onclick="switchLocationTab('photo')" id="tab-btn-photo" 
-                            class="flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer bg-white text-slate-800 shadow-sm">
-                        <i class="fa-solid fa-store text-indigo-600"></i>
-                        <span>Foto Toko</span>
-                    </button>
-                    <button type="button" onclick="switchLocationTab('map')" id="tab-btn-map" 
-                            class="flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer text-slate-600 hover:text-slate-800">
-                        <i class="fa-solid fa-map-location-dot"></i>
-                        <span>Peta Lokasi</span>
-                    </button>
-                </div>
-
-                <!-- Tab Contents -->
+            <!-- Left Side: Google Maps Location -->
+            <div class="relative group bg-white rounded-3xl p-3 shadow-md border border-slate-100 hover:shadow-xl hover:shadow-primary-500/5 hover:border-primary-100 transition-all duration-500 flex flex-col h-[340px] sm:h-[400px]">
                 <div class="grow rounded-2xl overflow-hidden relative">
-                    <!-- Photo Tab Content -->
-                    <div id="tab-content-photo" class="absolute inset-0 w-full h-full transition-opacity duration-300 opacity-100">
-                        <img src="{{ $storeImagePath }}" alt="Toko Berkah Mulia" class="w-full h-full object-cover rounded-2xl">
-                    </div>
-
-                    <!-- Map Tab Content -->
-                    <div id="tab-content-map" class="absolute inset-0 w-full h-full transition-opacity duration-300 opacity-0 pointer-events-none">
-                        @if($storeMapIframe)
-                            <iframe 
-                                data-src="{{ $storeMapIframe }}" 
-                                src="about:blank"
-                                class="w-full h-full rounded-2xl border-0" 
-                                title="Peta Lokasi Toko Berkah Mulia"
-                                allowfullscreen="" 
-                                loading="lazy" 
-                                referrerpolicy="no-referrer-when-downgrade">
-                            </iframe>
-                        @else
-                            <div class="w-full h-full rounded-2xl bg-slate-50 flex flex-col items-center justify-center text-slate-400">
-                                <i class="fa-solid fa-map-marked-alt text-4xl mb-2"></i>
-                                <span class="text-xs">Peta Lokasi Belum Ditentukan</span>
-                            </div>
-                        @endif
-                    </div>
+                    @if($storeMapIframe)
+                        <iframe 
+                            src="{{ $storeMapIframe }}" 
+                            class="w-full h-full rounded-2xl border-0" 
+                            title="Peta Lokasi Toko Berkah Mulia"
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    @else
+                        <div class="w-full h-full rounded-2xl bg-slate-50 flex flex-col items-center justify-center text-slate-400">
+                            <i class="fa-solid fa-map-marked-alt text-4xl mb-2"></i>
+                            <span class="text-xs">Peta Lokasi Belum Ditentukan</span>
+                        </div>
+                    @endif
                 </div>
             </div>
 
             <!-- Right Side: Location Details -->
             <div class="space-y-6 select-none">
                 <div>
-                    <span class="inline-block text-xs uppercase tracking-widest font-semibold text-secondary-800 bg-secondary-50 px-3 py-1 rounded-full mb-3">
-                        {{ $locationBadge }}
+                    <span class="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-extrabold text-primary-600 bg-primary-50 border border-primary-100/50 px-3 py-1 rounded-full mb-3">
+                        <i class="fa-solid fa-store text-[9px] text-primary-500"></i>
+                        <span>{{ $locationBadge }}</span>
                     </span>
                     <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight font-sans">
                         {{ $locationTitle }}
                     </h2>
                     <p class="mt-3 text-slate-500 text-sm leading-relaxed">
-                        {{ $locationDescription }}
+                        {{ str_replace('datang langsung to toko', 'datang langsung ke toko', $locationDescription) }}
                     </p>
                 </div>
 
-                <div class="space-y-4">
-                    <!-- Address -->
-                    <div class="flex gap-4 items-start">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-650 flex items-center justify-center shrink-0 text-sm">
+                <div class="space-y-3.5">
+                    <!-- Address Card -->
+                    <div class="flex gap-4 items-start bg-white p-4 rounded-2xl border border-slate-100 shadow-xs hover:border-primary-200 hover:shadow-md hover:shadow-primary-500/2 transition-all duration-300 group/tile">
+                        <div class="w-10 h-10 rounded-xl bg-primary-50 text-primary-500 flex items-center justify-center shrink-0 text-sm group-hover/tile:scale-105 group-hover/tile:bg-primary-500 group-hover/tile:text-white transition-all duration-300">
                             <i class="fa-solid fa-location-dot"></i>
                         </div>
-                        <div>
-                            <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Alamat Lengkap</h3>
-                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                        <div class="space-y-0.5">
+                            <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Alamat Lengkap</h3>
+                            <p class="text-xs text-slate-700 font-semibold leading-relaxed">
                                 {{ $storeAddress }}
                             </p>
                         </div>
                     </div>
 
-                    <!-- Operational Hours -->
-                    <div class="flex gap-4 items-start">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-650 flex items-center justify-center shrink-0 text-sm">
+                    <!-- Hours Card -->
+                    <div class="flex gap-4 items-start bg-white p-4 rounded-2xl border border-slate-100 shadow-xs hover:border-primary-200 hover:shadow-md hover:shadow-primary-500/2 transition-all duration-300 group/tile">
+                        <div class="w-10 h-10 rounded-xl bg-primary-50 text-primary-500 flex items-center justify-center shrink-0 text-sm group-hover/tile:scale-105 group-hover/tile:bg-primary-500 group-hover/tile:text-white transition-all duration-300">
                             <i class="fa-solid fa-clock"></i>
                         </div>
-                        <div>
-                            <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Jam Operasional</h3>
-                            <p class="text-xs text-slate-500 mt-1">
+                        <div class="space-y-0.5">
+                            <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Jam Operasional</h3>
+                            <p class="text-xs text-slate-700 font-semibold leading-relaxed">
                                 {{ $storeHours }}
                             </p>
                         </div>
                     </div>
 
-                    <!-- Contact -->
-                    <div class="flex gap-4 items-start">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-650 flex items-center justify-center shrink-0 text-sm">
-                            <i class="fa-solid fa-phone"></i>
+                    <!-- Contact Card -->
+                    <div class="flex gap-4 items-start bg-white p-4 rounded-2xl border border-slate-100 shadow-xs hover:border-primary-200 hover:shadow-md hover:shadow-primary-500/2 transition-all duration-300 group/tile">
+                        <div class="w-10 h-10 rounded-xl bg-primary-50 text-primary-500 flex items-center justify-center shrink-0 text-sm group-hover/tile:scale-105 group-hover/tile:bg-primary-500 group-hover/tile:text-white transition-all duration-300">
+                            <i class="fa-brands fa-whatsapp text-[15px]"></i>
                         </div>
-                        <div>
-                            <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Hubungi Kami</h3>
-                            <p class="text-xs text-slate-500 mt-1">
-                                WhatsApp: +{{ $storePhone }}
+                        <div class="space-y-0.5">
+                            <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hubungi Kami</h3>
+                            <p class="text-xs text-slate-700 font-semibold leading-relaxed">
+                                WhatsApp: <span class="font-mono">+{{ $storePhone }}</span>
                             </p>
                         </div>
                     </div>
@@ -338,8 +320,8 @@
                 <div class="pt-2">
                     @if($storeMapLink)
                         <a href="{{ $storeMapLink }}" target="_blank"
-                           class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold px-6 py-3 rounded-xl shadow-sm transition-all text-xs cursor-pointer">
-                            <i class="fa-solid fa-map-location-dot text-indigo-600 text-sm"></i>
+                           class="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 active:scale-95 text-white font-bold px-6 py-3.5 rounded-xl shadow-md shadow-primary-500/10 hover:shadow-lg hover:shadow-primary-500/20 transition-all text-xs cursor-pointer group">
+                            <i class="fa-solid fa-map-location-dot text-sm group-hover:rotate-6 group-hover:scale-110 transition-transform"></i>
                             <span>Petunjuk Arah Google Maps</span>
                         </a>
                     @endif
@@ -588,39 +570,6 @@
         });
     });
 
-    // Tab switcher logic
-    function switchLocationTab(tab) {
-        const btnPhoto = document.getElementById('tab-btn-photo');
-        const btnMap = document.getElementById('tab-btn-map');
-        const contentPhoto = document.getElementById('tab-content-photo');
-        const contentMap = document.getElementById('tab-content-map');
- 
-        if (tab === 'photo') {
-            btnPhoto.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer bg-white text-slate-800 shadow-sm";
-            btnMap.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer text-slate-600 hover:text-slate-800";
-            contentPhoto.classList.remove('opacity-0');
-            contentPhoto.classList.add('opacity-100');
-            contentMap.classList.remove('opacity-100');
-            contentMap.classList.add('opacity-0');
-            contentMap.classList.add('pointer-events-none');
-            contentPhoto.classList.remove('pointer-events-none');
-        } else {
-            btnPhoto.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer text-slate-600 hover:text-slate-800";
-            btnMap.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer bg-white text-slate-800 shadow-sm";
-            
-            // Dynamic load map iframe
-            const iframe = contentMap.querySelector('iframe');
-            if (iframe && iframe.getAttribute('src') === 'about:blank') {
-                iframe.setAttribute('src', iframe.getAttribute('data-src'));
-            }
 
-            contentPhoto.classList.remove('opacity-100');
-            contentPhoto.classList.add('opacity-0');
-            contentMap.classList.remove('opacity-0');
-            contentMap.classList.add('opacity-100');
-            contentMap.classList.remove('pointer-events-none');
-            contentPhoto.classList.add('pointer-events-none');
-        }
-    }
 </script>
 @endsection
