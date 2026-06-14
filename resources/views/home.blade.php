@@ -32,8 +32,25 @@
             <!-- Right Side: Contained Visual Image Carousel (Aligned with parent grid) -->
             <div class="lg:col-span-6 h-64 sm:h-80 lg:h-auto relative bg-slate-100 flex items-stretch overflow-hidden">
                 @php
-                    $customSlides = array_map(fn($b) => 'storage/' . $b, $banners);
-                    $defaultSlides = $randomBanners;
+                    $fileExists = function($path) {
+                        $cleanPath = preg_replace('/^storage\//', '', $path);
+                        return file_exists(public_path($path)) || file_exists(storage_path('app/public/' . $cleanPath));
+                    };
+
+                    $customSlides = [];
+                    foreach ($banners as $b) {
+                        $path = 'storage/' . $b;
+                        if ($fileExists($path)) {
+                            $customSlides[] = $path;
+                        }
+                    }
+
+                    $defaultSlides = [];
+                    foreach ($randomBanners as $rb) {
+                        if ($fileExists($rb)) {
+                            $defaultSlides[] = $rb;
+                        }
+                    }
                     
                     // Fallback to static assets if there are not enough product images in database
                     if (count($defaultSlides) < 2) {
@@ -41,33 +58,75 @@
                             'storage/assets/hero_banner.webp',
                             'storage/assets/product_bedong.webp'
                         ];
-                        $defaultSlides = array_merge($defaultSlides, array_slice($fallbacks, 0, 2 - count($defaultSlides)));
+                        foreach ($fallbacks as $fb) {
+                            if ($fileExists($fb)) {
+                                $defaultSlides[] = $fb;
+                            }
+                        }
+                        $defaultSlides = array_unique($defaultSlides);
                     }
                     
                     $slides = array_merge($customSlides, $defaultSlides);
                 @endphp
-                <!-- Carousel Track -->
-                <div id="hero-carousel-track" class="flex w-full h-full transition-transform duration-500 ease-out" style="transform: translateX(0%);">
-                    @foreach($slides as $slide)
-                        <div class="w-full h-full shrink-0 relative">
-                            <img class="w-full h-full object-cover" src="{{ asset($slide) }}" alt="Banner Slide {{ $loop->iteration }}" width="600" height="400" @if($loop->first) fetchpriority="high" @endif>
+                @if(count($slides) > 0)
+                    <!-- Carousel Track -->
+                    <div id="hero-carousel-track" class="flex w-full h-full transition-transform duration-500 ease-out" style="transform: translateX(0%);">
+                        @foreach($slides as $slide)
+                            <div class="w-full h-full shrink-0 relative flex items-stretch">
+                                <img class="w-full h-full object-cover" src="{{ asset($slide) }}" alt="Banner Slide {{ $loop->iteration }}" width="600" height="400" @if($loop->first) fetchpriority="high" @endif onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                                <div class="hidden absolute inset-0 flex-col items-center justify-center bg-gradient-to-tr from-slate-50 to-slate-100 text-slate-400 p-6 text-center w-full h-full select-none">
+                                    <div class="w-16 h-16 rounded-2xl bg-white shadow-xs flex items-center justify-center border border-slate-100 mb-3">
+                                        <svg class="w-8 h-8 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Gambar Banner Tidak Tersedia</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <!-- Fallback if there are no images at all (Premium SVG + icon style) -->
+                    <div class="w-full h-full bg-gradient-to-tr from-primary-50 via-slate-50 to-secondary-50/50 flex flex-col items-center justify-center p-8 text-center select-none min-h-[300px] lg:min-h-full relative overflow-hidden grow">
+                        <!-- Decorative floating circles behind -->
+                        <div class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-primary-100/20 blur-2xl"></div>
+                        <div class="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-secondary-100/20 blur-2xl"></div>
+                        
+                        <!-- Stylized Glass Container for the Icon -->
+                        <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/80 shadow-md flex items-center justify-center border border-white/60 mb-5 hover:scale-105 transition-all duration-300">
+                            <!-- SVG Image + Baby clothes illustration -->
+                            <svg class="w-10 h-10 sm:w-12 sm:h-12 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <!-- Outline of a clothes hanger with baby shirt -->
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3a2 2 0 00-2 2v2H5.5A1.5 1.5 0 004 8.5v6A1.5 1.5 0 005.5 16h13a1.5 1.5 0 001.5-1.5v-6A1.5 1.5 0 0018.5 7H14V5a2 2 0 00-2-2z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 11l3 3 3-3" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 5h.01" />
+                            </svg>
+                            <span class="absolute -bottom-1 -right-1 bg-secondary-500 text-white w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[8px] sm:text-[10px] font-bold shadow-sm">
+                                <i class="fa-solid fa-heart"></i>
+                            </span>
                         </div>
-                    @endforeach
-                </div>
+                        
+                        <!-- Title & Subtitle -->
+                        <h3 class="text-sm sm:text-base font-bold text-slate-800 tracking-tight">Berkah Mulia</h3>
+                        <p class="text-[11px] sm:text-xs text-slate-500 mt-1.5 max-w-xs leading-relaxed font-semibold">
+                            Pusat pakaian bayi & anak berkualitas premium. Gambar sedang disiapkan oleh admin.
+                        </p>
+                    </div>
+                @endif
 
                 @if(count($slides) > 1)
                 <!-- Carousel Controls (Prev/Next) -->
-                <button type="button" onclick="prevHeroSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center shadow-md transition-all cursor-pointer z-20" aria-label="Slide sebelumnya">
+                <button type="button" onclick="prevHeroSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center shadow-md transition-all cursor-pointer z-20" aria-label="Slide sebelumnya">
                     <i class="fa-solid fa-chevron-left text-sm"></i>
                 </button>
-                <button type="button" onclick="nextHeroSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center shadow-md transition-all cursor-pointer z-20" aria-label="Slide berikutnya">
+                <button type="button" onclick="nextHeroSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center shadow-md transition-all cursor-pointer z-20" aria-label="Slide berikutnya">
                     <i class="fa-solid fa-chevron-right text-sm"></i>
                 </button>
  
                 <!-- Carousel Indicators (Dots) -->
                 <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1 z-20">
                     @foreach($slides as $index => $slide)
-                        <button type="button" onclick="goToHeroSlide({{ $index }})" class="flex items-center justify-center w-8 h-8 cursor-pointer" aria-label="Lihat slide {{ $index + 1 }}">
+                        <button type="button" onclick="goToHeroSlide({{ $index }})" class="flex items-center justify-center w-11 h-11 cursor-pointer" aria-label="Lihat slide {{ $index + 1 }}">
                             <span class="hero-dot w-2 h-2 rounded-full bg-white/60 hover:bg-white transition-all"></span>
                         </button>
                     @endforeach
@@ -88,11 +147,11 @@
     <!-- Category Carousel -->
     <div class="relative group/carousel" id="category-carousel-wrapper">
         <!-- Left Arrow (hidden on mobile) -->
-        <button id="cat-prev" class="hidden sm:flex absolute -left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-md rounded-full w-9 h-9 items-center justify-center text-slate-600 hover:text-primary-500 transition-all opacity-0 group-hover/carousel:opacity-100" aria-label="Sebelumnya">
+        <button id="cat-prev" class="hidden sm:flex absolute -left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-md rounded-full w-11 h-11 items-center justify-center text-slate-600 hover:text-primary-500 transition-all opacity-0 group-hover/carousel:opacity-100" aria-label="Sebelumnya">
             <i class="fa-solid fa-chevron-left text-sm"></i>
         </button>
         <!-- Right Arrow (hidden on mobile) -->
-        <button id="cat-next" class="hidden sm:flex absolute -right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-md rounded-full w-9 h-9 items-center justify-center text-slate-600 hover:text-primary-500 transition-all opacity-0 group-hover/carousel:opacity-100" aria-label="Berikutnya">
+        <button id="cat-next" class="hidden sm:flex absolute -right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-md rounded-full w-11 h-11 items-center justify-center text-slate-600 hover:text-primary-500 transition-all opacity-0 group-hover/carousel:opacity-100" aria-label="Berikutnya">
             <i class="fa-solid fa-chevron-right text-sm"></i>
         </button>
 
@@ -456,6 +515,9 @@
         }
 
         function setupDesktop() {
+            // Read layout geometry first before mutating DOM to prevent write-then-read layout thrashing (forced reflow)
+            itemWidth = getItemWidth();
+
             carousel.style.overflowX = 'hidden';
             carousel.style.scrollSnapType = '';
             carousel.style.webkitOverflowScrolling = '';
@@ -466,8 +528,6 @@
             itemCount = items.length;
             if (itemCount === 0) return;
 
-            itemWidth = getItemWidth();
-            
             const maxVisible = Math.min(10, itemCount);
             const exactWidth = maxVisible * itemWidth;
             carousel.style.width = exactWidth + 'px';

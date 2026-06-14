@@ -27,7 +27,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" as="style">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
     
     <!-- Compiled Tailwind CSS & JS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -35,9 +37,9 @@
     <!-- FontAwesome for icons (asynchronous load to prevent render blocking) -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-    
     
     @yield('styles')
 </head>
@@ -72,12 +74,12 @@
                 <!-- Search Bar (Desktop) -->
                 <div class="flex-1 max-w-lg hidden sm:block">
                     <form action="{{ route('catalog.index') }}" method="GET" class="relative">
-                        <input type="text" name="search" placeholder="Cari pakaian anak, kode SKU..." value="{{ request('search') }}"
+                        <input type="text" name="search" aria-label="Cari pakaian anak dan kode SKU" placeholder="Cari pakaian anak, kode SKU..." value="{{ request('search') }}"
                                class="w-full bg-slate-50 border border-slate-200 text-slate-700 pl-10 pr-12 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-400 focus:bg-white transition-all text-sm">
                         <div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 flex items-center">
                             <i class="fa-solid fa-magnifying-glass text-sm"></i>
                         </div>
-                        <button type="submit" class="absolute right-1.5 top-1.5 bg-primary-500 hover:bg-primary-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold transition-all">
+                        <button type="submit" class="absolute right-1.5 top-1.5 bg-primary-500 hover:bg-primary-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold transition-all" aria-label="Kirim pencarian">
                             Cari
                         </button>
                     </form>
@@ -86,13 +88,13 @@
                 <!-- Mobile Search Toggle + WhatsApp -->
                 <div class="flex items-center gap-2 sm:gap-3">
                     <!-- Mobile Search Button -->
-                    <button type="button" id="mobile-search-toggle" class="sm:hidden w-9 h-9 flex items-center justify-center rounded-full bg-slate-50 border border-slate-200 text-slate-500 hover:bg-slate-100 transition-all">
+                    <button type="button" id="mobile-search-toggle" aria-label="Buka kolom pencarian mobile" class="sm:hidden w-11 h-11 flex items-center justify-center rounded-full bg-slate-50 border border-slate-200 text-slate-500 hover:bg-slate-100 transition-all">
                         <i class="fa-solid fa-magnifying-glass text-sm"></i>
                     </button>
 
                     <!-- WhatsApp CTA -->
-                    <a href="https://wa.me/{{ config('app.whatsapp_number', '628123456789') }}" target="_blank"
-                       class="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3 sm:px-4 py-2 rounded-full text-xs font-semibold border border-emerald-200 transition-all">
+                    <a href="https://wa.me/{{ config('app.whatsapp_number', '628123456789') }}" target="_blank" aria-label="Hubungi Admin Berkah Mulia via WhatsApp"
+                       class="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3.5 sm:px-4 py-2.5 rounded-full text-xs font-semibold border border-emerald-200 transition-all">
                         <i class="fa-brands fa-whatsapp text-lg text-emerald-500"></i>
                         <span class="hidden md:inline">Hubungi Admin</span>
                     </a>
@@ -103,12 +105,12 @@
             <div id="mobile-search-bar" class="sm:hidden transition-all duration-300 ease-out max-h-0 opacity-0 overflow-hidden px-3">
                 <form action="{{ route('catalog.index') }}" method="GET" class="mt-2 pb-3">
                     <div class="relative">
-                        <input type="text" name="search" id="mobile-search-input" placeholder="Cari pakaian anak, kode SKU..." value="{{ request('search') }}"
+                        <input type="text" name="search" id="mobile-search-input" aria-label="Cari pakaian anak dan kode SKU mobile" placeholder="Cari pakaian anak, kode SKU..." value="{{ request('search') }}"
                                class="w-full bg-slate-50 border border-slate-200 text-slate-700 pl-10 pr-16 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-400 focus:bg-white transition-all text-sm">
                         <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 flex items-center">
                             <i class="fa-solid fa-magnifying-glass text-sm"></i>
                         </div>
-                        <button type="submit" class="absolute right-2 top-1.5 bg-primary-500 hover:bg-primary-600 text-white px-4 py-1.5 rounded-full text-xs font-semibold transition-all">
+                        <button type="submit" class="absolute right-2 top-1.5 bg-primary-500 hover:bg-primary-600 text-white px-4 py-1.5 rounded-full text-xs font-semibold transition-all" aria-label="Kirim pencarian mobile">
                             Cari
                         </button>
                     </div>
@@ -206,7 +208,7 @@
                         </li>
                         <li class="flex items-center gap-2">
                             <i class="fa-solid fa-envelope text-primary-400"></i>
-                            <a href="mailto:info@bmberkahmulia.com" class="hover:text-primary-400 transition-colors">info@bmberkahmulia.com</a>
+                            <a href="mailto:{{ config('app.admin_email', 'info@bmberkahmulia.com') }}" class="hover:text-primary-400 transition-colors">{{ config('app.admin_email', 'info@bmberkahmulia.com') }}</a>
                         </li>
                         <li class="flex items-center gap-2">
                             <i class="fa-brands fa-whatsapp text-emerald-400 text-lg"></i>
@@ -229,13 +231,41 @@
     </footer>
 
     <!-- Back to Top Button -->
-    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="fixed bottom-6 right-6 z-40 w-10 h-10 bg-primary-500 hover:bg-primary-600 text-white rounded-full shadow-lg flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 translate-y-4 hover:scale-110 active:scale-95" aria-label="Kembali ke atas">
-        <i class="fa-solid fa-chevron-up text-sm"></i>
+    <button id="back-to-top" onclick="scrollToTopWithAnimation()" class="fixed bottom-6 right-6 z-40 w-10 h-10 bg-primary-500 hover:bg-primary-600 text-white rounded-full shadow-lg flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 translate-y-4 hover:scale-110 active:scale-95 group" aria-label="Kembali ke atas">
+        <i class="fa-solid fa-chevron-up text-sm group-hover:-translate-y-1 transition-transform duration-300"></i>
     </button>
 
     @yield('scripts')
 
     <script>
+    // Micro smooth scroll animation to top
+    function scrollToTopWithAnimation() {
+        const startY = window.scrollY;
+        if (startY === 0) return;
+        
+        const duration = 450; // fast & smooth duration in ms
+        const startTime = performance.now();
+
+        // Cubic-bezier like easing out
+        function easeOutCubic(t) {
+            return 1 - Math.pow(1 - t, 3);
+        }
+
+        function animate(currentTime) {
+            const timeElapsed = currentTime - startTime;
+            const progress = Math.min(timeElapsed / duration, 1);
+            const ease = easeOutCubic(progress);
+
+            window.scrollTo(0, startY * (1 - ease));
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            }
+        }
+
+        requestAnimationFrame(animate);
+    }
+
     // Back to Top visibility
     const backToTop = document.getElementById('back-to-top');
     window.addEventListener('scroll', () => {

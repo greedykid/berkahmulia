@@ -16,13 +16,18 @@ class ImageHelper
     {
         if (!$file->isValid()) return null;
 
-        $extension = strtolower($file->getClientOriginalExtension());
-        $filename = uniqid() . '_' . time() . '.' . $extension;
+        $origExtension = strtolower($file->getClientOriginalExtension());
+        
+        // Use webp if GD is loaded and supports it, otherwise fallback to original extension
+        $useWebp = extension_loaded('gd') && function_exists('imagewebp');
+        $targetExtension = $useWebp ? 'webp' : ($origExtension === 'png' ? 'png' : 'jpg');
+
+        $filename = uniqid() . '_' . time() . '.' . $targetExtension;
         $path = $directory . '/' . $filename;
 
         // Try to compress using GD library
         if (extension_loaded('gd')) {
-            $image = self::createImageFromFile($file->getRealPath(), $extension);
+            $image = self::createImageFromFile($file->getRealPath(), $origExtension);
             
             if ($image) {
                 $origWidth = imagesx($image);
@@ -36,39 +41,28 @@ class ImageHelper
 
                     $resized = imagecreatetruecolor($newWidth, $newHeight);
                     
-                    // Preserve transparency for PNG
-                    if ($extension === 'png') {
-                        imagealphablending($resized, false);
-                        imagesavealpha($resized, true);
-                    }
+                    // Support transparency for PNG/WebP
+                    imagealphablending($resized, false);
+                    imagesavealpha($resized, true);
 
                     imagecopyresampled($resized, $image, 0, 0, 0, 0, $newWidth, $newHeight, $origWidth, $origHeight);
                     imagedestroy($image);
                     $image = $resized;
+                } else {
+                    // Even if not resizing, preserve alpha transparency for the source
+                    imagealphablending($image, false);
+                    imagesavealpha($image, true);
                 }
 
                 // Save to temp file
                 $tempPath = tempnam(sys_get_temp_dir(), 'img_');
                 
-                switch ($extension) {
-                    case 'jpg':
-                    case 'jpeg':
-                        imagejpeg($image, $tempPath, $quality);
-                        break;
-                    case 'png':
-                        imagepng($image, $tempPath, min(9, (int)(9 - ($quality / 100) * 9)));
-                        break;
-                    case 'webp':
-                        if (function_exists('imagewebp')) {
-                            imagewebp($image, $tempPath, $quality);
-                        } else {
-                            imagejpeg($image, $tempPath, $quality);
-                            $path = str_replace('.webp', '.jpg', $path);
-                        }
-                        break;
-                    default:
-                        imagejpeg($image, $tempPath, $quality);
-                        break;
+                if ($targetExtension === 'webp') {
+                    imagewebp($image, $tempPath, $quality);
+                } elseif ($targetExtension === 'png') {
+                    imagepng($image, $tempPath, min(9, (int)(9 - ($quality / 100) * 9)));
+                } else {
+                    imagejpeg($image, $tempPath, $quality);
                 }
 
                 imagedestroy($image);
@@ -82,7 +76,7 @@ class ImageHelper
         }
 
         // Fallback: store without compression
-        return $file->store($directory, 'public');
+        return $file->storeAs($directory, $filename, 'public');
     }
 
     private static function createImageFromFile(string $filePath, string $extension)

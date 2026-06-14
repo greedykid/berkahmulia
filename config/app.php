@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Global Contact Settings for Berkah Mulia
+    |--------------------------------------------------------------------------
+    |
+    | Custom configuration values utilized globally to route customer inquiry
+    | links and administrator notification services.
+    |
+    */
+    'whatsapp_number' => env('WHATSAPP_NUMBER', '628123456789'),
+    'admin_email' => env('ADMIN_EMAIL', 'admin@bmberkahmulia.com'),
+
 ];

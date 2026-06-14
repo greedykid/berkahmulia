@@ -113,41 +113,7 @@
                            class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
                            placeholder="https://maps.google.com/?q=...">
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Foto Toko</label>
-                    @if($storeInfo['image'])
-                        <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 p-2 mb-3">
-                            <div class="aspect-[16/9] w-full rounded-lg overflow-hidden bg-slate-200">
-                                <img src="{{ asset('storage/' . $storeInfo['image']) }}" alt="Foto Toko" class="w-full h-full object-cover">
-                            </div>
-                            <div class="p-2 flex items-center gap-2">
-                                <input type="checkbox" name="delete_store_image" value="1" id="delete_store_image"
-                                       class="w-4 h-4 text-rose-600 border-slate-300 rounded focus:ring-rose-500 cursor-pointer">
-                                <label for="delete_store_image" class="text-xs text-rose-600 font-semibold cursor-pointer select-none">Hapus foto</label>
-                            </div>
-                        </div>
-                    @endif
-                    <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 hover:bg-slate-100 transition-all relative group cursor-pointer">
-                        <input type="file" name="store_image" accept="image/*" id="store-image-input"
-                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewStoreImage(event)">
-                        <div class="flex flex-col items-center justify-center py-2 text-center">
-                            <div class="w-9 h-9 rounded-full bg-indigo-50 flex items-center justify-center text-sm mb-2 group-hover:scale-110 transition-transform duration-200">
-                                <i class="fa-solid fa-camera text-indigo-600"></i>
-                            </div>
-                            <span class="text-xs font-semibold text-slate-600">Pilih foto toko</span>
-                            <span class="text-[10px] text-slate-400 mt-0.5">JPEG, PNG, JPG, WEBP (Max. 10MB)</span>
-                        </div>
-                    </div>
-                    <div id="store-image-preview-container" class="hidden mt-3 border border-slate-200 rounded-xl p-2 bg-slate-50">
-                        <div class="aspect-[16/9] w-full rounded-lg overflow-hidden bg-slate-200">
-                            <img id="store-image-preview" src="#" alt="Pratinjau" class="w-full h-full object-cover">
-                        </div>
-                        <div class="flex justify-between items-center text-[10px] mt-1.5 px-1">
-                            <span id="store-image-filename" class="text-slate-600 font-medium truncate max-w-[120px]"></span>
-                            <span class="text-emerald-600 font-bold"><i class="fa-solid fa-circle-check"></i> Siap</span>
-                        </div>
-                    </div>
-                </div>
+
             </div>
 
             <div class="mt-5 flex justify-end">
@@ -159,26 +125,184 @@
         </div>
     </form>
 </div>
+
+<!-- Live Preview Section -->
+<div class="mt-10 mb-6">
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center">
+                <i class="fa-solid fa-eye text-primary-600"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Pratinjau Halaman Utama (Real-time)</h4>
+                <p class="text-[11px] text-slate-500 mt-0.5">Tampilan nyata dari bagian lokasi toko offline di beranda toko saat ini.</p>
+            </div>
+        </div>
+
+        <!-- Real-time dynamic preview block matching the homepage layout -->
+        <div class="border border-slate-100 rounded-2xl overflow-hidden p-1 sm:p-3 bg-slate-50 select-none">
+            <section class="bg-gradient-to-br from-slate-50 via-primary-50/10 to-slate-50 py-12 px-4 rounded-2xl border border-slate-100/50">
+                <div class="max-w-6xl mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                        
+                        <!-- Left Side: Google Maps Location -->
+                        <div class="relative group bg-white rounded-3xl p-3 shadow-md border border-slate-100 transition-all duration-500 flex flex-col h-[320px]">
+                            <div class="grow rounded-2xl overflow-hidden relative">
+                                <iframe 
+                                    id="preview-map-iframe"
+                                    src="{{ $storeInfo['map_iframe'] ?: '' }}" 
+                                    class="w-full h-full rounded-2xl border-0 {{ $storeInfo['map_iframe'] ? '' : 'hidden' }}" 
+                                    title="Peta Lokasi Toko Berkah Mulia"
+                                    allowfullscreen="" 
+                                    loading="lazy" 
+                                    referrerpolicy="no-referrer-when-downgrade">
+                                </iframe>
+                                <div id="preview-map-placeholder" class="w-full h-full rounded-2xl bg-slate-50 flex flex-col items-center justify-center text-slate-400 {{ $storeInfo['map_iframe'] ? 'hidden' : 'flex' }}">
+                                    <i class="fa-solid fa-map-marked-alt text-4xl mb-2 text-slate-300"></i>
+                                    <span class="text-xs font-semibold">Peta Lokasi Belum Ditentukan</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Location Details -->
+                        <div class="space-y-5 select-none text-left">
+                            <div>
+                                <span class="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-extrabold text-primary-600 bg-primary-50 border border-primary-100/50 px-3 py-1 rounded-full mb-3">
+                                    <i class="fa-solid fa-store text-[9px] text-primary-500"></i>
+                                    <span id="preview-location-badge">{{ $locationText['badge'] }}</span>
+                                </span>
+
+                                <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight font-sans" id="preview-location-title">
+                                    {{ $locationText['title'] }}
+                                </h2>
+                                <p class="mt-2 text-slate-500 text-xs sm:text-sm leading-relaxed" id="preview-location-description">
+                                    {{ str_replace('datang langsung to toko', 'datang langsung ke toko', $locationText['description']) }}
+                                </p>
+                            </div>
+
+                            <div class="space-y-3">
+                                <!-- Address Card -->
+                                <div class="flex gap-3 items-start bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs hover:border-primary-200 hover:shadow-md transition-all duration-300 group/tile">
+                                    <div class="w-9 h-9 rounded-xl bg-primary-50 text-primary-500 flex items-center justify-center shrink-0 text-sm group-hover/tile:scale-105 group-hover/tile:bg-primary-500 group-hover/tile:text-white transition-all duration-300">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                    </div>
+                                    <div class="space-y-0.5">
+                                        <h3 class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Alamat Lengkap</h3>
+                                        <p class="text-xs text-slate-700 font-semibold leading-relaxed" id="preview-store-address">
+                                            {{ $storeInfo['address'] }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Hours Card -->
+                                <div class="flex gap-3 items-start bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs hover:border-primary-200 hover:shadow-md transition-all duration-300 group/tile">
+                                    <div class="w-9 h-9 rounded-xl bg-primary-50 text-primary-500 flex items-center justify-center shrink-0 text-sm group-hover/tile:scale-105 group-hover/tile:bg-primary-500 group-hover/tile:text-white transition-all duration-300">
+                                        <i class="fa-solid fa-clock"></i>
+                                    </div>
+                                    <div class="space-y-0.5">
+                                        <h3 class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Jam Operasional</h3>
+                                        <p class="text-xs text-slate-700 font-semibold leading-relaxed" id="preview-store-hours">
+                                            {{ $storeInfo['hours'] }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Contact Card -->
+                                <div class="flex gap-3 items-start bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs hover:border-primary-200 hover:shadow-md transition-all duration-300 group/tile">
+                                    <div class="w-9 h-9 rounded-xl bg-primary-50 text-primary-500 flex items-center justify-center shrink-0 text-sm group-hover/tile:scale-105 group-hover/tile:bg-primary-500 group-hover/tile:text-white transition-all duration-300">
+                                        <i class="fa-brands fa-whatsapp text-base"></i>
+                                    </div>
+                                    <div class="space-y-0.5">
+                                        <h3 class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Hubungi Kami</h3>
+                                        <p class="text-xs text-slate-700 font-semibold leading-relaxed" id="preview-store-phone">
+                                            WhatsApp: <span class="font-mono" id="preview-phone-span">+{{ $storeInfo['phone'] }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-1">
+                                <a id="preview-store-map-link" href="{{ $storeInfo['map_link'] ?: '#' }}" target="_blank"
+                                   class="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 active:scale-95 text-white font-bold px-5 py-3 rounded-xl shadow-md shadow-primary-500/10 hover:shadow-lg hover:shadow-primary-500/20 transition-all text-xs cursor-pointer group">
+                                    <i class="fa-solid fa-map-location-dot text-sm group-hover:rotate-6 group-hover:scale-110 transition-transform"></i>
+                                    <span>Petunjuk Arah Google Maps</span>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
 <script>
-    function previewStoreImage(event) {
-        const input = event.target;
-        const container = document.getElementById('store-image-preview-container');
-        const img = document.getElementById('store-image-preview');
-        const filenameLabel = document.getElementById('store-image-filename');
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                img.src = e.target.result;
-                filenameLabel.textContent = input.files[0].name;
-                container.classList.remove('hidden');
-            };
-            reader.readAsDataURL(input.files[0]);
-        } else {
-            container.classList.add('hidden');
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputBadge = document.getElementById('location_badge');
+        const inputTitle = document.getElementById('location_title');
+        const inputDesc = document.getElementById('location_description');
+        const inputAddress = document.getElementById('store_address');
+        const inputHours = document.getElementById('store_hours');
+        const inputPhone = document.getElementById('store_phone');
+        const inputIframe = document.getElementById('store_map_iframe');
+        const inputLink = document.getElementById('store_map_link');
+
+        const previewBadge = document.getElementById('preview-location-badge');
+        const previewTitle = document.getElementById('preview-location-title');
+        const previewDesc = document.getElementById('preview-location-description');
+        const previewAddress = document.getElementById('preview-store-address');
+        const previewHours = document.getElementById('preview-store-hours');
+        const previewPhoneSpan = document.getElementById('preview-phone-span');
+        const previewIframe = document.getElementById('preview-map-iframe');
+        const previewLink = document.getElementById('preview-store-map-link');
+        const mapPlaceholder = document.getElementById('preview-map-placeholder');
+
+        function updatePreview() {
+            if (inputBadge && previewBadge) previewBadge.textContent = inputBadge.value || 'Kunjungi Kami';
+            if (inputTitle && previewTitle) previewTitle.textContent = inputTitle.value || 'Lokasi Toko Offline';
+            
+            if (inputDesc && previewDesc) {
+                let desc = inputDesc.value || '';
+                // Automatically fix "datang langsung to toko" typo in the preview
+                desc = desc.replace(/datang langsung to toko/gi, 'datang langsung ke toko');
+                previewDesc.textContent = desc || 'Silakan datang langsung ke toko fisik kami...';
+            }
+
+            if (inputAddress && previewAddress) previewAddress.textContent = inputAddress.value || 'Alamat toko belum ditentukan.';
+            if (inputHours && previewHours) previewHours.textContent = inputHours.value || 'Jam operasional belum ditentukan.';
+            if (inputPhone && previewPhoneSpan) previewPhoneSpan.textContent = `+${inputPhone.value || '628123456789'}`;
+            
+            if (inputLink && previewLink) {
+                previewLink.href = inputLink.value || '#';
+            }
+
+            if (inputIframe && previewIframe && mapPlaceholder) {
+                if (inputIframe.value) {
+                    previewIframe.src = inputIframe.value;
+                    previewIframe.classList.remove('hidden');
+                    mapPlaceholder.classList.add('hidden');
+                } else {
+                    previewIframe.classList.add('hidden');
+                    mapPlaceholder.classList.remove('hidden');
+                    mapPlaceholder.classList.replace('hidden', 'flex');
+                }
+            }
         }
-    }
+
+        // Add input event listeners for real-time updates
+        const inputs = [inputBadge, inputTitle, inputDesc, inputAddress, inputHours, inputPhone, inputIframe, inputLink];
+        inputs.forEach(input => {
+            if (input) {
+                input.addEventListener('input', updatePreview);
+            }
+        });
+
+        // Initialize state
+        updatePreview();
+    });
 </script>
 @endsection

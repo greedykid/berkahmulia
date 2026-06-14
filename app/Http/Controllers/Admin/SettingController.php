@@ -40,9 +40,77 @@ class SettingController extends Controller
             'phone' => Setting::get('store_phone', '628123456789'),
             'map_iframe' => Setting::get('store_map_iframe', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.0863812739343!2d110.82583857500171!3d-7.56555549244837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a16f2c3d0b2f5%3A0x86da51ccbf56bc2e!2sSurakarta%2C%20Surakarta%20City%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1718000000000!5m2!1sen!2sid'),
             'map_link' => Setting::get('store_map_link', 'https://maps.google.com/?q=Berkah+Mulia+Surakarta'),
-            'image' => Setting::get('store_image'),
         ];
         return view('admin.settings.lokasi', compact('locationText', 'storeInfo'));
+    }
+
+    public function kontak()
+    {
+        $contact = [
+            'whatsapp_number' => config('app.whatsapp_number', '628123456789'),
+            'admin_email' => config('app.admin_email', 'admin@bmberkahmulia.com'),
+        ];
+        return view('admin.settings.kontak', compact('contact'));
+    }
+
+    public function updateKontak(Request $request)
+    {
+        $whatsapp = $request->input('whatsapp_number');
+        
+        // Normalize: remove all non-digit characters
+        $whatsapp = preg_replace('/[^0-9]/', '', $whatsapp);
+        
+        // Convert country code or zero prefixes to clean suffix
+        if (strpos($whatsapp, '628') === 0) {
+            $whatsapp = substr($whatsapp, 2);
+        } elseif (strpos($whatsapp, '08') === 0) {
+            $whatsapp = substr($whatsapp, 1);
+        }
+        
+        $request->merge(['whatsapp_number' => $whatsapp]);
+        
+        $request->validate([
+            'whatsapp_number' => ['required', 'regex:/^8[0-9]{8,12}$/'],
+            'admin_email' => 'required|email|max:255',
+        ], [
+            'whatsapp_number.regex' => 'Format nomor WhatsApp harus diawali dengan angka 8 dan berisi 9-13 digit angka (contoh: 82112619691).',
+        ]);
+
+        $fullWhatsapp = '62' . $request->input('whatsapp_number');
+
+        $this->updateEnvFile('WHATSAPP_NUMBER', $fullWhatsapp);
+        $this->updateEnvFile('ADMIN_EMAIL', $request->input('admin_email'));
+
+        // Clear config cache so Laravel reads the new env variables immediately
+        try {
+            \Illuminate\Support\Facades\Artisan::call('config:clear');
+            \Illuminate\Support\Facades\Cache::flush();
+        } catch (\Exception $e) {
+            // Ignore if artisan command fails in certain restricted environments
+        }
+
+        return redirect()->route('admin.settings.kontak')
+            ->with('success', 'Kontak WhatsApp dan Email berhasil diperbarui!');
+    }
+
+    protected function updateEnvFile(string $key, string $value)
+    {
+        $path = base_path('.env');
+
+        if (file_exists($path)) {
+            $content = file_get_contents($path);
+            
+            // Check if key exists in env file (multiline search)
+            if (preg_match("/^{$key}=/m", $content)) {
+                // Replace existing key
+                $content = preg_replace("/^{$key}=.*/m", "{$key}=\"{$value}\"", $content);
+            } else {
+                // Append key to the end
+                $content .= "\n{$key}=\"{$value}\"\n";
+            }
+            
+            file_put_contents($path, $content);
+        }
     }
 
     public function panduanUkuran()
@@ -149,7 +217,7 @@ class SettingController extends Controller
         // Clear general application cache
         
 
-        return redirect()->route('admin.settings.index')
+        return redirect()->route('admin.settings.banner')
             ->with('success', 'Pengaturan banner toko berhasil diperbarui!');
     }
 
@@ -172,7 +240,7 @@ class SettingController extends Controller
         
         
 
-        return redirect()->route('admin.settings.index')
+        return redirect()->route('admin.settings.banner')
             ->with('success', 'Teks hero banner berhasil diperbarui!');
     }
 
@@ -191,8 +259,9 @@ class SettingController extends Controller
         
         
         
+        
 
-        return redirect()->route('admin.settings.index')
+        return redirect()->route('admin.settings.lokasi')
             ->with('success', 'Teks lokasi toko berhasil diperbarui!');
     }
 
@@ -204,7 +273,6 @@ class SettingController extends Controller
             'store_phone' => 'required|string|max:20',
             'store_map_iframe' => 'nullable|string|max:1000',
             'store_map_link' => 'nullable|string|max:1000',
-            'store_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
         ]);
 
         Setting::set('store_address', $request->input('store_address'));
@@ -212,25 +280,6 @@ class SettingController extends Controller
         Setting::set('store_phone', $request->input('store_phone'));
         Setting::set('store_map_iframe', $request->input('store_map_iframe'));
         Setting::set('store_map_link', $request->input('store_map_link'));
-
-        if ($request->has('delete_store_image') && $request->input('delete_store_image')) {
-            $oldImage = Setting::get('store_image');
-            if ($oldImage && Storage::disk('public')->exists($oldImage)) {
-                Storage::disk('public')->delete($oldImage);
-            }
-            Setting::set('store_image', null);
-        }
-
-        if ($request->hasFile('store_image') && $request->file('store_image')->isValid()) {
-            $oldImage = Setting::get('store_image');
-            if ($oldImage && Storage::disk('public')->exists($oldImage)) {
-                Storage::disk('public')->delete($oldImage);
-            }
-            $path = \App\Helpers\ImageHelper::storeCompressed($request->file('store_image'), 'settings', 1200, 80);
-            if ($path) {
-                Setting::set('store_image', $path);
-            }
-        }
 
         // Clear general cache
         
@@ -240,7 +289,7 @@ class SettingController extends Controller
         
         
 
-        return redirect()->route('admin.settings.index')
+        return redirect()->route('admin.settings.lokasi')
             ->with('success', 'Informasi dan lokasi toko berhasil diperbarui!');
     }
 }

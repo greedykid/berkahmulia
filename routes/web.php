@@ -40,6 +40,8 @@ Route::middleware(['auth', 'admin', 'throttle:30,1'])->prefix('admin')->name('ad
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::get('/settings/banner', [SettingController::class, 'banner'])->name('settings.banner');
     Route::get('/settings/lokasi', [SettingController::class, 'lokasi'])->name('settings.lokasi');
+    Route::get('/settings/kontak', [SettingController::class, 'kontak'])->name('settings.kontak');
+    Route::post('/settings/kontak', [SettingController::class, 'updateKontak'])->name('settings.updateKontak');
     Route::get('/settings/panduan-ukuran', [SettingController::class, 'panduanUkuran'])->name('settings.panduanUkuran');
     Route::post('/settings/hero-banners', [SettingController::class, 'updateHeroBanners'])->name('settings.updateHeroBanners');
     Route::post('/settings/hero-text', [SettingController::class, 'updateHeroText'])->name('settings.updateHeroText');

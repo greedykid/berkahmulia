@@ -99,6 +99,10 @@
                            class="block px-3 py-2 rounded-lg text-xs font-medium transition-all {{ request()->routeIs('admin.settings.lokasi') ? 'bg-slate-700 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                             <i class="fa-solid fa-map-pin mr-2 text-[10px]"></i>Lokasi Toko
                         </a>
+                        <a href="{{ route('admin.settings.kontak') }}" 
+                           class="block px-3 py-2 rounded-lg text-xs font-medium transition-all {{ request()->routeIs('admin.settings.kontak') ? 'bg-slate-700 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                            <i class="fa-brands fa-whatsapp mr-2 text-[10px]"></i>Kontak Toko
+                        </a>
                         <a href="{{ route('admin.settings.panduanUkuran') }}" 
                            class="block px-3 py-2 rounded-lg text-xs font-medium transition-all {{ request()->routeIs('admin.settings.panduanUkuran') ? 'bg-slate-700 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                             <i class="fa-solid fa-ruler mr-2 text-[10px]"></i>Panduan Ukuran
@@ -195,6 +199,10 @@
                         <a href="{{ route('admin.settings.lokasi') }}" 
                            class="block px-3 py-2 rounded-lg text-xs font-medium transition-all {{ request()->routeIs('admin.settings.lokasi') ? 'bg-slate-700 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                             <i class="fa-solid fa-map-pin mr-2 text-[10px]"></i>Lokasi Toko
+                        </a>
+                        <a href="{{ route('admin.settings.kontak') }}" 
+                           class="block px-3 py-2 rounded-lg text-xs font-medium transition-all {{ request()->routeIs('admin.settings.kontak') ? 'bg-slate-700 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                            <i class="fa-brands fa-whatsapp mr-2 text-[10px]"></i>Kontak Toko
                         </a>
                         <a href="{{ route('admin.settings.panduanUkuran') }}" 
                            class="block px-3 py-2 rounded-lg text-xs font-medium transition-all {{ request()->routeIs('admin.settings.panduanUkuran') ? 'bg-slate-700 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
