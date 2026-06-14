@@ -67,7 +67,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Kaos anak berbahan 100% Cotton Combed 30s premium. Sangat lembut, dingin, menyerap keringat, dan tidak menimbulkan iritasi pada kulit bayi/anak. Cocok untuk pakaian kasual sehari-hari.',
                 'price' => 45000,
                 'status' => 'ready',
-                'images' => ['assets/product_baju.webp', 'assets/product_aksesoris.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'S (0-1 Tahun)', 'color' => 'Kuning', 'stock' => 15],
                     ['size' => 'M (1-2 Tahun)', 'color' => 'Kuning', 'stock' => 20],
@@ -82,7 +82,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Celana pendek anak yang dirancang untuk kenyamanan bermain seharian. Menggunakan pinggang karet elastis lembut dan bahan katun berkualitas tinggi.',
                 'price' => 25000,
                 'status' => 'ready',
-                'images' => ['assets/product_baju.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Abu-abu', 'stock' => 25],
                     ['size' => 'M', 'color' => 'Hitam', 'stock' => 15],
@@ -96,7 +96,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Clodi (Cloth Diaper) yang ramah lingkungan dan hemat pengeluaran. Lapisan luar waterproof anti-bocor, lapisan dalam stay-dry microfleece lembut, dilengkapi insert microfiber berdaya serap tinggi.',
                 'price' => 35000,
                 'status' => 'ready',
-                'images' => ['assets/product_aksesoris.webp', 'assets/product_bedong.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'All Size', 'color' => 'Hijau Tosca', 'stock' => 18],
                     ['size' => 'All Size', 'color' => 'Soft Pink', 'stock' => 10],
@@ -109,7 +109,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Satu set isi 3 pcs bedong bayi flanel berukuran 90x90 cm. Bahan tebal namun tetap bernapas (breathable), memberikan kehangatan ekstra untuk bayi baru lahir.',
                 'price' => 75000,
                 'status' => 'ready',
-                'images' => ['assets/product_bedong.webp', 'assets/product_baju.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'Standard 90x90', 'color' => 'Kuning Motif', 'stock' => 8],
                     ['size' => 'Standard 90x90', 'color' => 'Biru Motif', 'stock' => 14],
@@ -122,7 +122,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Topi rajut bayi premium dengan hiasan double pompon imut di bagian atas. Melindungi kepala bayi tetap hangat saat keluar rumah. Bahan melar dan lembut.',
                 'price' => 18000,
                 'status' => 'ready',
-                'images' => ['assets/product_aksesoris.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => '0-12 Bulan', 'color' => 'Cokelat', 'stock' => 15],
                     ['size' => '0-12 Bulan', 'color' => 'Cream', 'stock' => 22],
@@ -136,7 +136,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Setelan lengkap baju pendek dan celana pendek bayi bermotif lucu. Menggunakan kancing depan memudahkan pemakaian baju ke bayi yang aktif.',
                 'price' => 55000,
                 'status' => 'ready',
-                'images' => ['assets/product_baju.webp', 'assets/product_bedong.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'S (0-6m)', 'color' => 'Hijau Pastel', 'stock' => 12],
                     ['size' => 'M (6-12m)', 'color' => 'Kuning Soft', 'stock' => 9],
@@ -149,7 +149,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Rok tutu bayi berbahan kain tulle lembut berlapis-lapis untuk tampilan mengembang yang anggun. Pinggang elastis tidak membekas di kulit bayi.',
                 'price' => 40000,
                 'status' => 'ready',
-                'images' => ['assets/product_aksesoris.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'S (1-2 Tahun)', 'color' => 'Soft Pink', 'stock' => 6],
                     ['size' => 'M (2-3 Tahun)', 'color' => 'Lilac', 'stock' => 10],
@@ -162,7 +162,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Gendongan kaos (Geos) praktis tanpa ring or ikat. Terbuat dari katun stretch berkualitas tebal yang kokoh menopang berat badan bayi hingga 15kg.',
                 'price' => 85000,
                 'status' => 'ready',
-                'images' => ['assets/product_bedong.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'M (BB Ibu 50-60kg)', 'color' => 'Navy Blue', 'stock' => 15],
                     ['size' => 'L (BB Ibu 60-70kg)', 'color' => 'Navy Blue', 'stock' => 10],
@@ -175,7 +175,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Satu pak berisi 3 celana dalam anak perempuan bermotif karakter lucu. Terbuat dari katun rajut tipis menyerap keringat yang elastis dan nyaman dipakai.',
                 'price' => 30000,
                 'status' => 'ready',
-                'images' => ['assets/product_aksesoris.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'M (Estimasi 3-5 Tahun)', 'color' => 'Mix Karakter', 'stock' => 30],
                     ['size' => 'L (Estimasi 5-7 Tahun)', 'color' => 'Mix Karakter', 'stock' => 25],
@@ -188,7 +188,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Kaos singlet basic anak-anak berwarna putih bersih. Sangat direkomendasikan sebagai kaos dalam pakaian harian sekolah atau rumah.',
                 'price' => 12000,
                 'status' => 'ready',
-                'images' => ['assets/product_baju.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Putih Bersih', 'stock' => 40],
                     ['size' => 'M', 'color' => 'Putih Bersih', 'stock' => 50],
@@ -203,7 +203,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Baju lengan panjang bayi newborn dari bahan katun organic 100%. Cocok untuk bayi baru lahir usia 0-3 bulan.',
                 'price' => 38000,
                 'status' => 'ready',
-                'images' => ['assets/product_baju.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'Newborn (0-3m)', 'color' => 'Putih', 'stock' => 30],
                     ['size' => 'Newborn (0-3m)', 'color' => 'Kuning Lembut', 'stock' => 25],
@@ -216,7 +216,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Kaos anak laki-laki bermotif dinosaurus lucu. Bahan adem, tidak luntur, dan tahan lama setelah dicuci berkali-kali.',
                 'price' => 35000,
                 'status' => 'ready',
-                'images' => ['assets/product_baju.webp', 'assets/product_aksesoris.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'S (1-2 Tahun)', 'color' => 'Hijau', 'stock' => 18],
                     ['size' => 'M (2-3 Tahun)', 'color' => 'Hijau', 'stock' => 22],
@@ -231,7 +231,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Kemeja batik anak laki-laki untuk acara formal atau kondangan. Bahan katun halus tidak gerah.',
                 'price' => 65000,
                 'status' => 'po',
-                'images' => ['assets/product_baju.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'S (2-3 Tahun)', 'color' => 'Cokelat Batik', 'stock' => 0],
                     ['size' => 'M (3-4 Tahun)', 'color' => 'Cokelat Batik', 'stock' => 0],
@@ -244,7 +244,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Celana panjang training anak dengan bahan jersey lembut. Pinggang karet dan tali serut, ada saku samping.',
                 'price' => 40000,
                 'status' => 'ready',
-                'images' => ['assets/product_baju.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'S (2-3 Tahun)', 'color' => 'Abu Muda', 'stock' => 20],
                     ['size' => 'M (3-4 Tahun)', 'color' => 'Abu Muda', 'stock' => 15],
@@ -258,7 +258,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Celana jeans anak dengan bahan stretch elastis sehingga nyaman untuk bergerak. Model slim fit kekinian.',
                 'price' => 55000,
                 'status' => 'ready',
-                'images' => ['assets/product_baju.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'S (2-3 Tahun)', 'color' => 'Dark Blue', 'stock' => 10],
                     ['size' => 'M (3-4 Tahun)', 'color' => 'Dark Blue', 'stock' => 8],
@@ -272,7 +272,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Popok kain lipat tradisional dari bahan katun tebal. Ekonomis dan ramah lingkungan, isi 6 lembar per paket.',
                 'price' => 28000,
                 'status' => 'ready',
-                'images' => ['assets/product_bedong.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'Standard', 'color' => 'Putih', 'stock' => 45],
                 ]
@@ -284,7 +284,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Bedong instan dengan kancing yang praktis. Bahan katun bambu yang adem dan anti bakteri, cocok untuk iklim tropis.',
                 'price' => 45000,
                 'status' => 'ready',
-                'images' => ['assets/product_bedong.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => '0-3 Bulan', 'color' => 'Abu Salur', 'stock' => 12],
                     ['size' => '0-3 Bulan', 'color' => 'Cream Polos', 'stock' => 2],
@@ -297,7 +297,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Set sarung tangan dan kaki bayi isi 3 pasang. Melindungi tangan bayi agar tidak mencakar wajah sendiri.',
                 'price' => 15000,
                 'status' => 'ready',
-                'images' => ['assets/product_aksesoris.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'Newborn', 'color' => 'Putih Polos', 'stock' => 50],
                     ['size' => 'Newborn', 'color' => 'Mix Warna', 'stock' => 35],
@@ -310,7 +310,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Slabber / celemek makan bayi dengan lapisan anti air di bagian belakang. Mudah dibersihkan dan cepat kering.',
                 'price' => 12000,
                 'status' => 'ready',
-                'images' => ['assets/product_aksesoris.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'All Size', 'color' => 'Motif Hewan', 'stock' => 40],
                     ['size' => 'All Size', 'color' => 'Motif Buah', 'stock' => 1],
@@ -323,7 +323,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Piyama anak lengan panjang celana panjang. Bahan kaos katun halus yang nyaman untuk tidur.',
                 'price' => 50000,
                 'status' => 'ready',
-                'images' => ['assets/product_baju.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'S (1-2 Tahun)', 'color' => 'Biru Motif Bintang', 'stock' => 14],
                     ['size' => 'M (2-3 Tahun)', 'color' => 'Pink Motif Kelinci', 'stock' => 11],
@@ -337,7 +337,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Setelan gamis anak perempuan lengkap dengan kerudung. Bahan wolfis premium yang jatuh dan tidak menerawang.',
                 'price' => 85000,
                 'status' => 'po',
-                'images' => ['assets/product_baju.webp', 'assets/product_aksesoris.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'S (3-4 Tahun)', 'color' => 'Dusty Pink', 'stock' => 0],
                     ['size' => 'M (4-5 Tahun)', 'color' => 'Dusty Pink', 'stock' => 0],
@@ -351,7 +351,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Rok plisket anak dengan bahan chiffon yang ringan dan adem. Pinggang karet elastis nyaman dipakai seharian.',
                 'price' => 35000,
                 'status' => 'ready',
-                'images' => ['assets/product_aksesoris.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'S (2-3 Tahun)', 'color' => 'Cream', 'stock' => 9],
                     ['size' => 'M (3-4 Tahun)', 'color' => 'Dusty Blue', 'stock' => 7],
@@ -364,7 +364,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Baby carrier multifungsi 4 posisi gendong. Dilengkapi headrest, hip seat, dan sabuk penopang pinggang. Menahan beban hingga 20kg.',
                 'price' => 150000,
                 'status' => 'ready',
-                'images' => ['assets/product_bedong.webp', 'assets/product_aksesoris.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'All Size', 'color' => 'Navy', 'stock' => 5],
                     ['size' => 'All Size', 'color' => 'Maroon', 'stock' => 3],
@@ -377,7 +377,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Celana dalam model boxer anak laki-laki. Bahan katun stretch nyaman, isi 3 pcs dengan motif bervariasi.',
                 'price' => 35000,
                 'status' => 'ready',
-                'images' => ['assets/product_baju.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'M (3-5 Tahun)', 'color' => 'Mix Motif', 'stock' => 20],
                     ['size' => 'L (5-7 Tahun)', 'color' => 'Mix Motif', 'stock' => 18],
@@ -391,7 +391,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Singlet bayi tanpa lengan bahan katun rib yang elastis dan adem. Cocok dipakai di dalam baju sebagai lapisan penyerap keringat.',
                 'price' => 10000,
                 'status' => 'ready',
-                'images' => ['assets/product_baju.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'S (0-6m)', 'color' => 'Putih', 'stock' => 60],
                     ['size' => 'M (6-12m)', 'color' => 'Putih', 'stock' => 55],
@@ -405,7 +405,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Romper/jumper bayi pendek bermotif kartun. Kancing di selangkangan memudahkan ganti popok.',
                 'price' => 42000,
                 'status' => 'ready',
-                'images' => ['assets/product_baju.webp', 'assets/product_bedong.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => '0-3 Bulan', 'color' => 'Biru Langit', 'stock' => 16],
                     ['size' => '3-6 Bulan', 'color' => 'Kuning Cerah', 'stock' => 12],
@@ -419,7 +419,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Celana pop bayi tanpa kaki (model celana pendek). Isi 3 pcs warna polos, pinggang karet lembut.',
                 'price' => 22000,
                 'status' => 'ready',
-                'images' => ['assets/product_baju.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => 'Newborn (0-3m)', 'color' => 'Mix Polos', 'stock' => 35],
                     ['size' => 'S (3-6m)', 'color' => 'Mix Polos', 'stock' => 28],
@@ -432,7 +432,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Selimut bedong muslin dari serat bambu. Ultra lembut, breathable, makin dicuci makin halus. Ukuran besar 120x120cm.',
                 'price' => 95000,
                 'status' => 'ready',
-                'images' => ['assets/product_bedong.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => '120x120cm', 'color' => 'Sage Green', 'stock' => 6],
                     ['size' => '120x120cm', 'color' => 'Dusty Rose', 'stock' => 4],
@@ -446,10 +446,22 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Kaos kaki bayi dengan sol anti slip agar bayi tidak tergelincir. Isi 5 pasang berbagai motif lucu.',
                 'price' => 25000,
                 'status' => 'sold_out',
-                'images' => ['assets/product_aksesoris.webp'],
+                'images' => [],
                 'variants' => [
                     ['size' => '0-12 Bulan', 'color' => 'Mix Motif', 'stock' => 0],
                     ['size' => '1-3 Tahun', 'color' => 'Mix Motif', 'stock' => 0],
+                ]
+            ],
+            [
+                'category' => 'Gurita',
+                'name' => 'Gurita Bayi Instan Perekat Isi 6 Pcs',
+                'sku' => 'GR-001',
+                'description' => 'Gurita bayi instan perekat terbuat dari kain katun lembut berkualitas premium, meminimalkan iritasi pada kulit sensitif bayi baru lahir. Dilengkapi perekat praktis.',
+                'price' => 38000,
+                'status' => 'ready',
+                'images' => [],
+                'variants' => [
+                    ['size' => 'Standard', 'color' => 'Putih', 'stock' => 50],
                 ]
             ],
         ];

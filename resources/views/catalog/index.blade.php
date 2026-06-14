@@ -318,14 +318,7 @@
                                                 <span class="text-[10px] text-slate-400 font-medium">Gambar tidak tersedia</span>
                                             </div>
                                         @else
-                                            <img src="{{ asset('storage/assets/product_baju.webp') }}" 
-                                                 alt="{{ $product->name }}" 
-                                                 width="300" 
-                                                 height="300"
-                                                 class="w-full h-full object-cover"
-                                                 loading="lazy"
-                                                 onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
-                                            <div class="hidden absolute inset-0 flex-col items-center justify-center bg-slate-100 text-slate-400 p-2">
+                                            <div class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-slate-400 p-2">
                                                 <i class="fa-regular fa-image text-3xl mb-1"></i>
                                                 <span class="text-[10px] text-slate-400 font-medium">Gambar tidak tersedia</span>
                                             </div>

@@ -33,6 +33,7 @@
             <div class="lg:col-span-6 h-64 sm:h-80 lg:h-auto relative bg-slate-100 flex items-stretch overflow-hidden">
                 @php
                     $fileExists = function($path) {
+                        if (!$path) return false;
                         $cleanPath = preg_replace('/^storage\//', '', $path);
                         return file_exists(public_path($path)) || file_exists(storage_path('app/public/' . $cleanPath));
                     };
@@ -41,29 +42,48 @@
                     foreach ($banners as $b) {
                         $path = 'storage/' . $b;
                         if ($fileExists($path)) {
-                            $customSlides[] = $path;
+                            $customSlides[] = [
+                                'path' => $path,
+                                'title' => 'Koleksi Terbaru',
+                                'description' => 'Pilihan pakaian anak berkualitas',
+                                'url' => route('catalog.index')
+                            ];
                         }
                     }
 
                     $defaultSlides = [];
                     foreach ($randomBanners as $rb) {
-                        if ($fileExists($rb)) {
-                            $defaultSlides[] = $rb;
-                        }
+                        $path = $rb['image_path'] ?? null;
+                        $hasImage = $path && $fileExists($path);
+                        $defaultSlides[] = [
+                            'path' => $hasImage ? $path : null,
+                            'title' => $rb['name'],
+                            'description' => 'Rp ' . number_format($rb['price'], 0, ',', '.'),
+                            'url' => route('catalog.show', $rb['slug'])
+                        ];
                     }
                     
                     // Fallback to static assets if there are not enough product images in database
                     if (count($defaultSlides) < 2) {
                         $fallbacks = [
-                            'storage/assets/hero_banner.webp',
-                            'storage/assets/product_bedong.webp'
+                            [
+                                'path' => 'storage/assets/hero_banner.webp',
+                                'title' => 'Pakaian Lembut & Nyaman',
+                                'description' => 'Koleksi Bayi & Anak Premium',
+                                'url' => route('catalog.index')
+                            ],
+                            [
+                                'path' => 'storage/assets/product_bedong.webp',
+                                'title' => 'Koleksi Bedong & Aksesoris',
+                                'description' => 'Bahan Katun Alami 100%',
+                                'url' => route('catalog.index', ['category' => 'bedong'])
+                            ]
                         ];
                         foreach ($fallbacks as $fb) {
-                            if ($fileExists($fb)) {
+                            if ($fileExists($fb['path'])) {
                                 $defaultSlides[] = $fb;
                             }
                         }
-                        $defaultSlides = array_unique($defaultSlides);
                     }
                     
                     $slides = array_merge($customSlides, $defaultSlides);
@@ -73,14 +93,24 @@
                     <div id="hero-carousel-track" class="flex w-full h-full transition-transform duration-500 ease-out" style="transform: translateX(0%);">
                         @foreach($slides as $slide)
                             <div class="w-full h-full shrink-0 relative flex items-stretch">
-                                <img class="w-full h-full object-cover" src="{{ asset($slide) }}" alt="Banner Slide {{ $loop->iteration }}" width="600" height="400" @if($loop->first) fetchpriority="high" @endif onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
-                                <div class="hidden absolute inset-0 flex-col items-center justify-center bg-gradient-to-tr from-slate-50 to-slate-100 text-slate-400 p-6 text-center w-full h-full select-none">
-                                    <div class="w-16 h-16 rounded-2xl bg-white shadow-xs flex items-center justify-center border border-slate-100 mb-3">
+                                @if($slide['path'])
+                                    <img class="w-full h-full object-cover" src="{{ asset($slide['path']) }}" alt="{{ $slide['title'] }}" width="600" height="400" @if($loop->first) fetchpriority="high" @endif onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                                @endif
+                                <div class="{{ $slide['path'] ? 'hidden' : 'flex' }} absolute inset-0 flex-col items-center justify-center bg-gradient-to-tr from-primary-50 via-slate-50 to-secondary-50/50 text-slate-700 p-6 text-center w-full h-full select-none relative overflow-hidden">
+                                    <!-- Decorative background shapes -->
+                                    <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-primary-100/20 blur-2xl"></div>
+                                    <div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-secondary-100/20 blur-2xl"></div>
+
+                                    <div class="relative w-16 h-16 rounded-2xl bg-white shadow-xs flex items-center justify-center border border-slate-100 mb-3 hover:scale-105 transition-transform duration-300">
                                         <svg class="w-8 h-8 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                     </div>
-                                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Gambar Banner Tidak Tersedia</span>
+                                    <h3 class="text-sm font-bold text-slate-800 tracking-tight px-4 leading-snug">{{ $slide['title'] }}</h3>
+                                    <p class="text-[11px] text-slate-500 font-semibold mt-1.5">{{ $slide['description'] }}</p>
+                                    <a href="{{ $slide['url'] }}" class="mt-4 inline-flex items-center justify-center px-4 py-2 bg-primary-500 hover:bg-primary-600 active:scale-95 text-white text-xs font-bold rounded-xl shadow-xs transition-all z-10">
+                                        Lihat Detail
+                                    </a>
                                 </div>
                             </div>
                         @endforeach
@@ -231,14 +261,7 @@
                                 <span class="text-[10px] text-slate-400 font-medium">Gambar tidak tersedia</span>
                             </div>
                         @else
-                            <img src="{{ asset('storage/assets/product_baju.webp') }}" 
-                                 alt="{{ $product->name }}" 
-                                 width="300" 
-                                 height="300"
-                                 class="w-full h-full object-cover"
-                                 loading="lazy"
-                                 onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
-                            <div class="hidden absolute inset-0 flex-col items-center justify-center bg-slate-100 text-slate-400 p-2">
+                            <div class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-slate-400 p-2">
                                 <i class="fa-regular fa-image text-3xl mb-1"></i>
                                 <span class="text-[10px] text-slate-400 font-medium">Gambar tidak tersedia</span>
                             </div>

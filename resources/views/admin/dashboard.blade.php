@@ -131,8 +131,7 @@
                                                 <i class="fa-regular fa-image text-sm"></i>
                                             </div>
                                         @else
-                                            <img src="{{ asset('storage/assets/product_baju.webp') }}" alt="" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
-                                            <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
+                                            <div class="absolute inset-0 flex items-center justify-center bg-slate-100 text-slate-400">
                                                 <i class="fa-regular fa-image text-sm"></i>
                                             </div>
                                         @endif
