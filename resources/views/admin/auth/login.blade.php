@@ -24,8 +24,19 @@
         <!-- Brand Header -->
         <div class="text-center mb-8 flex flex-col items-center">
             <img src="{{ asset('logo.webp') }}" alt="Berkah Mulia Logo" class="h-16 w-16 rounded-2xl shadow-md border border-slate-100 object-cover mb-4">
-            <span class="text-3xl font-extrabold bg-linear-to-r from-pink-500 to-indigo-500 bg-clip-text text-transparent">
-                Berkah Mulia
+            <span class="flex items-center gap-0.5 text-3xl tracking-tight leading-none select-none mb-1">
+                <span class="logo-letter text-apricot-cream-300">B</span>
+                <span class="logo-letter text-pearl-aqua-300">e</span>
+                <span class="logo-letter text-sky-blue-300">r</span>
+                <span class="logo-letter text-vanilla-custard-300">k</span>
+                <span class="logo-letter text-thistle-300">a</span>
+                <span class="logo-letter text-frozen-water-300">h</span>
+                <span class="w-1.5"></span>
+                <span class="logo-letter text-peach-fuzz-300">M</span>
+                <span class="logo-letter text-frozen-water-u-300">u</span>
+                <span class="logo-letter text-vanilla-custard-l-300">l</span>
+                <span class="logo-letter text-thistle-300">i</span>
+                <span class="logo-letter text-thistle-300">a</span>
             </span>
             <p class="text-slate-400 text-xs mt-1 font-semibold uppercase tracking-wider">Dashboard Administration</p>
         </div>

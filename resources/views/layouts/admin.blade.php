@@ -32,7 +32,20 @@
 
     <!-- Mobile Header -->
     <header class="bg-slate-900 text-white p-4 md:hidden flex justify-between items-center z-40 shrink-0">
-        <a href="{{ route('admin.dashboard') }}" class="font-bold text-lg tracking-tight">BM Admin Panel</a>
+        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-0.5 text-sm tracking-tight leading-none select-none">
+            <span class="logo-letter text-apricot-cream-300">B</span>
+            <span class="logo-letter text-pearl-aqua-300">e</span>
+            <span class="logo-letter text-sky-blue-300">r</span>
+            <span class="logo-letter text-vanilla-custard-300">k</span>
+            <span class="logo-letter text-thistle-300">a</span>
+            <span class="logo-letter text-frozen-water-300">h</span>
+            <span class="w-0.5"></span>
+            <span class="logo-letter text-peach-fuzz-300">M</span>
+            <span class="logo-letter text-frozen-water-u-300">u</span>
+            <span class="logo-letter text-vanilla-custard-l-300">l</span>
+            <span class="logo-letter text-thistle-300">i</span>
+            <span class="logo-letter text-thistle-300">a</span>
+        </a>
         <button id="mobile-menu-btn" class="text-slate-400 hover:text-white focus:outline-none" aria-label="Toggle menu">
             <i class="fa-solid fa-bars text-xl" id="mobile-menu-icon"></i>
         </button>
@@ -55,8 +68,21 @@
             <div class="flex items-center gap-3 px-2">
                 <img src="{{ asset('logo.webp') }}" alt="Logo" class="h-10 w-auto rounded-lg shadow-sm shrink-0 object-cover">
                 <div class="flex flex-col">
-                    <span class="text-sm font-bold text-white tracking-tight leading-none">Berkah Mulia</span>
-                    <span class="text-[8px] text-slate-400 uppercase tracking-wider mt-1 font-semibold">Admin Panel</span>
+                    <span class="flex items-center gap-0.5 text-sm tracking-tight leading-none select-none mb-0.5">
+                        <span class="logo-letter text-apricot-cream-300">B</span>
+                        <span class="logo-letter text-pearl-aqua-300">e</span>
+                        <span class="logo-letter text-sky-blue-300">r</span>
+                        <span class="logo-letter text-vanilla-custard-300">k</span>
+                        <span class="logo-letter text-thistle-300">a</span>
+                        <span class="logo-letter text-frozen-water-300">h</span>
+                        <span class="w-1"></span>
+                        <span class="logo-letter text-peach-fuzz-300">M</span>
+                        <span class="logo-letter text-frozen-water-u-300">u</span>
+                        <span class="logo-letter text-vanilla-custard-l-300">l</span>
+                        <span class="logo-letter text-thistle-300">i</span>
+                        <span class="logo-letter text-thistle-300">a</span>
+                    </span>
+                    <span class="text-[8px] text-slate-400 uppercase tracking-wider mt-0.5 font-semibold">Admin Panel</span>
                 </div>
             </div>
 
@@ -149,8 +175,21 @@
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
                     <img src="{{ asset('logo.webp') }}" alt="Logo" class="h-10 w-auto rounded-lg shadow-sm shrink-0 object-cover">
                     <div class="flex flex-col sidebar-expanded-only">
-                        <span class="text-sm font-bold text-white tracking-tight leading-none">Berkah Mulia</span>
-                        <span class="text-[8px] text-slate-400 uppercase tracking-wider mt-1 font-semibold">Admin Panel</span>
+                        <span class="flex items-center gap-0.5 text-sm tracking-tight leading-none select-none mb-0.5">
+                            <span class="logo-letter text-apricot-cream-300">B</span>
+                            <span class="logo-letter text-pearl-aqua-300">e</span>
+                            <span class="logo-letter text-sky-blue-300">r</span>
+                            <span class="logo-letter text-vanilla-custard-300">k</span>
+                            <span class="logo-letter text-thistle-300">a</span>
+                            <span class="logo-letter text-frozen-water-300">h</span>
+                            <span class="w-1"></span>
+                            <span class="logo-letter text-peach-fuzz-300">M</span>
+                            <span class="logo-letter text-frozen-water-u-300">u</span>
+                            <span class="logo-letter text-vanilla-custard-l-300">l</span>
+                            <span class="logo-letter text-thistle-300">i</span>
+                            <span class="logo-letter text-thistle-300">a</span>
+                        </span>
+                        <span class="text-[8px] text-slate-400 uppercase tracking-wider mt-0.5 font-semibold">Admin Panel</span>
                     </div>
                 </a>
             </div>

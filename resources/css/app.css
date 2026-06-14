@@ -7,27 +7,29 @@
 @theme {
     --font-sans: 'Quicksand', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-    --color-primary-50: #eef7f6;
-    --color-primary-100: #b8e4d3; /* Pale Mint */
-    --color-primary-200: #add6d0; /* Light Teal */
-    --color-primary-300: #78999c; /* Grayish Teal */
-    --color-primary-400: #528c94;
-    --color-primary-500: #3c7c94; /* Deep Teal */
-    --color-primary-600: #2d6276;
-    --color-primary-700: #214958;
-    --color-primary-850: #142d38;
-    --color-primary-900: #0d1f27;
+    --color-primary-50: #eaf4fb;
+    --color-primary-100: #d5e9f6;
+    --color-primary-200: #aad3ee;
+    --color-primary-300: #80bde5;
+    --color-primary-400: #56a6dc;
+    --color-primary-500: #2b90d4;
+    --color-primary-600: #2373a9;
+    --color-primary-700: #1a577f;
+    --color-primary-800: #113a55;
+    --color-primary-900: #091d2a;
+    --color-primary-950: #06141e;
 
-    --color-secondary-50: #f7f8f3;
-    --color-secondary-100: #dfe2c5; /* Soft Sage Beige */
-    --color-secondary-200: #7dbad9; /* Light Sky Blue */
-    --color-secondary-300: #6d93b4; /* Soft Medium Blue */
-    --color-secondary-400: #7f8c78; /* Sage Green */
-    --color-secondary-500: #c49486; /* Terracotta */
-    --color-secondary-600: #b07d6f;
-    --color-secondary-700: #936254;
-    --color-secondary-800: #784d41;
-    --color-secondary-900: #445153; /* Dark Charcoal */
+    --color-secondary-50: #feefe7;
+    --color-secondary-100: #fddfce;
+    --color-secondary-200: #fac09e;
+    --color-secondary-300: #f8a06d;
+    --color-secondary-400: #f6803c;
+    --color-secondary-500: #f4610b;
+    --color-secondary-600: #c34d09;
+    --color-secondary-700: #923a07;
+    --color-secondary-800: #612705;
+    --color-secondary-900: #311302;
+    --color-secondary-950: #220e02;
 
     /* Logo colors per letter */
     --color-apricot-cream-50: #fdf4e7;

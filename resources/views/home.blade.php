@@ -168,7 +168,8 @@
 </section>
 
 <!-- Visual Category Grid (Carter's Style Circle Cards) -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+<section class="bg-white border-y border-slate-100 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center max-w-xl mx-auto mb-12">
         <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Belanja Berdasarkan Kategori</h2>
         <p class="mt-2 text-slate-500 text-sm">Temukan pakaian yang tepat berdasarkan kategori produk khusus kami</p>
@@ -229,7 +230,8 @@
 
 
 <!-- Featured Products (Showcase) -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+<section class="bg-slate-50/50 py-16 border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-end justify-between mb-10">
         <div>
             <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight font-sans">Koleksi Terpopuler</h2>
@@ -310,7 +312,7 @@
 </section>
 
 <!-- Store Location Section -->
-<section class="bg-gradient-to-br from-slate-50 via-primary-50/10 to-slate-50 py-16 border-t border-slate-100">
+<section class="bg-gradient-to-br from-white via-primary-50/5 to-white py-16 border-b border-slate-100">
     @php
         $storeAddress = \App\Models\Setting::get('store_address', 'Jl. Berkah Mulia Raya No. 88, Central Business District, Kota Surakarta, Jawa Tengah 57132');
         $storeHours = \App\Models\Setting::get('store_hours', 'Senin - Sabtu: 08.00 - 17.00 WIB (Minggu Libur)');
@@ -409,9 +411,6 @@
                     @endif
                 </div>
             </div>
-        </div>
-    </div>
-</section>
         </div>
     </div>
 </section>
