@@ -27,9 +27,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" as="style">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" as="style">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
     
     <!-- Compiled Tailwind CSS & JS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -63,9 +63,20 @@
                 <div class="shrink-0" id="header-logo">
                     <a href="{{ route('home') }}" class="flex items-center gap-2 sm:gap-3">
                         <img src="{{ asset('logo.webp') }}" alt="Berkah Mulia Logo" width="48" height="48" class="h-10 sm:h-12 w-auto rounded-xl shadow-sm border border-slate-100 object-cover">
-                        <div class="hidden sm:flex sm:flex-col">
-                            <span class="text-lg font-bold bg-linear-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent tracking-tight leading-none">
-                                Berkah Mulia
+                        <div class="flex flex-col">
+                            <span class="flex items-center gap-0.5 text-base sm:text-2xl tracking-tight leading-none select-none">
+                                <span class="logo-letter text-apricot-cream-300">B</span>
+                                <span class="logo-letter text-pearl-aqua-300">e</span>
+                                <span class="logo-letter text-sky-blue-300">r</span>
+                                <span class="logo-letter text-vanilla-custard-300">k</span>
+                                <span class="logo-letter text-thistle-300">a</span>
+                                <span class="logo-letter text-frozen-water-300">h</span>
+                                <span class="w-1 sm:w-1.5"></span>
+                                <span class="logo-letter text-peach-fuzz-300">M</span>
+                                <span class="logo-letter text-frozen-water-u-300">u</span>
+                                <span class="logo-letter text-vanilla-custard-l-300">l</span>
+                                <span class="logo-letter text-thistle-300">i</span>
+                                <span class="logo-letter text-thistle-300">a</span>
                             </span>
                         </div>
                     </a>

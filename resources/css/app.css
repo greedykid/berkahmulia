@@ -5,7 +5,7 @@
 @source "../../storage/framework/views/*.php";
 
 @theme {
-    --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Quicksand', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
     --color-primary-50: #eef7f6;
     --color-primary-100: #b8e4d3; /* Pale Mint */
@@ -28,6 +28,115 @@
     --color-secondary-700: #936254;
     --color-secondary-800: #784d41;
     --color-secondary-900: #445153; /* Dark Charcoal */
+
+    /* Logo colors per letter */
+    --color-apricot-cream-50: #fdf4e7;
+    --color-apricot-cream-100: #fbe8d0;
+    --color-apricot-cream-200: #f7d2a1;
+    --color-apricot-cream-300: #f4bb71;
+    --color-apricot-cream-400: #f0a542;
+    --color-apricot-cream-500: #ec8e13;
+    --color-apricot-cream-600: #bd720f;
+    --color-apricot-cream-700: #8e550b;
+    --color-apricot-cream-800: #5e3908;
+    --color-apricot-cream-900: #2f1c04;
+    --color-apricot-cream-950: #211403;
+
+    --color-pearl-aqua-50: #edf7f3;
+    --color-pearl-aqua-100: #dcefe8;
+    --color-pearl-aqua-200: #b8e0d1;
+    --color-pearl-aqua-300: #95d0b9;
+    --color-pearl-aqua-400: #71c1a2;
+    --color-pearl-aqua-500: #4eb18b;
+    --color-pearl-aqua-600: #3e8e6f;
+    --color-pearl-aqua-700: #2f6a53;
+    --color-pearl-aqua-800: #1f4738;
+    --color-pearl-aqua-900: #10231c;
+    --color-pearl-aqua-950: #0b1913;
+
+    --color-sky-blue-50: #eaf4fb;
+    --color-sky-blue-100: #d5e9f6;
+    --color-sky-blue-200: #aad3ee;
+    --color-sky-blue-300: #80bde5;
+    --color-sky-blue-400: #56a6dc;
+    --color-sky-blue-500: #2b90d4;
+    --color-sky-blue-600: #2373a9;
+    --color-sky-blue-700: #1a577f;
+    --color-sky-blue-800: #113a55;
+    --color-sky-blue-900: #091d2a;
+    --color-sky-blue-950: #06141e;
+
+    --color-vanilla-custard-50: #fef9e7;
+    --color-vanilla-custard-100: #fdf4ce;
+    --color-vanilla-custard-200: #fbe89d;
+    --color-vanilla-custard-300: #f9dd6c;
+    --color-vanilla-custard-400: #f7d13b;
+    --color-vanilla-custard-500: #f5c60a;
+    --color-vanilla-custard-600: #c49e08;
+    --color-vanilla-custard-700: #937706;
+    --color-vanilla-custard-800: #624f04;
+    --color-vanilla-custard-900: #312802;
+    --color-vanilla-custard-950: #221c01;
+
+    --color-thistle-50: #f3eff6;
+    --color-thistle-100: #e8deed;
+    --color-thistle-200: #d0beda;
+    --color-thistle-300: #b99dc8;
+    --color-thistle-400: #a27cb6;
+    --color-thistle-500: #8a5ca3;
+    --color-thistle-600: #6f4983;
+    --color-thistle-700: #533762;
+    --color-thistle-800: #372541;
+    --color-thistle-900: #1c1221;
+    --color-thistle-950: #130d17;
+
+    --color-frozen-water-50: #eef7f3;
+    --color-frozen-water-100: #dcefe8;
+    --color-frozen-water-200: #b9dfd0;
+    --color-frozen-water-300: #96cfb9;
+    --color-frozen-water-400: #73bfa2;
+    --color-frozen-water-500: #50af8b;
+    --color-frozen-water-600: #408c6f;
+    --color-frozen-water-700: #306953;
+    --color-frozen-water-800: #204637;
+    --color-frozen-water-900: #10231c;
+    --color-frozen-water-950: #0b1813;
+
+    --color-peach-fuzz-50: #feefe7;
+    --color-peach-fuzz-100: #fddfce;
+    --color-peach-fuzz-200: #fac09e;
+    --color-peach-fuzz-300: #f8a06d;
+    --color-peach-fuzz-400: #f6803c;
+    --color-peach-fuzz-500: #f4610b;
+    --color-peach-fuzz-600: #c34d09;
+    --color-peach-fuzz-700: #923a07;
+    --color-peach-fuzz-800: #612705;
+    --color-peach-fuzz-900: #311302;
+    --color-peach-fuzz-950: #220e02;
+
+    --color-frozen-water-u-50: #eef7f3;
+    --color-frozen-water-u-100: #dcefe6;
+    --color-frozen-water-u-200: #b9dfcd;
+    --color-frozen-water-u-300: #96cfb4;
+    --color-frozen-water-u-400: #73bf9c;
+    --color-frozen-water-u-500: #50af83;
+    --color-frozen-water-u-600: #408c69;
+    --color-frozen-water-u-700: #30694e;
+    --color-frozen-water-u-800: #204634;
+    --color-frozen-water-u-900: #10231a;
+    --color-frozen-water-u-950: #0b1812;
+
+    --color-vanilla-custard-l-50: #fff9e6;
+    --color-vanilla-custard-l-100: #fef3cd;
+    --color-vanilla-custard-l-200: #fee79a;
+    --color-vanilla-custard-l-300: #fdda68;
+    --color-vanilla-custard-l-400: #fdce35;
+    --color-vanilla-custard-l-500: #fcc203;
+    --color-vanilla-custard-l-600: #ca9b02;
+    --color-vanilla-custard-l-700: #977402;
+    --color-vanilla-custard-l-800: #654e01;
+    --color-vanilla-custard-l-900: #322701;
+    --color-vanilla-custard-l-950: #231b00;
 }
 
 /* Custom Styles for Berkah Mulia - Carter's Inspired */
@@ -107,4 +216,19 @@ input[type="range"]::-webkit-slider-thumb {
 
 .animate-fade-in {
     animation: fadeIn 0.4s ease forwards;
+}
+
+/* Logo Bubble Pastel Colors with micro-animations */
+.logo-letter {
+    display: inline-block;
+    font-weight: 800;
+    text-shadow: 1px 1px 0 #334155, 
+                 -1px -1px 0 #334155, 
+                 1px -1px 0 #334155, 
+                 -1px 1px 0 #334155,
+                 1.5px 2px 0px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.logo-letter:hover {
+    transform: translateY(-3px) scale(1.15);
 }
