@@ -35,6 +35,7 @@ Route::middleware(['auth', 'admin', 'throttle:30,1'])->prefix('admin')->name('ad
     Route::post('/products-import-csv', [ProductController::class, 'importCsv'])->name('products.importCsv');
     Route::post('/products-bulk-status', [ProductController::class, 'bulkStatus'])->name('products.bulkStatus');
     Route::post('/products-bulk-delete', [ProductController::class, 'bulkDelete'])->name('products.bulkDelete');
+    Route::post('/products/{product}/toggle-popular', [ProductController::class, 'togglePopular'])->name('products.togglePopular');
 
     // Shop Settings
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');

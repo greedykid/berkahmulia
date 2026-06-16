@@ -26,14 +26,21 @@ class CatalogController extends Controller
             return (object) $cat;
         });
         
-        // Eager load category and first image for products
+        // Eager load category and first image for products (Prioritize is_popular, fallback to latest)
         $featuredProducts = collect(\Illuminate\Support\Facades\Cache::remember('featured_products', 3600, function() {
-            return Product::with(['category', 'images'])
-                ->where('status', 'ready')
-                ->latest()
-                ->take(8)
-                ->get()
-                ->map(function($prod) {
+            $baseQuery = Product::with(['category', 'images'])
+                ->where('status', 'ready');
+
+            // Check if there are any products explicitly marked as popular
+            $popularExists = (clone $baseQuery)->where('is_popular', true)->exists();
+
+            if ($popularExists) {
+                $products = $baseQuery->where('is_popular', true)->latest()->take(8)->get();
+            } else {
+                $products = $baseQuery->latest()->take(8)->get();
+            }
+
+            return $products->map(function($prod) {
                     return [
                         'id' => $prod->id,
                         'name' => $prod->name,

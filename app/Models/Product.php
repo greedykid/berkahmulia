@@ -20,6 +20,11 @@ class Product extends Model
         'description',
         'price',
         'status',
+        'is_popular',
+    ];
+
+    protected $casts = [
+        'is_popular' => 'boolean',
     ];
 
     protected static function booted()

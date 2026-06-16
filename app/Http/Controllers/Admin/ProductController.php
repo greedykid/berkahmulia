@@ -101,6 +101,7 @@ class ProductController extends Controller
             'price' => $request->price,
             'status' => $request->status,
             'description' => $request->description,
+            'is_popular' => $request->boolean('is_popular', false),
         ]);
 
         // Upload images
@@ -158,6 +159,7 @@ class ProductController extends Controller
             'price' => $request->price,
             'status' => $request->status,
             'description' => $request->description,
+            'is_popular' => $request->boolean('is_popular', false),
         ]);
 
         // Delete specific images if requested
@@ -487,6 +489,19 @@ class ProductController extends Controller
 
         return redirect()->route('admin.products.index')
             ->with('success', "$count produk berhasil dihapus.");
+    }
+
+    /**
+     * Toggle the popular status of a product
+     */
+    public function togglePopular(Product $product)
+    {
+        $product->update([
+            'is_popular' => !$product->is_popular
+        ]);
+
+        return redirect()->back()
+            ->with('success', 'Status populer produk berhasil diperbarui!');
     }
 
     /**

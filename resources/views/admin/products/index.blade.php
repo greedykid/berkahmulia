@@ -378,6 +378,7 @@
                             {!! getSortIcon('status', $sort, $direction) !!}
                         </a>
                     </th>
+                    <th class="py-3 px-4 text-center">Populer</th>
                     <th class="py-3 px-4 text-right">Aksi</th>
                 </tr>
             </thead>
@@ -441,6 +442,20 @@
                                 <span class="bg-rose-50 text-rose-700 text-xs font-bold px-3 py-1 rounded-full border border-rose-100">Habis</span>
                             @endif
                         </td>
+                        <!-- Populer -->
+                        <td class="py-4 px-4 text-center">
+                            <form action="{{ route('admin.products.togglePopular', $prod->id) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" title="{{ $prod->is_popular ? 'Nonaktifkan Populer' : 'Aktifkan Populer' }}" 
+                                        class="transition-all p-1.5 rounded-lg hover:bg-slate-100 cursor-pointer inline-flex items-center justify-center">
+                                    @if($prod->is_popular)
+                                        <i class="fa-solid fa-star text-amber-500 text-base animate-pulse"></i>
+                                    @else
+                                        <i class="fa-regular fa-star text-slate-350 text-base hover:text-amber-400"></i>
+                                    @endif
+                                </button>
+                            </form>
+                        </td>
                         <!-- Actions -->
                         <td class="py-4 px-4 text-right">
                             <div class="flex items-center justify-end gap-1.5">
@@ -485,7 +500,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="py-16 text-center text-slate-400">
+                        <td colspan="8" class="py-16 text-center text-slate-400">
                             <i class="fa-solid fa-boxes-open text-3xl mb-3 block text-slate-300"></i>
                             Belum ada data produk atau produk tidak ditemukan.
                         </td>
@@ -502,6 +517,11 @@
                 <!-- Header: Info & Thumbnail -->
                 <div class="flex items-start gap-3">
                     <div class="w-14 h-14 rounded-xl overflow-hidden border border-slate-100/80 bg-slate-50 shrink-0 relative">
+                        @if($prod->is_popular)
+                            <div class="absolute top-0.5 right-0.5 bg-amber-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[8px] z-10 shadow-sm animate-pulse">
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                        @endif
                         @if($prod->images->isNotEmpty())
                             <img src="{{ asset('storage/' . $prod->images->first()->image_path) }}" alt="" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
                             <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
@@ -558,6 +578,14 @@
 
                 <!-- Action Buttons Row (Finger-friendly targets) -->
                 <div class="flex items-center gap-2 border-t border-slate-100 pt-3">
+                    <form action="{{ route('admin.products.togglePopular', $prod->id) }}" method="POST" class="grow">
+                        @csrf
+                        <button type="submit" class="w-full font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all {{ $prod->is_popular ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200' }}">
+                            <i class="fa-{{ $prod->is_popular ? 'solid' : 'regular' }} fa-star text-amber-500"></i>
+                            <span>{{ $prod->is_popular ? 'Populer' : 'Jadikan Populer' }}</span>
+                        </button>
+                    </form>
+                    
                     <button type="button"
                             onclick="openEditProductModal(this)"
                             data-product="{{ json_encode($prod) }}"
@@ -701,6 +729,21 @@
                                             Habis
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- Produk Populer -->
+                            <div class="md:col-span-2 flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 hover:bg-slate-100/50 transition-all">
+                                <div class="flex items-center h-5">
+                                    <input type="checkbox" name="is_popular" id="is_popular" value="1" {{ old('is_popular') ? 'checked' : '' }}
+                                           class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-400 cursor-pointer">
+                                </div>
+                                <div class="ms-3 text-xs select-none">
+                                    <label for="is_popular" class="font-bold text-slate-700 cursor-pointer flex items-center gap-1.5">
+                                        <i class="fa-solid fa-star text-amber-500 text-[10px]"></i>
+                                        Produk Populer (Unggulan)
+                                    </label>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Tampilkan produk ini di bagian "Koleksi Terpopuler" di homepage.</p>
                                 </div>
                             </div>
                         </div>
@@ -903,6 +946,21 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Produk Populer -->
+                            <div class="md:col-span-2 flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 hover:bg-slate-100/50 transition-all">
+                                <div class="flex items-center h-5">
+                                    <input type="checkbox" name="is_popular" id="edit_is_popular" value="1"
+                                           class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-400 cursor-pointer">
+                                </div>
+                                <div class="ms-3 text-xs select-none">
+                                    <label for="edit_is_popular" class="font-bold text-slate-700 cursor-pointer flex items-center gap-1.5">
+                                        <i class="fa-solid fa-star text-amber-500 text-[10px]"></i>
+                                        Produk Populer (Unggulan)
+                                    </label>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Tampilkan produk ini di bagian "Koleksi Terpopuler" di homepage.</p>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Description -->
@@ -1097,6 +1155,8 @@
         // Populate Custom Status Dropdown in Edit Modal
         document.getElementById('edit_status_hidden').value = product.status;
         document.getElementById('edit_selected-status-label').innerText = statusLabels[product.status] || 'Ready';
+
+        document.getElementById('edit_is_popular').checked = !!product.is_popular;
 
         document.getElementById('edit_description').value = product.description || '';
 
@@ -1305,6 +1365,8 @@
                     const oldStatus = @json(old('status'));
                     document.getElementById('edit_status_hidden').value = oldStatus;
                     document.getElementById('edit_selected-status-label').innerText = statusLabels[oldStatus] || 'Ready';
+
+                    document.getElementById('edit_is_popular').checked = {{ old('is_popular') ? 'true' : 'false' }};
 
                     document.getElementById('edit_description').value = @json(old('description'));
 

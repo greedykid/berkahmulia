@@ -51,6 +51,20 @@
                             <i class="fa-solid fa-magnifying-glass-plus text-lg text-slate-600"></i>
                         </div>
                     </div>
+
+                    <!-- Left/Right Carousel Controls -->
+                    @if($product->images->count() > 1)
+                        <button type="button" onclick="event.stopPropagation(); prevImage();" 
+                                class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white text-slate-800 w-10 h-10 rounded-full shadow-md flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:scale-110 active:scale-95 transition-all duration-200 z-10 cursor-pointer"
+                                aria-label="Gambar sebelumnya">
+                            <i class="fa-solid fa-chevron-left text-sm"></i>
+                        </button>
+                        <button type="button" onclick="event.stopPropagation(); nextImage();" 
+                                class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white text-slate-800 w-10 h-10 rounded-full shadow-md flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:scale-110 active:scale-95 transition-all duration-200 z-10 cursor-pointer"
+                                aria-label="Gambar berikutnya">
+                            <i class="fa-solid fa-chevron-right text-sm"></i>
+                        </button>
+                    @endif
                     
                     @if($product->status !== 'ready')
                         <div class="absolute top-4 left-4 bg-slate-900/80 text-white text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider backdrop-blur-sm">
@@ -61,7 +75,7 @@
 
                 <!-- Gallery Thumbnails -->
                 @if($product->images->count() > 1)
-                    <div class="flex gap-3 overflow-x-auto pb-1 no-scrollbar">
+                    <div id="gallery-thumbnails" class="flex gap-3 overflow-x-auto pb-1 no-scrollbar">
                         @foreach($product->images as $index => $img)
                             <button type="button" onclick="changeImage('{{ asset('storage/' . $img->image_path) }}', this)"
                                     class="w-20 h-20 rounded-xl border-2 border-slate-100 overflow-hidden shrink-0 focus:outline-none transition-all relative {{ $index === 0 ? 'thumbnail-active' : '' }}">
@@ -328,9 +342,22 @@
     const productCategory = "{{ $product->category->name }}";
     const whatsappBaseUrl = "https://wa.me/{{ config('app.whatsapp_number', '628123456789') }}";
 
+    const productImages = [
+        @foreach($product->images as $img)
+            "{{ asset('storage/' . $img->image_path) }}",
+        @endforeach
+    ];
+    let currentImageIndex = 0;
+
     // Change preview image on thumbnail click
     function changeImage(src, btn) {
         document.getElementById('main-image').src = src;
+        
+        // Update currentImageIndex based on src
+        const idx = productImages.indexOf(src);
+        if (idx !== -1) {
+            currentImageIndex = idx;
+        }
         
         // Remove active class from all thumbnails
         const thumbnails = btn.parentNode.children;
@@ -340,6 +367,39 @@
         
         // Add active class to clicked thumbnail
         btn.classList.add('thumbnail-active');
+    }
+
+    function prevImage() {
+        if (productImages.length <= 1) return;
+        currentImageIndex = (currentImageIndex - 1 + productImages.length) % productImages.length;
+        updateCarouselImage();
+    }
+
+    // Toggle Carousel Right
+    function nextImage() {
+        if (productImages.length <= 1) return;
+        currentImageIndex = (currentImageIndex + 1) % productImages.length;
+        updateCarouselImage();
+    }
+
+    // Update active carousel slide image
+    function updateCarouselImage() {
+        const newSrc = productImages[currentImageIndex];
+        document.getElementById('main-image').src = newSrc;
+        
+        // Sync thumbnail active class
+        const thumbnailContainer = document.getElementById('gallery-thumbnails');
+        if (thumbnailContainer) {
+            const thumbnails = thumbnailContainer.children;
+            for (let i = 0; i < thumbnails.length; i++) {
+                if (i === currentImageIndex) {
+                    thumbnails[i].classList.add('thumbnail-active');
+                    thumbnails[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+                } else {
+                    thumbnails[i].classList.remove('thumbnail-active');
+                }
+            }
+        }
     }
 
     // Toggle Size Guide Modal with smooth animation
@@ -460,10 +520,30 @@
         }
     }
 
+    function prevLightboxImage() {
+        if (productImages.length <= 1) return;
+        currentImageIndex = (currentImageIndex - 1 + productImages.length) % productImages.length;
+        updateCarouselImage();
+        document.getElementById('lightbox-image').src = productImages[currentImageIndex];
+    }
+
+    function nextLightboxImage() {
+        if (productImages.length <= 1) return;
+        currentImageIndex = (currentImageIndex + 1) % productImages.length;
+        updateCarouselImage();
+        document.getElementById('lightbox-image').src = productImages[currentImageIndex];
+    }
+
     document.addEventListener('keydown', function(event) {
         const lightboxModal = document.getElementById('lightbox-modal');
-        if (event.key === 'Escape' && lightboxModal && !lightboxModal.classList.contains('hidden')) {
-            closeLightbox();
+        if (lightboxModal && !lightboxModal.classList.contains('hidden')) {
+            if (event.key === 'Escape') {
+                closeLightbox();
+            } else if (event.key === 'ArrowLeft') {
+                prevLightboxImage();
+            } else if (event.key === 'ArrowRight') {
+                nextLightboxImage();
+            }
         }
     });
 </script>
@@ -474,6 +554,21 @@
     <button type="button" class="absolute top-6 right-6 text-white/80 hover:text-white hover:scale-110 focus:outline-none transition-all duration-200 z-101">
         <i class="fa-solid fa-xmark text-3xl"></i>
     </button>
+    
+    <!-- Lightbox Left/Right Controls -->
+    @if($product->images->count() > 1)
+        <button type="button" onclick="event.stopPropagation(); prevLightboxImage();" 
+                class="absolute left-6 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 z-101 cursor-pointer"
+                aria-label="Gambar sebelumnya">
+            <i class="fa-solid fa-chevron-left text-xl"></i>
+        </button>
+        <button type="button" onclick="event.stopPropagation(); nextLightboxImage();" 
+                class="absolute right-6 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 z-101 cursor-pointer"
+                aria-label="Gambar berikutnya">
+            <i class="fa-solid fa-chevron-right text-xl"></i>
+        </button>
+    @endif
+
     <!-- Lightbox Image Wrapper -->
     <div class="relative max-w-5xl max-h-[90vh] flex items-center justify-center" onclick="event.stopPropagation()">
         <img id="lightbox-image" src="" alt="Fullscreen Preview" class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl border border-white/10 object-contain animate-zoom-in" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
