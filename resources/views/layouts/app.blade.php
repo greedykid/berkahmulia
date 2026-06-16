@@ -38,7 +38,11 @@
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#4f46e5">
     <link rel="apple-touch-icon" href="/logo.webp">
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 1e4a9caf6758b6409161dfeb96598d09ded1337d
     <!-- FontAwesome for icons (asynchronous load to prevent render blocking) -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
@@ -367,7 +371,11 @@
         });
     });
     </script>
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 1e4a9caf6758b6409161dfeb96598d09ded1337d
     <!-- PWA Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {

@@ -551,6 +551,7 @@
     </script>
 
     @yield('scripts')
+<<<<<<< HEAD
  
     <!-- PWA Service Worker Registration -->
     <script>
@@ -562,5 +563,18 @@
             });
         }
     </script>
+=======
+
+     <!-- PWA Service Worker Registration -->
+     <script>
+         if ('serviceWorker' in navigator) {
+             window.addEventListener('load', () => {
+                 navigator.serviceWorker.register('/sw.js')
+                     .then(reg => console.log('Service Worker registered successfully!', reg.scope))
+                     .catch(err => console.error('Service Worker registration failed:', err));
+             });
+         }
+     </script>
+>>>>>>> 1e4a9caf6758b6409161dfeb96598d09ded1337d
 </body>
 </html>

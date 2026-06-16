@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const CACHE_NAME = 'berkah-mulia-cache-v2';
 const urlsToCache = [
   '/',
@@ -9,6 +10,16 @@ const urlsToCache = [
 // Install Event - Pre-cache core assets & skip waiting for immediate activation
 self.addEventListener('install', event => {
   self.skipWaiting();
+=======
+const CACHE_NAME = 'berkah-mulia-cache-v1';
+const urlsToCache = [
+  '/',
+  '/favicon.ico',
+  '/logo.webp'
+];
+
+self.addEventListener('install', event => {
+>>>>>>> 1e4a9caf6758b6409161dfeb96598d09ded1337d
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -17,6 +28,7 @@ self.addEventListener('install', event => {
   );
 });
 
+<<<<<<< HEAD
 // Activate Event - Take control of clients immediately and clean up old cache versions
 self.addEventListener('activate', event => {
   event.waitUntil(
@@ -93,4 +105,31 @@ self.addEventListener('fetch', event => {
         })
     );
   }
+=======
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        if (response) {
+          return response;
+        }
+        return fetch(event.request);
+      })
+  );
+});
+
+self.addEventListener('activate', event => {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+>>>>>>> 1e4a9caf6758b6409161dfeb96598d09ded1337d
 });
