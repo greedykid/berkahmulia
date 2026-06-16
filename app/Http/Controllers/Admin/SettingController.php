@@ -217,7 +217,7 @@ class SettingController extends Controller
         if ($request->hasFile('banners')) {
             foreach (array_reverse($request->file('banners')) as $file) {
                 if ($file->isValid()) {
-                    $path = \App\Helpers\ImageHelper::storeCompressed($file, 'banners', 1600, 80);
+                    $path = \App\Helpers\ImageHelper::storeCompressed($file, 'hero', 1600, 80);
                     if ($path) {
                         array_unshift($currentBanners, $path);
                     }

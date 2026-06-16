@@ -34,6 +34,11 @@
     <!-- Compiled Tailwind CSS & JS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="/logo.webp">
+
     <!-- FontAwesome for icons (asynchronous load to prevent render blocking) -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
@@ -74,7 +79,7 @@
                 <!-- Logo -->
                 <div class="shrink-0" id="header-logo">
                     <a href="{{ route('home') }}" class="flex items-center gap-2 sm:gap-3">
-                        <img src="{{ asset('logo.webp') }}" alt="Berkah Mulia Logo" width="48" height="48" class="h-10 sm:h-12 w-auto rounded-xl shadow-sm border border-slate-100 object-cover">
+                        <img src="/logo.webp" alt="Berkah Mulia Logo" width="48" height="48" class="h-10 sm:h-12 w-auto rounded-xl shadow-sm border border-slate-100 object-cover">
                         <div class="flex flex-col">
                             <span class="flex items-center gap-0.5 text-base sm:text-2xl tracking-tight leading-none select-none">
                                 <span class="logo-letter text-apricot-cream-300">B</span>
@@ -211,7 +216,7 @@
                 <!-- About -->
                 <div class="space-y-4">
                     <div class="flex items-center gap-3">
-                        <img src="{{ asset('logo.webp') }}" alt="Berkah Mulia Logo" width="40" height="40" class="h-10 w-auto rounded-lg shadow-sm border border-slate-700 object-cover">
+                        <img src="/logo.webp" alt="Berkah Mulia Logo" width="40" height="40" class="h-10 w-auto rounded-lg shadow-sm border border-slate-700 object-cover">
                         <span class="text-lg font-bold bg-linear-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent">
                             Berkah Mulia
                         </span>
@@ -361,6 +366,17 @@
             }
         });
     });
+    </script>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registered successfully!', reg.scope))
+                    .catch(err => console.error('Service Worker registration failed:', err));
+            });
+        }
     </script>
 </body>
 </html>
