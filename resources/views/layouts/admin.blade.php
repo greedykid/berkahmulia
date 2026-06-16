@@ -15,6 +15,11 @@
     <!-- Compiled Tailwind CSS & JS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="/logo.webp">
+    
     <!-- FontAwesome for icons (asynchronous load to prevent render blocking) -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
@@ -22,7 +27,7 @@
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans h-screen h-dvh flex flex-col md:flex-row overflow-hidden">
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col md:flex-row md:h-screen md:h-dvh md:overflow-hidden">
 
 @php
     $outOfStockBadge = \App\Models\ProductVariant::whereHas('product', function($query) {
@@ -285,7 +290,7 @@
     </aside>
 
     <!-- Main Content Area -->
-    <div class="grow flex flex-col min-w-0 h-screen h-dvh overflow-hidden">
+    <div class="grow flex flex-col min-w-0 md:h-screen md:h-dvh md:overflow-hidden">
         <!-- Top Navbar in desktop (Title block) -->
         <header class="bg-white border-b border-slate-200 hidden md:flex items-center justify-between px-8 py-4 shrink-0">
             <div class="flex items-center gap-4">
@@ -302,7 +307,7 @@
         </header>
 
         <!-- Main Body Page (Independently scrollable) -->
-        <main class="grow p-4 md:p-8 overflow-y-auto">
+        <main class="grow p-4 md:p-8 md:overflow-y-auto pb-24 md:pb-8">
             <!-- Toast Notifications (auto-dismiss) -->
             @if(session('success'))
                 <div id="toast-success" class="fixed top-4 right-4 z-[60] bg-emerald-50 border border-emerald-200 text-emerald-800 px-5 py-3 rounded-xl flex items-center gap-3 shadow-lg animate-fade-in max-w-sm">
@@ -546,5 +551,16 @@
     </script>
 
     @yield('scripts')
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registered successfully!', reg.scope))
+                    .catch(err => console.error('Service Worker registration failed:', err));
+            });
+        }
+    </script>
 </body>
 </html>
