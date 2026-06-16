@@ -94,7 +94,9 @@
                         @foreach($slides as $slide)
                             <div class="w-full h-full shrink-0 relative flex items-stretch">
                                 @if($slide['path'])
-                                    <img class="w-full h-full object-cover" src="{{ asset($slide['path']) }}" alt="{{ $slide['title'] }}" width="600" height="400" @if($loop->first) fetchpriority="high" @endif onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                                    <a href="{{ $slide['url'] }}" class="block w-full h-full cursor-pointer">
+                                        <img class="w-full h-full object-cover" src="{{ asset($slide['path']) }}" alt="{{ $slide['title'] }}" width="600" height="400" @if($loop->first) fetchpriority="high" @endif onerror="this.parentElement.style.display='none'; this.parentElement.nextElementSibling.classList.replace('hidden', 'flex');">
+                                    </a>
                                 @endif
                                 <div class="{{ $slide['path'] ? 'hidden' : 'flex' }} absolute inset-0 flex-col items-center justify-center bg-gradient-to-tr from-primary-50 via-slate-50 to-secondary-50/50 text-slate-700 p-6 text-center w-full h-full select-none relative overflow-hidden">
                                     <!-- Decorative background shapes -->
