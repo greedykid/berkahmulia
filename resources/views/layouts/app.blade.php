@@ -46,13 +46,25 @@
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
     <!-- Top Announcement Bar -->
-    <div id="announcement-bar" class="bg-primary-600 text-white text-xs py-2 px-4 text-center font-medium tracking-wide relative">
+    <div id="announcement-bar" class="bg-primary-600 text-white text-xs py-2 px-4 text-center font-medium tracking-wide relative hidden">
         <i class="fa-solid fa-gift mr-1 animate-pulse"></i>
         {{ \App\Models\Setting::get('store_announcement_text', 'Selamat datang di Berkah Mulia! Koleksi Pakaian Bayi, Anak-anak & Pakaian Dalam Terbaik.') }}
-        <button onclick="document.getElementById('announcement-bar').style.display='none'" class="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-slate-200 transition-colors" aria-label="Tutup">
+        <button onclick="closeAnnouncementBar()" class="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-slate-200 transition-colors" aria-label="Tutup">
             <i class="fa-solid fa-xmark text-sm"></i>
         </button>
     </div>
+    <script>
+        (function() {
+            const bar = document.getElementById('announcement-bar');
+            if (sessionStorage.getItem('announcement_closed') !== 'true') {
+                bar.classList.remove('hidden');
+            }
+        })();
+        function closeAnnouncementBar() {
+            document.getElementById('announcement-bar').style.display = 'none';
+            sessionStorage.setItem('announcement_closed', 'true');
+        }
+    </script>
 
     <!-- Header Section -->
     <header class="bg-white border-b border-slate-100 shadow-sm sticky top-0 z-50">
