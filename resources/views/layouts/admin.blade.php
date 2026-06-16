@@ -22,7 +22,7 @@
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans h-screen flex flex-col md:flex-row overflow-hidden">
+<body class="bg-slate-100 text-slate-800 font-sans h-screen h-dvh flex flex-col md:flex-row overflow-hidden">
 
 @php
     $outOfStockBadge = \App\Models\ProductVariant::whereHas('product', function($query) {
@@ -55,7 +55,7 @@
     <div id="mobile-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 md:hidden" onclick="closeMobileDrawer()"></div>
 
     <!-- Mobile Drawer Sidebar -->
-    <aside id="mobile-drawer" class="fixed top-0 left-0 h-full w-72 bg-slate-900 text-slate-300 z-50 flex flex-col justify-between py-6 px-4 transform -translate-x-full transition-transform duration-300 ease-out md:hidden overflow-y-auto">
+    <aside id="mobile-drawer" class="fixed top-0 left-0 h-dvh w-72 bg-slate-900 text-slate-300 z-50 flex flex-col justify-between py-6 px-4 transform -translate-x-full transition-transform duration-300 ease-out md:hidden overflow-y-auto">
         <!-- Close button -->
         <div class="absolute top-4 right-4">
             <button onclick="closeMobileDrawer()" class="text-slate-400 hover:text-white p-1">
@@ -168,7 +168,7 @@
     </aside>
 
     <!-- Desktop Sidebar Navigation -->
-    <aside id="sidebar" class="bg-slate-900 text-slate-300 h-screen sticky top-0 hidden md:flex flex-col justify-between py-6 px-4 transition-all duration-300 z-30 shrink-0 md:w-64">
+    <aside id="sidebar" class="bg-slate-900 text-slate-300 h-screen h-dvh sticky top-0 hidden md:flex flex-col justify-between py-6 px-4 transition-all duration-300 z-30 shrink-0 md:w-64">
         <div class="space-y-8">
             <!-- Brand & Toggle Button -->
             <div class="flex items-center justify-between px-2 min-h-[40px]">
@@ -285,7 +285,7 @@
     </aside>
 
     <!-- Main Content Area -->
-    <div class="grow flex flex-col min-w-0 h-screen overflow-hidden">
+    <div class="grow flex flex-col min-w-0 h-screen h-dvh overflow-hidden">
         <!-- Top Navbar in desktop (Title block) -->
         <header class="bg-white border-b border-slate-200 hidden md:flex items-center justify-between px-8 py-4 shrink-0">
             <div class="flex items-center gap-4">

@@ -769,7 +769,7 @@
                                     <i class="fa-solid fa-camera text-indigo-600"></i>
                                 </div>
                                 <span class="text-xs font-semibold text-slate-600">Pilih foto produk</span>
-                                <span class="text-[10px] text-slate-400 mt-0.5">JPG, PNG, WEBP (Max. 2MB per file)</span>
+                                <span class="text-[10px] text-slate-400 mt-0.5">Format: JPG, JPEG, PNG, WEBP, GIF, SVG, BMP, TIFF, HEIC, HEIF (Max. 10MB per file)</span>
                             </div>
                         </div>
                         
@@ -989,7 +989,7 @@
                             <input type="file" name="images[]" id="edit_product_images" multiple accept="image/*"
                                    onchange="handleFileSelect(this, true)"
                                    class="w-full border border-dashed border-slate-250 text-slate-500 bg-slate-50 hover:bg-slate-100 px-4 py-6 rounded-2xl cursor-pointer text-xs text-center">
-                            <p class="text-[9px] text-slate-400 mt-1.5">Format: JPG, JPEG, PNG, WEBP. Maksimal ukuran file: 2MB.</p>
+                            <p class="text-[9px] text-slate-400 mt-1.5">Format: JPG, JPEG, PNG, WEBP, GIF, SVG, BMP, TIFF, HEIC, HEIF. Maksimal ukuran file: 10MB.</p>
                         </div>
                         
                         <!-- Pratinjau Foto Baru -->
