@@ -71,7 +71,7 @@
         <div class="space-y-8">
             <!-- Brand -->
             <div class="flex items-center gap-3 px-2">
-                <img src="{{ asset('logo.webp') }}" alt="Logo" class="h-10 w-auto rounded-lg shadow-sm shrink-0 object-cover">
+                <img src="/logo.webp" alt="Logo" class="h-10 w-auto rounded-lg shadow-sm shrink-0 object-cover">
                 <div class="flex flex-col">
                     <span class="flex items-center gap-0.5 text-sm tracking-tight leading-none select-none mb-0.5">
                         <span class="logo-letter text-apricot-cream-300">B</span>
@@ -178,7 +178,7 @@
             <!-- Brand & Toggle Button -->
             <div class="flex items-center justify-between px-2 min-h-[40px]">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
-                    <img src="{{ asset('logo.webp') }}" alt="Logo" class="h-10 w-auto rounded-lg shadow-sm shrink-0 object-cover">
+                    <img src="/logo.webp" alt="Logo" class="h-10 w-auto rounded-lg shadow-sm shrink-0 object-cover">
                     <div class="flex flex-col sidebar-expanded-only">
                         <span class="flex items-center gap-0.5 text-sm tracking-tight leading-none select-none mb-0.5">
                             <span class="logo-letter text-apricot-cream-300">B</span>

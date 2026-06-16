@@ -95,7 +95,7 @@
                             <div class="w-full h-full shrink-0 relative flex items-stretch">
                                 @if($slide['path'])
                                     <a href="{{ $slide['url'] }}" class="block w-full h-full cursor-pointer">
-                                        <img class="w-full h-full object-cover" src="{{ asset($slide['path']) }}" alt="{{ $slide['title'] }}" width="600" height="400" @if($loop->first) fetchpriority="high" @endif onerror="this.parentElement.style.display='none'; this.parentElement.nextElementSibling.classList.replace('hidden', 'flex');">
+                                        <img class="w-full h-full object-cover" src="{{ '/' . $slide['path'] }}" alt="{{ $slide['title'] }}" width="600" height="400" @if($loop->first) fetchpriority="high" @endif onerror="this.parentElement.style.display='none'; this.parentElement.nextElementSibling.classList.replace('hidden', 'flex');">
                                     </a>
                                 @endif
                                 <div class="{{ $slide['path'] ? 'hidden' : 'flex' }} absolute inset-0 flex-col items-center justify-center bg-gradient-to-tr from-primary-50 via-slate-50 to-secondary-50/50 text-slate-700 p-6 text-center w-full h-full select-none relative overflow-hidden">
@@ -211,9 +211,9 @@
                     <a href="{{ route('catalog.index', ['category' => $cat->slug]) }}" class="category-item group text-center flex flex-col items-center shrink-0 px-3 sm:px-4">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white shadow-sm flex items-center justify-center overflow-hidden border-2 border-slate-100 group-hover:border-primary-400 group-hover:shadow-md transition-all duration-300 relative">
                             @if(isset($cat->image_path) && $cat->image_path)
-                                <img src="{{ asset('storage/' . $cat->image_path) }}" alt="{{ $cat->name }}" width="96" height="96" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                                <img src="{{ '/storage/' . $cat->image_path }}" alt="{{ $cat->name }}" width="96" height="96" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
                             @else
-                                <img src="{{ asset('storage/assets/' . $imgName) }}" alt="{{ $cat->name }}" width="96" height="96" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                                <img src="{{ '/storage/assets/' . $imgName }}" alt="{{ $cat->name }}" width="96" height="96" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
                             @endif
                             <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
                                 <i class="fa-regular fa-image text-lg sm:text-xl"></i>
@@ -253,7 +253,7 @@
                     <!-- Image -->
                     <div class="aspect-square bg-slate-50 relative overflow-hidden">
                         @if($product->images->isNotEmpty())
-                            <img src="{{ asset('storage/' . $product->images->first()->image_path) }}" 
+                            <img src="{{ '/storage/' . $product->images->first()->image_path }}" 
                                  alt="{{ $product->name }}" 
                                  width="300" 
                                  height="300"

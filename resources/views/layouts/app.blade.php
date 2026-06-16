@@ -79,7 +79,7 @@
                 <!-- Logo -->
                 <div class="shrink-0" id="header-logo">
                     <a href="{{ route('home') }}" class="flex items-center gap-2 sm:gap-3">
-                        <img src="{{ asset('logo.webp') }}" alt="Berkah Mulia Logo" width="48" height="48" class="h-10 sm:h-12 w-auto rounded-xl shadow-sm border border-slate-100 object-cover">
+                        <img src="/logo.webp" alt="Berkah Mulia Logo" width="48" height="48" class="h-10 sm:h-12 w-auto rounded-xl shadow-sm border border-slate-100 object-cover">
                         <div class="flex flex-col">
                             <span class="flex items-center gap-0.5 text-base sm:text-2xl tracking-tight leading-none select-none">
                                 <span class="logo-letter text-apricot-cream-300">B</span>
@@ -216,7 +216,7 @@
                 <!-- About -->
                 <div class="space-y-4">
                     <div class="flex items-center gap-3">
-                        <img src="{{ asset('logo.webp') }}" alt="Berkah Mulia Logo" width="40" height="40" class="h-10 w-auto rounded-lg shadow-sm border border-slate-700 object-cover">
+                        <img src="/logo.webp" alt="Berkah Mulia Logo" width="40" height="40" class="h-10 w-auto rounded-lg shadow-sm border border-slate-700 object-cover">
                         <span class="text-lg font-bold bg-linear-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent">
                             Berkah Mulia
                         </span>
