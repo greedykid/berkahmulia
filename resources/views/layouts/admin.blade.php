@@ -36,7 +36,7 @@
 @endphp
 
     <!-- Mobile Header -->
-    <header class="bg-slate-900 text-white p-4 md:hidden flex justify-between items-center z-40 shrink-0">
+    <header class="bg-slate-900 text-white p-4 md:hidden flex justify-between items-center sticky top-0 z-40 shrink-0">
         <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-0.5 text-sm tracking-tight leading-none select-none">
             <span class="logo-letter text-apricot-cream-300">B</span>
             <span class="logo-letter text-pearl-aqua-300">e</span>
@@ -552,15 +552,15 @@
 
     @yield('scripts')
 
-    <!-- PWA Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('Service Worker registered successfully!', reg.scope))
-                    .catch(err => console.error('Service Worker registration failed:', err));
-            });
-        }
-    </script>
+     <!-- PWA Service Worker Registration -->
+     <script>
+         if ('serviceWorker' in navigator) {
+             window.addEventListener('load', () => {
+                 navigator.serviceWorker.register('/sw.js')
+                     .then(reg => console.log('Service Worker registered successfully!', reg.scope))
+                     .catch(err => console.error('Service Worker registration failed:', err));
+             });
+         }
+     </script>
 </body>
 </html>
