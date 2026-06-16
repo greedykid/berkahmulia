@@ -719,7 +719,7 @@
 
                         <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 hover:bg-slate-100 transition-all relative group cursor-pointer">
                             <input type="file" name="images[]" id="add_product_images" multiple accept="image/*"
-                                   onchange="previewImages(this, 'add_images_preview_section', 'add_images_preview_list')"
+                                   onchange="handleFileSelect(this, false)"
                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                             <div class="flex flex-col items-center justify-center py-3 text-center">
                                 <div class="w-9 h-9 rounded-full bg-indigo-50 flex items-center justify-center text-sm mb-2 group-hover:scale-110 transition-transform duration-200">
@@ -929,7 +929,7 @@
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1.5">Tambah Foto Baru</label>
                             <input type="file" name="images[]" id="edit_product_images" multiple accept="image/*"
-                                   onchange="previewImages(this, 'edit_images_preview_section', 'edit_images_preview_list')"
+                                   onchange="handleFileSelect(this, true)"
                                    class="w-full border border-dashed border-slate-250 text-slate-500 bg-slate-50 hover:bg-slate-100 px-4 py-6 rounded-2xl cursor-pointer text-xs text-center">
                             <p class="text-[9px] text-slate-400 mt-1.5">Format: JPG, JPEG, PNG, WEBP. Maksimal ukuran file: 2MB.</p>
                         </div>
@@ -1047,6 +1047,7 @@
 
     // Open Add Modal with animation
     function openProductModal() {
+        addProductFiles = [];
         productModal.classList.remove('pointer-events-none');
         document.body.classList.add('overflow-hidden');
         requestAnimationFrame(() => {
@@ -1070,10 +1071,12 @@
         document.getElementById('add_product_images').value = '';
         document.getElementById('add_images_preview_section').classList.add('hidden');
         document.getElementById('add_images_preview_list').innerHTML = '';
+        addProductFiles = [];
     }
 
     // Open Edit Modal
     function openEditProductModal(button) {
+        editProductFiles = [];
         const product = JSON.parse(button.getAttribute('data-product'));
         const updateUrl = button.getAttribute('data-update-url');
 
@@ -1162,6 +1165,7 @@
         document.getElementById('edit_product_images').value = '';
         document.getElementById('edit_images_preview_section').classList.add('hidden');
         document.getElementById('edit_images_preview_list').innerHTML = '';
+        editProductFiles = [];
     }
 
     function addEditVariantRowWithValue(size, color, stock) {
@@ -1206,21 +1210,52 @@
         }
     }
 
-    // Dynamic Image Upload Preview Helper
-    function previewImages(input, sectionId, listId) {
+    // Image Upload Queue Management
+    let addProductFiles = [];
+    let editProductFiles = [];
+
+    function handleFileSelect(input, isEdit) {
+        if (input.files && input.files.length > 0) {
+            const queue = isEdit ? editProductFiles : addProductFiles;
+            Array.from(input.files).forEach(file => {
+                queue.push(file);
+            });
+            updateFileInputAndPreview(isEdit);
+        }
+    }
+
+    function updateFileInputAndPreview(isEdit) {
+        const queue = isEdit ? editProductFiles : addProductFiles;
+        const inputId = isEdit ? 'edit_product_images' : 'add_product_images';
+        const sectionId = isEdit ? 'edit_images_preview_section' : 'add_images_preview_section';
+        const listId = isEdit ? 'edit_images_preview_list' : 'add_images_preview_list';
+
+        const input = document.getElementById(inputId);
         const section = document.getElementById(sectionId);
         const list = document.getElementById(listId);
+
         list.innerHTML = '';
 
-        if (input.files && input.files.length > 0) {
+        // Synchronize our queue array to the actual input files using DataTransfer
+        const dt = new DataTransfer();
+        queue.forEach(file => dt.items.add(file));
+        input.files = dt.files;
+
+        if (queue.length > 0) {
             section.classList.remove('hidden');
-            Array.from(input.files).forEach(file => {
+            queue.forEach((file, index) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const imgDiv = document.createElement('div');
-                    imgDiv.className = 'relative bg-slate-50 border border-slate-100 rounded-2xl overflow-hidden aspect-square flex items-center justify-center p-2';
+                    imgDiv.className = 'relative bg-slate-50 border border-slate-100 rounded-2xl overflow-hidden aspect-square flex flex-col justify-between p-2';
                     imgDiv.innerHTML = `
-                        <img src="${e.target.result}" alt="" class="w-full h-full object-cover rounded-xl shadow-sm">
+                        <div class="relative w-full h-16 rounded-xl overflow-hidden bg-slate-50 shrink-0">
+                            <img src="${e.target.result}" alt="" class="w-full h-full object-cover rounded-xl" />
+                        </div>
+                        <button type="button" onclick="removeQueuedFile(${index}, ${isEdit})" class="flex items-center justify-center gap-1 mt-2 cursor-pointer select-none text-[9px] font-bold text-rose-600 uppercase hover:text-rose-800">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span>Batal</span>
+                        </button>
                     `;
                     list.appendChild(imgDiv);
                 }
@@ -1229,6 +1264,12 @@
         } else {
             section.classList.add('hidden');
         }
+    }
+
+    function removeQueuedFile(index, isEdit) {
+        const queue = isEdit ? editProductFiles : addProductFiles;
+        queue.splice(index, 1);
+        updateFileInputAndPreview(isEdit);
     }
 
     // Auto-open modal on page load if validation errors exist or add/edit parameter is present

@@ -20,6 +20,7 @@ class StoreProductRequest extends FormRequest
             'price' => 'required|numeric|min:0',
             'status' => 'required|in:ready,sold_out,po',
             'description' => 'nullable|string',
+            'images' => 'nullable|array',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'variants.*.size' => 'nullable|string|max:100',
             'variants.*.color' => 'nullable|string|max:100',

@@ -51,6 +51,9 @@ class SettingController extends Controller
         $contact = [
             'whatsapp_number' => config('app.whatsapp_number', '628123456789'),
             'admin_email' => config('app.admin_email', 'admin@bmberkahmulia.com'),
+            'whatsapp_message_template' => Setting::get('whatsapp_message_template', 'Halo Admin Berkah Mulia, saya ingin bertanya mengenai produk...'),
+            'instagram_url' => Setting::get('instagram_url', 'https://www.instagram.com'),
+            'shopee_url' => Setting::get('shopee_url', 'https://shopee.co.id'),
         ];
         return view('admin.settings.kontak', compact('contact'));
     }
@@ -74,14 +77,23 @@ class SettingController extends Controller
         $request->validate([
             'whatsapp_number' => ['required', 'regex:/^8[0-9]{8,12}$/'],
             'admin_email' => 'required|email|max:255',
+            'whatsapp_message_template' => 'nullable|string',
+            'instagram_url' => 'nullable|url|max:255',
+            'shopee_url' => 'nullable|url|max:255',
         ], [
             'whatsapp_number.regex' => 'Format nomor WhatsApp harus diawali dengan angka 8 dan berisi 9-13 digit angka (contoh: 82112619691).',
+            'instagram_url.url' => 'Format Link Instagram tidak valid. Pastikan diawali dengan http:// atau https://.',
+            'shopee_url.url' => 'Format Link Shopee tidak valid. Pastikan diawali dengan http:// atau https://.',
         ]);
 
         $fullWhatsapp = '62' . $request->input('whatsapp_number');
 
         $this->updateEnvFile('WHATSAPP_NUMBER', $fullWhatsapp);
         $this->updateEnvFile('ADMIN_EMAIL', $request->input('admin_email'));
+
+        Setting::set('whatsapp_message_template', $request->input('whatsapp_message_template'));
+        Setting::set('instagram_url', $request->input('instagram_url'));
+        Setting::set('shopee_url', $request->input('shopee_url'));
 
         // Clear config cache so Laravel reads the new env variables immediately
         try {
@@ -92,7 +104,7 @@ class SettingController extends Controller
         }
 
         return redirect()->route('admin.settings.kontak')
-            ->with('success', 'Kontak WhatsApp dan Email berhasil diperbarui!');
+            ->with('success', 'Kontak WhatsApp, Email, dan Media Sosial berhasil diperbarui!');
     }
 
     protected function updateEnvFile(string $key, string $value)

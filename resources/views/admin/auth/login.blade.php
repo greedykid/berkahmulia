@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin | Berkah Mulia</title>
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <!-- Compiled Tailwind CSS & JS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 </head>
+
 <body class="bg-slate-100 flex items-center justify-center min-h-screen p-4 font-sans">
 
     <div class="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-lg animate-fade-in">
         <!-- Brand Header -->
         <div class="text-center mb-8 flex flex-col items-center">
-            <img src="{{ asset('logo.webp') }}" alt="Berkah Mulia Logo" class="h-16 w-16 rounded-2xl shadow-md border border-slate-100 object-cover mb-4">
+            <img src="{{ asset('logo.webp') }}" alt="Berkah Mulia Logo"
+                class="h-16 w-16 rounded-2xl shadow-md border border-slate-100 object-cover mb-4">
             <span class="flex items-center gap-0.5 text-3xl tracking-tight leading-none select-none mb-1">
                 <span class="logo-letter text-apricot-cream-300">B</span>
                 <span class="logo-letter text-pearl-aqua-300">e</span>
@@ -43,7 +47,8 @@
 
         <!-- Flash alerts -->
         @if(session('success'))
-            <div class="mb-6 bg-emerald-50 border border-emerald-250 text-emerald-800 px-4 py-3 rounded-xl flex items-center gap-3">
+            <div
+                class="mb-6 bg-emerald-50 border border-emerald-250 text-emerald-800 px-4 py-3 rounded-xl flex items-center gap-3">
                 <i class="fa-solid fa-circle-check text-emerald-500"></i>
                 <p class="text-xs font-semibold">{{ session('success') }}</p>
             </div>
@@ -68,10 +73,12 @@
 
             <!-- Email -->
             <div>
-                <label for="email" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Email Address</label>
+                <label for="email" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Email
+                    Address</label>
                 <div class="relative">
-                    <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus placeholder="admin@bmberkahmulia.com"
-                           class="w-full bg-slate-50 border border-slate-200 text-slate-700 pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white text-sm transition-all">
+                    <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus
+                        placeholder="admin@bmberkahmulia.com"
+                        class="w-full bg-slate-50 border border-slate-200 text-slate-700 pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white text-sm transition-all">
                     <div class="absolute left-3.5 top-3.5 text-slate-400">
                         <i class="fa-solid fa-envelope"></i>
                     </div>
@@ -80,14 +87,17 @@
 
             <!-- Password -->
             <div>
-                <label for="password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Password</label>
+                <label for="password"
+                    class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Password</label>
                 <div class="relative">
                     <input type="password" name="password" id="password" required placeholder="••••••••"
-                           class="w-full bg-slate-50 border border-slate-200 text-slate-700 pl-10 pr-11 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white text-sm transition-all">
+                        class="w-full bg-slate-50 border border-slate-200 text-slate-700 pl-10 pr-11 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white text-sm transition-all">
                     <div class="absolute left-3.5 top-3.5 text-slate-400">
                         <i class="fa-solid fa-lock"></i>
                     </div>
-                    <button type="button" onclick="toggleLoginPassword()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors" tabindex="-1">
+                    <button type="button" onclick="toggleLoginPassword()"
+                        class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                        tabindex="-1">
                         <i class="fa-solid fa-eye text-sm" id="login-eye-icon"></i>
                     </button>
                 </div>
@@ -96,14 +106,15 @@
             <!-- Remember Me -->
             <div class="flex items-center">
                 <input id="remember" name="remember" type="checkbox"
-                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-350 rounded">
+                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-350 rounded cursor-pointer">
                 <label for="remember" class="ml-2 block text-xs font-semibold text-slate-500">
                     Ingat Saya di Perangkat Ini
                 </label>
             </div>
 
             <!-- Submit -->
-            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition-all shadow-md text-sm tracking-wide">
+            <button type="submit"
+                class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition-all shadow-md text-sm tracking-wide cursor-pointer">
                 Masuk ke Dashboard
             </button>
         </form>
@@ -115,33 +126,34 @@
         </div>
     </div>
 
-<script>
-function toggleLoginPassword() {
-    const input = document.getElementById('password');
-    const icon = document.getElementById('login-eye-icon');
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-    } else {
-        input.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-    }
-}
-
-// Form loading state (prevent double-click and show loader)
-const loginForm = document.querySelector('form');
-if (loginForm) {
-    loginForm.addEventListener('submit', function() {
-        const btn = this.querySelector('button[type="submit"]');
-        if (btn && !btn.disabled) {
-            btn.disabled = true;
-            btn.style.opacity = '0.7';
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Masuk ke Dashboard...';
+    <script>
+        function toggleLoginPassword() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('login-eye-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
         }
-    });
-}
-</script>
+
+        // Form loading state (prevent double-click and show loader)
+        const loginForm = document.querySelector('form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function () {
+                const btn = this.querySelector('button[type="submit"]');
+                if (btn && !btn.disabled) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.7';
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Masuk ke Dashboard...';
+                }
+            });
+        }
+    </script>
 </body>
+
 </html>

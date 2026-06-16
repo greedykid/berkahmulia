@@ -22,6 +22,7 @@ class UpdateProductRequest extends FormRequest
             'price' => 'required|numeric|min:0',
             'status' => 'required|in:ready,sold_out,po',
             'description' => 'nullable|string',
+            'images' => 'nullable|array',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'delete_images' => 'nullable|array',
             'delete_images.*' => 'integer|exists:product_images,id',
