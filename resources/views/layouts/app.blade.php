@@ -376,6 +376,14 @@
                     .then(reg => console.log('Service Worker registered successfully!', reg.scope))
                     .catch(err => console.error('Service Worker registration failed:', err));
             });
+
+            // Reload otomatis jika cache lama dibersihkan oleh Service Worker versi baru
+            navigator.serviceWorker.addEventListener('message', event => {
+                if (event.data && event.data.type === 'CACHE_CLEARED') {
+                    console.log('Cache diperbarui. Memuat ulang halaman...');
+                    window.location.reload();
+                }
+            });
         }
     </script>
 </body>
