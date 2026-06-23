@@ -68,11 +68,11 @@ class CatalogController extends Controller
 
         $banners = \App\Models\Setting::get('hero_banners', []);
 
-        // Get 2 random products (with or without images)
+        // Get 4 random products (with or without images)
         $randomBanners = Product::with('images')
             ->where('status', 'ready')
             ->inRandomOrder()
-            ->take(2)
+            ->take(4)
             ->get()
             ->map(function($prod) {
                 $image = $prod->images->first();

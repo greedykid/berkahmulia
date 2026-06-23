@@ -93,6 +93,22 @@
                         </span>
                     </div>
 
+                    <!-- Toggle Show Instagram in Navbar -->
+                    <div class="flex items-center bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 hover:bg-slate-100/50 transition-all">
+                        <div class="flex items-center h-5">
+                            <input type="checkbox" name="show_instagram_nav" id="show_instagram_nav" value="1"
+                                   {{ old('show_instagram_nav', $contact['show_instagram_nav'] ?? true) ? 'checked' : '' }}
+                                   class="w-4 h-4 rounded border-slate-300 text-indigo-650 focus:ring-indigo-400 cursor-pointer">
+                        </div>
+                        <div class="ms-3 text-xs select-none">
+                            <label for="show_instagram_nav" class="font-bold text-slate-700 cursor-pointer flex items-center gap-1.5">
+                                <i class="fa-brands fa-instagram text-pink-500 text-[10px]"></i>
+                                Tampilkan Instagram di Navbar
+                            </label>
+                            <p class="text-[10px] text-slate-500 mt-0.5">Aktifkan untuk menampilkan ikon Instagram di bagian atas navigasi (navbar) utama.</p>
+                        </div>
+                    </div>
+
                     <!-- Shopee Link Field -->
                     <div>
                         <label for="shopee_url" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Link Shopee</label>
@@ -134,8 +150,8 @@
                 <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-2">1. Tombol Kontak Navbar</span>
                 <div class="flex items-center justify-center gap-2 py-4 bg-white rounded-xl border border-slate-100 shadow-xs">
                     <a id="preview-instagram-nav" href="#" target="_blank"
-                       class="hidden flex items-center justify-center w-9 h-9 bg-pink-50 text-pink-700 rounded-full border border-pink-200 pointer-events-none">
-                        <i class="fa-brands fa-instagram text-base text-pink-650"></i>
+                       class="hidden flex items-center justify-center w-9 h-9 bg-pink-50 rounded-full border border-pink-200 pointer-events-none">
+                        <i class="fa-brands fa-instagram text-base" style="color: #e1306c;"></i>
                     </a>
                     <a id="preview-shopee-nav" href="#" target="_blank"
                        class="hidden flex items-center justify-center w-9 h-9 bg-orange-50 text-orange-700 rounded-full border border-orange-200 pointer-events-none">
@@ -144,7 +160,7 @@
                         </svg>
                     </a>
                     <a id="preview-whatsapp-nav" href="#" target="_blank"
-                       class="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-xs font-semibold border border-emerald-200 pointer-events-none">
+                       class="flex items-center justify-center gap-1.5 bg-emerald-50 text-emerald-700 px-4 h-9 rounded-full text-xs font-semibold border border-emerald-200 pointer-events-none">
                         <i class="fa-brands fa-whatsapp text-lg text-emerald-500"></i>
                         <span>Hubungi Admin</span>
                     </a>
@@ -165,6 +181,12 @@
                             <i class="fa-brands fa-whatsapp text-emerald-400 text-sm"></i>
                             <span id="preview-whatsapp-text" class="hover:text-primary-400 transition-colors">
                                 +628123456789 (Sales Admin)
+                            </span>
+                        </li>
+                        <li id="preview-instagram-footer-item" class="hidden flex items-center gap-2">
+                            <i class="fa-brands fa-instagram text-sm" style="color: #e1306c;"></i>
+                            <span id="preview-instagram-footer-text" class="hover:text-primary-400 transition-colors">
+                                Instagram
                             </span>
                         </li>
                     </ul>
@@ -190,6 +212,9 @@
         const previewShopeeNav = document.getElementById('preview-shopee-nav');
         const previewWhatsappText = document.getElementById('preview-whatsapp-text');
         const previewEmailText = document.getElementById('preview-email-text');
+        const previewInstagramFooterItem = document.getElementById('preview-instagram-footer-item');
+        const previewInstagramFooterText = document.getElementById('preview-instagram-footer-text');
+        const inputShowInstagramNav = document.getElementById('show_instagram_nav');
 
         function updateLivePreview() {
             let whatsapp = inputWhatsapp.value || '';
@@ -236,7 +261,8 @@
             }
 
             // Sync Instagram Preview
-            if (instagram) {
+            const showInstagramNavVal = inputShowInstagramNav ? inputShowInstagramNav.checked : true;
+            if (instagram && showInstagramNavVal) {
                 if (previewInstagramNav) {
                     previewInstagramNav.classList.remove('hidden');
                     previewInstagramNav.href = instagram;
@@ -244,6 +270,41 @@
             } else {
                 if (previewInstagramNav) {
                     previewInstagramNav.classList.add('hidden');
+                }
+            }
+
+            if (instagram) {
+                if (previewInstagramFooterItem) {
+                    previewInstagramFooterItem.classList.remove('hidden');
+                    let instagramUsername = 'Instagram';
+                    try {
+                        const parsedUrl = new URL(instagram);
+                        let path = parsedUrl.pathname.replace(/^\/|\/$/g, '');
+                        let segments = path.split('/');
+                        let firstSegment = segments[0] || '';
+                        if (firstSegment && !['explore', 'p', 'reels', 'stories'].includes(firstSegment.toLowerCase())) {
+                            instagramUsername = '@' + firstSegment;
+                        }
+                    } catch (e) {
+                        if (instagram.includes('instagram.com/')) {
+                            let parts = instagram.split('instagram.com/');
+                            if (parts[1]) {
+                                let path = parts[1].replace(/^\/|\/$/g, '');
+                                let segments = path.split('/');
+                                let firstSegment = segments[0] || '';
+                                if (firstSegment && !['explore', 'p', 'reels', 'stories'].includes(firstSegment.toLowerCase())) {
+                                    instagramUsername = '@' + firstSegment;
+                                }
+                            }
+                        }
+                    }
+                    if (previewInstagramFooterText) {
+                        previewInstagramFooterText.textContent = instagramUsername;
+                    }
+                }
+            } else {
+                if (previewInstagramFooterItem) {
+                    previewInstagramFooterItem.classList.add('hidden');
                 }
             }
 
@@ -266,6 +327,7 @@
         if (inputTemplate) inputTemplate.addEventListener('input', updateLivePreview);
         if (inputInstagram) inputInstagram.addEventListener('input', updateLivePreview);
         if (inputShopee) inputShopee.addEventListener('input', updateLivePreview);
+        if (inputShowInstagramNav) inputShowInstagramNav.addEventListener('change', updateLivePreview);
 
         // Run once initially
         updateLivePreview();

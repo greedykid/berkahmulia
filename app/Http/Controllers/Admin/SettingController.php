@@ -54,6 +54,7 @@ class SettingController extends Controller
             'whatsapp_message_template' => Setting::get('whatsapp_message_template', 'Halo Admin Berkah Mulia, saya ingin bertanya mengenai produk...'),
             'instagram_url' => Setting::get('instagram_url', 'https://www.instagram.com'),
             'shopee_url' => Setting::get('shopee_url', 'https://shopee.co.id'),
+            'show_instagram_nav' => Setting::get('show_instagram_nav', true),
         ];
         return view('admin.settings.kontak', compact('contact'));
     }
@@ -94,6 +95,7 @@ class SettingController extends Controller
         Setting::set('whatsapp_message_template', $request->input('whatsapp_message_template'));
         Setting::set('instagram_url', $request->input('instagram_url'));
         Setting::set('shopee_url', $request->input('shopee_url'));
+        Setting::set('show_instagram_nav', $request->boolean('show_instagram_nav'));
 
         // Clear config cache so Laravel reads the new env variables immediately
         try {

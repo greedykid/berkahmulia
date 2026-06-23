@@ -202,6 +202,11 @@ class ProductController extends Controller
             }
         }
 
+        $redirectUrl = $request->input('redirect_url');
+        if ($redirectUrl && filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
+            return redirect($redirectUrl)->with('success', 'Produk berhasil diperbarui!');
+        }
+
         return redirect()->route('admin.products.index')
             ->with('success', 'Produk berhasil diperbarui!');
     }
@@ -209,10 +214,15 @@ class ProductController extends Controller
     /**
      * Delete product
      */
-    public function destroy(Product $product)
+    public function destroy(Request $request, Product $product)
     {
         // Delete product (SoftDeletes is handled by Eloquent; database cascade will trigger on permanent delete)
         $product->delete();
+
+        $redirectUrl = $request->input('redirect_url');
+        if ($redirectUrl && filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
+            return redirect($redirectUrl)->with('success', 'Produk berhasil dihapus!');
+        }
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Produk berhasil dihapus!');

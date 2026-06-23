@@ -30,7 +30,7 @@
             </div>
 
             <!-- Right Side: Contained Visual Image Carousel (Aligned with parent grid) -->
-            <div class="lg:col-span-6 h-64 sm:h-80 lg:h-auto relative bg-slate-100 flex items-stretch overflow-hidden">
+            <div class="lg:col-span-6 aspect-square sm:aspect-auto sm:h-80 lg:h-auto relative bg-slate-100 flex items-stretch overflow-hidden group/carousel-hero">
                 @php
                     $fileExists = function($path) {
                         if (!$path) return false;
@@ -64,7 +64,7 @@
                     }
                     
                     // Fallback to static assets if there are not enough product images in database
-                    if (count($defaultSlides) < 2) {
+                    if (count($defaultSlides) < 4) {
                         $fallbacks = [
                             [
                                 'path' => 'storage/assets/hero_banner.webp',
@@ -148,18 +148,18 @@
 
                 @if(count($slides) > 1)
                 <!-- Carousel Controls (Prev/Next) -->
-                <button type="button" onclick="prevHeroSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center shadow-md transition-all cursor-pointer z-20" aria-label="Slide sebelumnya">
+                <button type="button" onclick="prevHeroSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center shadow-md border border-slate-100 hover:scale-105 transition-all duration-300 cursor-pointer z-20 md:opacity-0 md:group-hover/carousel-hero:opacity-100 md:translate-x-2 md:group-hover/carousel-hero:translate-x-0" aria-label="Slide sebelumnya">
                     <i class="fa-solid fa-chevron-left text-sm"></i>
                 </button>
-                <button type="button" onclick="nextHeroSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center shadow-md transition-all cursor-pointer z-20" aria-label="Slide berikutnya">
+                <button type="button" onclick="nextHeroSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center shadow-md border border-slate-100 hover:scale-105 transition-all duration-300 cursor-pointer z-20 md:opacity-0 md:group-hover/carousel-hero:opacity-100 md:-translate-x-2 md:group-hover/carousel-hero:translate-x-0" aria-label="Slide berikutnya">
                     <i class="fa-solid fa-chevron-right text-sm"></i>
                 </button>
  
                 <!-- Carousel Indicators (Dots) -->
-                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1 z-20">
+                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-0.5 z-20 bg-slate-900/35 backdrop-blur-xs px-3 py-1 rounded-full border border-white/10 select-none">
                     @foreach($slides as $index => $slide)
-                        <button type="button" onclick="goToHeroSlide({{ $index }})" class="flex items-center justify-center w-11 h-11 cursor-pointer" aria-label="Lihat slide {{ $index + 1 }}">
-                            <span class="hero-dot w-2 h-2 rounded-full bg-white/60 hover:bg-white transition-all"></span>
+                        <button type="button" onclick="goToHeroSlide({{ $index }})" class="flex items-center justify-center w-7 h-7 cursor-pointer group" aria-label="Lihat slide {{ $index + 1 }}">
+                            <span class="hero-dot w-2 h-2 rounded-full bg-white/50 group-hover:bg-white transition-all duration-300"></span>
                         </button>
                     @endforeach
                 </div>
@@ -457,11 +457,11 @@
         if (heroDots.length > 0) {
             heroDots.forEach((dot, index) => {
                 if (index === currentHeroSlide) {
-                    dot.classList.remove('bg-white/60', 'w-2');
-                    dot.classList.add('bg-white', 'w-4');
+                    dot.classList.remove('bg-white/50', 'w-2');
+                    dot.classList.add('bg-white', 'w-5');
                 } else {
-                    dot.classList.remove('bg-white', 'w-4');
-                    dot.classList.add('bg-white/60', 'w-2');
+                    dot.classList.remove('bg-white', 'w-5');
+                    dot.classList.add('bg-white/50', 'w-2');
                 }
             });
         }

@@ -128,13 +128,14 @@
                         }
                         $instagramUrl = \App\Models\Setting::get('instagram_url', '');
                         $shopeeUrl = \App\Models\Setting::get('shopee_url', '');
+                        $showInstagramNav = \App\Models\Setting::get('show_instagram_nav', true);
                     @endphp
 
                     <!-- Instagram CTA -->
-                    @if(!empty($instagramUrl))
+                    @if(!empty($instagramUrl) && $showInstagramNav)
                     <a href="{{ $instagramUrl }}" target="_blank" aria-label="Instagram Berkah Mulia"
-                       class="flex items-center justify-center w-11 h-11 bg-pink-50 text-pink-700 hover:bg-pink-100 rounded-full border border-pink-200 transition-all hover:scale-105 shrink-0">
-                        <i class="fa-brands fa-instagram text-lg text-pink-650"></i>
+                       class="flex items-center justify-center w-11 h-11 bg-pink-50 rounded-full border border-pink-200 transition-all hover:scale-105 shrink-0">
+                        <i class="fa-brands fa-instagram text-lg" style="color: #e1306c;"></i>
                     </a>
                     @endif
 
@@ -150,7 +151,7 @@
 
                     <!-- WhatsApp CTA -->
                     <a href="{{ $whatsappLink }}" target="_blank" aria-label="Hubungi Admin Berkah Mulia via WhatsApp"
-                       class="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3.5 sm:px-4 py-2.5 rounded-full text-xs font-semibold border border-emerald-200 transition-all hover:scale-105 shrink-0">
+                       class="flex items-center justify-center gap-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3.5 sm:px-4 h-11 rounded-full text-xs font-semibold border border-emerald-200 transition-all hover:scale-105 shrink-0">
                         <i class="fa-brands fa-whatsapp text-lg text-emerald-500"></i>
                         <span class="hidden md:inline">Hubungi Admin</span>
                     </a>
@@ -217,8 +218,19 @@
                 <div class="space-y-4">
                     <div class="flex items-center gap-3">
                         <img src="/logo.webp" alt="Berkah Mulia Logo" width="40" height="40" class="h-10 w-auto rounded-lg shadow-sm border border-slate-700 object-cover">
-                        <span class="text-lg font-bold bg-linear-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent">
-                            Berkah Mulia
+                        <span class="flex items-center gap-0.5 text-lg tracking-tight leading-none select-none">
+                            <span class="logo-letter text-apricot-cream-300">B</span>
+                            <span class="logo-letter text-pearl-aqua-300">e</span>
+                            <span class="logo-letter text-sky-blue-300">r</span>
+                            <span class="logo-letter text-vanilla-custard-300">k</span>
+                            <span class="logo-letter text-thistle-300">a</span>
+                            <span class="logo-letter text-frozen-water-300">h</span>
+                            <span class="w-1"></span>
+                            <span class="logo-letter text-peach-fuzz-300">M</span>
+                            <span class="logo-letter text-frozen-water-u-300">u</span>
+                            <span class="logo-letter text-vanilla-custard-l-300">l</span>
+                            <span class="logo-letter text-thistle-300">i</span>
+                            <span class="logo-letter text-thistle-300">a</span>
                         </span>
                     </div>
                     <p class="text-sm leading-relaxed text-slate-400">
@@ -272,6 +284,26 @@
                                 +{{ config('app.whatsapp_number', '628123456789') }} (Sales Admin)
                             </a>
                         </li>
+                        @if(!empty($instagramUrl))
+                        @php
+                            $instagramUsername = 'Instagram';
+                            $parsedUrl = parse_url($instagramUrl);
+                            if (isset($parsedUrl['path'])) {
+                                $path = trim($parsedUrl['path'], '/');
+                                $segments = explode('/', $path);
+                                $firstSegment = isset($segments[0]) ? trim($segments[0]) : '';
+                                if (!empty($firstSegment) && !in_array(strtolower($firstSegment), ['explore', 'p', 'reels', 'stories'])) {
+                                    $instagramUsername = '@' . $firstSegment;
+                                }
+                            }
+                        @endphp
+                        <li class="flex items-center gap-2">
+                            <i class="fa-brands fa-instagram text-lg" style="color: #e1306c;"></i>
+                            <a href="{{ $instagramUrl }}" target="_blank" class="hover:text-primary-400 transition-colors">
+                                {{ $instagramUsername }}
+                            </a>
+                        </li>
+                        @endif
                     </ul>
                 </div>
             </div>

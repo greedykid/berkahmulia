@@ -490,6 +490,7 @@
                                 <form action="{{ route('admin.products.destroy', $prod->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
+                                    <input type="hidden" name="redirect_url" value="{{ request()->fullUrl() }}">
                                     <button type="button" title="Hapus Produk" onclick="confirmDelete(this, 'Apakah Anda yakin ingin menghapus produk ini beserta seluruh gambarnya?')" class="relative group text-rose-600 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 p-2 rounded-lg text-xs font-semibold transition-all cursor-pointer">
                                         <i class="fa-solid fa-trash-can"></i>
                                         <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">Hapus</span>
@@ -598,6 +599,7 @@
                     <form action="{{ route('admin.products.destroy', $prod->id) }}" method="POST" class="grow">
                         @csrf
                         @method('DELETE')
+                        <input type="hidden" name="redirect_url" value="{{ request()->fullUrl() }}">
                         <button type="button" onclick="confirmDelete(this, 'Apakah Anda yakin ingin menghapus produk ini beserta seluruh gambarnya?')" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer">
                             <i class="fa-solid fa-trash-can"></i>
                             <span>Hapus</span>
@@ -864,6 +866,7 @@
             <form id="edit-product-form" action="" method="POST" enctype="multipart/form-data" class="flex flex-col flex-1 min-h-0">
                 @csrf
                 @method('PUT')
+                <input type="hidden" name="redirect_url" value="{{ request()->fullUrl() }}">
                 <!-- Modal Body (Scrollable form body wrapper) -->
                 <div class="flex-1 overflow-y-auto px-2.5 pb-4 no-scrollbar space-y-6">
 
