@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Beranda')
+@section('canonical_url', route('home'))
 
 @section('content')
 <!-- Hero Banner Section (Clean split grid design constrained to content layout width) -->
@@ -331,6 +332,40 @@
         $storeImage = \App\Models\Setting::get('store_image');
         $storeImagePath = $storeImage ? asset('storage/' . $storeImage) : asset('storefront_location.webp');
     @endphp
+    
+    <!-- JSON-LD Store Schema for Local SEO -->
+    <script type="application/ld+json">
+    {
+      "@@context": "https://schema.org",
+      "@@type": "Store",
+      "name": "Berkah Mulia",
+      "image": "{{ asset('logo.webp') }}",
+      "@@id": "{{ route('home') }}",
+      "url": "{{ route('home') }}",
+      "telephone": "{{ $storePhone }}",
+      "address": {
+        "@@type": "PostalAddress",
+        "streetAddress": "{{ $storeAddress }}",
+        "addressLocality": "Depok",
+        "addressRegion": "Jawa Barat",
+        "addressCountry": "ID"
+      },
+      "openingHoursSpecification": {
+        "@@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ],
+        "opens": "08:00",
+        "closes": "17:00"
+      }
+    }
+    </script>
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <!-- Left Side: Google Maps Location -->

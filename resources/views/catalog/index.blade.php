@@ -2,6 +2,17 @@
 
 @section('title', 'Katalog Produk')
 
+@php
+    $canonicalParams = [];
+    if (request()->has('category')) {
+        $canonicalParams['category'] = request('category');
+    } elseif (request()->has('categories')) {
+        $canonicalParams['categories'] = request('categories');
+    }
+    $canonicalUrl = route('catalog.index', $canonicalParams);
+@endphp
+@section('canonical_url', $canonicalUrl)
+
 @section('content')
 <div class="bg-slate-50 border-b border-slate-100 py-6">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -8,6 +8,7 @@
     
     <!-- Meta SEO -->
     <meta name="description" content="@yield('meta_description', 'Pusat grosir dan eceran pakaian bayi, anak-anak, dan underwear berkualitas premium dengan harga bersahabat di Berkah Mulia.')">
+    <link rel="canonical" href="@yield('canonical_url', request()->url())">
     
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website">

@@ -3,6 +3,7 @@
 @section('title', $product->name)
 @section('meta_description', \Illuminate\Support\Str::limit(strip_tags($product->description ?: 'Beli ' . $product->name . ' berkualitas di Berkah Mulia. Pakaian bayi dan anak-anak premium.'), 150))
 @section('og_image', $product->images->isNotEmpty() ? asset('storage/' . $product->images->first()->image_path) : asset('storage/assets/product_baju.webp'))
+@section('canonical_url', route('catalog.show', $product->slug))
 
 @section('content')
 <div class="bg-slate-50 border-b border-slate-100 py-3">
