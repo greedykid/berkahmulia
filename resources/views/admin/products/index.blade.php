@@ -89,7 +89,19 @@
                 <p class="text-[11px] text-slate-500 mt-0.5 hidden sm:block">Kelola semua produk yang tersedia di etalase toko Anda.</p>
             </div>
         </div>
-        <div class="flex items-center gap-2 flex-wrap">
+        <div class="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+            <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl shrink-0 mr-1">
+                <button type="button" id="layout-toggle-table" onclick="toggleLayoutMode('table')" 
+                        class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-slate-500 hover:text-slate-700">
+                    <i class="fa-solid fa-table"></i>
+                    <span>Tabel</span>
+                </button>
+                <button type="button" id="layout-toggle-grid" onclick="toggleLayoutMode('grid')" 
+                        class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-slate-500 hover:text-slate-700">
+                    <i class="fa-solid fa-grip"></i>
+                    <span>Grid</span>
+                </button>
+            </div>
             <a href="{{ route('admin.products.exportCsv', request()->query()) }}"
                class="border border-slate-200 hover:bg-slate-50 text-slate-600 font-semibold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer flex-1 sm:flex-none justify-center">
                 <i class="fa-solid fa-file-arrow-down text-emerald-500"></i>
@@ -346,46 +358,46 @@
     </div>
 
     <!-- Desktop Table Layout (Visible on desktop/tablet, hidden on mobile) -->
-    <div class="hidden md:block overflow-x-auto">
-        <table class="min-w-full text-sm text-slate-600">
+    <div id="product-table-view" class="hidden md:block overflow-x-auto">
+        <table class="min-w-full text-sm text-slate-650">
             <thead>
-                <tr class="border-b border-slate-100 font-semibold text-xs text-left select-none">
-                    <th class="py-3 px-3 w-10">
+                <tr class="border-b border-slate-200 bg-slate-50/75 font-bold text-[10px] uppercase tracking-wider text-slate-500 select-none">
+                    <th class="py-3.5 px-3 w-10 text-center">
                         <input type="checkbox" id="select-all-products" onchange="toggleAllProducts(this)" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-400 cursor-pointer">
                     </th>
-                    <th class="py-3 px-4 text-slate-500">
+                    <th class="py-3.5 px-4 text-left">
                         <a href="{{ getSortLink('name', $sort, $direction) }}" class="flex items-center hover:text-indigo-600 transition-colors cursor-pointer">
                             <span>Info Produk</span>
                             {!! getSortIcon('name', $sort, $direction) !!}
                         </a>
                     </th>
-                    <th class="py-3 px-4">
+                    <th class="py-3.5 px-4 text-left">
                         <a href="{{ getSortLink('category', $sort, $direction) }}" class="flex items-center hover:text-indigo-600 transition-colors cursor-pointer">
                             <span>Kategori</span>
                             {!! getSortIcon('category', $sort, $direction) !!}
                         </a>
                     </th>
-                    <th class="py-3 px-4">
+                    <th class="py-3.5 px-4 text-left">
                         <a href="{{ getSortLink('price', $sort, $direction) }}" class="flex items-center hover:text-indigo-600 transition-colors cursor-pointer">
                             <span>Harga</span>
                             {!! getSortIcon('price', $sort, $direction) !!}
                         </a>
                     </th>
-                    <th class="py-3 px-4">Varian (Ukuran / Warna / Stok)</th>
-                    <th class="py-3 px-4">
+                    <th class="py-3.5 px-4 text-left normal-case tracking-normal text-xs font-semibold">Varian (Ukuran / Warna / Stok)</th>
+                    <th class="py-3.5 px-4 text-left">
                         <a href="{{ getSortLink('status', $sort, $direction) }}" class="flex items-center hover:text-indigo-600 transition-colors cursor-pointer">
                             <span>Status</span>
                             {!! getSortIcon('status', $sort, $direction) !!}
                         </a>
                     </th>
-                    <th class="py-3 px-4 text-center">Populer</th>
-                    <th class="py-3 px-4 text-right">Aksi</th>
+                    <th class="py-3.5 px-4 text-center">Populer</th>
+                    <th class="py-3.5 px-4 text-right">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
                 @forelse($products as $prod)
-                    <tr class="hover:bg-slate-50/40 transition-colors">
-                        <td class="py-4 px-3">
+                    <tr class="hover:bg-slate-50/40 transition-colors cursor-pointer" data-product-detail="{{ json_encode($prod) }}" onclick="handleProductRowClick(event, this)">
+                        <td class="py-4 px-3 text-center">
                             <input type="checkbox" name="bulk_ids[]" value="{{ $prod->id }}" class="product-checkbox w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-400 cursor-pointer" onchange="updateBulkBar()">
                         </td>
                         <!-- Image & Name -->
@@ -404,46 +416,50 @@
                                     @endif
                                 </div>
                                 <div class="min-w-0">
-                                    <p class="font-bold text-slate-800 leading-snug truncate max-w-[200px]" title="{{ $prod->name }}">{{ $prod->name }}</p>
-                                    <p class="text-[10px] text-slate-400 font-mono mt-1">SKU: {{ $prod->sku ?: '-' }}</p>
+                                    <p class="font-bold text-slate-800 leading-snug line-clamp-2 max-w-[240px]" title="{{ $prod->name }}">{{ $prod->name }}</p>
+                                    <span class="inline-block bg-slate-100 text-slate-500 font-mono text-[9px] px-1.5 py-0.5 rounded-md mt-1.5">SKU: {{ $prod->sku ?: '-' }}</span>
                                 </div>
                             </div>
                         </td>
                         <!-- Category -->
-                        <td class="py-4 px-4 text-xs font-semibold text-slate-500">
-                            {{ $prod->category->name }}
+                        <td class="py-4 px-4 whitespace-nowrap">
+                            <span class="inline-block bg-indigo-50/50 text-indigo-755 border border-indigo-100/60 text-[10px] font-bold px-2.5 py-1 rounded-lg">
+                                {{ $prod->category->name }}
+                            </span>
                         </td>
                         <!-- Price -->
-                        <td class="py-4 px-4 font-bold text-slate-800">
+                        <td class="py-4 px-4 font-bold text-slate-800 whitespace-nowrap text-sm">
                             Rp {{ number_format($prod->price, 0, ',', '.') }}
                         </td>
                         <!-- Variants -->
                         <td class="py-4 px-4 text-xs">
                             @if($prod->variants->isNotEmpty())
-                                <div class="flex flex-wrap gap-1 max-w-[250px]">
+                                <div class="flex flex-wrap gap-1.5 max-w-[280px]">
                                     @foreach($prod->variants as $variant)
-                                        <span class="inline-block bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-semibold text-[10px]"
+                                        <span class="inline-flex items-center gap-1 bg-slate-50 border border-slate-200 text-slate-600 px-2 py-0.5 rounded-lg font-bold text-[9px] whitespace-nowrap"
                                               title="Warna: {{ $variant->color ?: '-' }}, Stok: {{ $variant->stock }}">
-                                            {{ $variant->size ?: '-' }} ({{ $variant->stock }})
+                                            <span>{{ $variant->size ?: '-' }}</span>
+                                            <span class="w-1.5 h-1.5 rounded-full {{ $variant->stock > 0 ? 'bg-emerald-550 shadow-xs' : 'bg-rose-500' }}" style="background-color: {{ $variant->stock > 0 ? '#10b981' : '#ef4444' }}"></span>
+                                            <span class="text-slate-400 font-medium">{{ $variant->stock }}</span>
                                         </span>
                                     @endforeach
                                 </div>
                             @else
-                                <span class="text-slate-400 text-[11px] italic">Tidak ada varian</span>
+                                <span class="text-slate-450 text-[10px] italic">Tidak ada varian</span>
                             @endif
                         </td>
                         <!-- Status -->
-                        <td class="py-4 px-4">
+                        <td class="py-4 px-4 whitespace-nowrap">
                             @if($prod->status === 'ready')
-                                <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full border border-emerald-100">Ready</span>
+                                <span class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-3 py-1 rounded-full border border-emerald-100 whitespace-nowrap">Ready</span>
                             @elseif($prod->status === 'po')
-                                <span class="bg-amber-50 text-amber-700 text-xs font-bold px-3 py-1 rounded-full border border-amber-100">Pre-Order</span>
+                                <span class="bg-amber-50 text-amber-700 text-[10px] font-bold px-3 py-1 rounded-full border border-amber-100 whitespace-nowrap">Pre-Order</span>
                             @else
-                                <span class="bg-rose-50 text-rose-700 text-xs font-bold px-3 py-1 rounded-full border border-rose-100">Habis</span>
+                                <span class="bg-rose-50 text-rose-700 text-[10px] font-bold px-3 py-1 rounded-full border border-rose-100 whitespace-nowrap">Habis</span>
                             @endif
                         </td>
                         <!-- Populer -->
-                        <td class="py-4 px-4 text-center">
+                        <td class="py-4 px-4 text-center whitespace-nowrap">
                             <form action="{{ route('admin.products.togglePopular', $prod->id) }}" method="POST" class="inline">
                                 @csrf
                                 <button type="submit" title="{{ $prod->is_popular ? 'Nonaktifkan Populer' : 'Aktifkan Populer' }}" 
@@ -457,7 +473,7 @@
                             </form>
                         </td>
                         <!-- Actions -->
-                        <td class="py-4 px-4 text-right">
+                        <td class="py-4 px-4 text-right whitespace-nowrap">
                             <div class="flex items-center justify-end gap-1.5">
                                 <form action="{{ route('admin.products.store') }}" method="POST" class="inline">
                                     @csrf
@@ -471,7 +487,7 @@
                                         <input type="hidden" name="variants[{{ $vi }}][color]" value="{{ $v->color }}">
                                         <input type="hidden" name="variants[{{ $vi }}][stock]" value="{{ $v->stock }}">
                                     @endforeach
-                                    <button type="button" onclick="confirmDuplicate(this)" title="Duplikat" class="relative group text-slate-500 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 p-2 rounded-lg text-xs transition-all cursor-pointer">
+                                    <button type="button" onclick="confirmDuplicate(this)" title="Duplikat" class="relative group text-slate-600 hover:text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200 p-2 rounded-xl text-xs transition-all cursor-pointer">
                                         <i class="fa-solid fa-copy"></i>
                                         <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">Duplikat</span>
                                     </button>
@@ -482,7 +498,7 @@
                                         data-product="{{ json_encode($prod) }}"
                                         data-update-url="{{ route('admin.products.update', $prod->id) }}"
                                         title="Edit Produk"
-                                        class="relative group text-indigo-650 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 p-2 rounded-lg text-xs font-semibold transition-all cursor-pointer">
+                                        class="relative group text-indigo-700 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 p-2 rounded-xl text-xs font-semibold transition-all cursor-pointer">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                     <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">Edit</span>
                                 </button>
@@ -491,7 +507,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <input type="hidden" name="redirect_url" value="{{ request()->fullUrl() }}">
-                                    <button type="button" title="Hapus Produk" onclick="confirmDelete(this, 'Apakah Anda yakin ingin menghapus produk ini beserta seluruh gambarnya?')" class="relative group text-rose-600 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 p-2 rounded-lg text-xs font-semibold transition-all cursor-pointer">
+                                    <button type="button" title="Hapus Produk" onclick="confirmDelete(this, 'Apakah Anda yakin ingin menghapus produk ini beserta seluruh gambarnya?')" class="relative group text-rose-600 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 border border-rose-105 p-2 rounded-xl text-xs font-semibold transition-all cursor-pointer">
                                         <i class="fa-solid fa-trash-can"></i>
                                         <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">Hapus</span>
                                     </button>
@@ -511,77 +527,81 @@
         </table>
     </div>
 
-    <!-- Mobile Stacked Card Layout (Visible on mobile screens, hidden on desktop/tablet) -->
-    <div class="block md:hidden space-y-4">
+    <!-- Mobile Stacked Card / Grid Layout (Default on mobile, fallback on desktop when toggled) -->
+    <div id="product-grid-view" class="block md:hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         @forelse($products as $prod)
-            <div class="bg-slate-50/50 border border-slate-200 rounded-2xl p-4 space-y-3 hover:border-indigo-200 transition-all">
-                <!-- Header: Info & Thumbnail -->
-                <div class="flex items-start gap-3">
-                    <div class="w-14 h-14 rounded-xl overflow-hidden border border-slate-100/80 bg-slate-50 shrink-0 relative">
-                        @if($prod->is_popular)
-                            <div class="absolute top-0.5 right-0.5 bg-amber-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[8px] z-10 shadow-sm animate-pulse">
-                                <i class="fa-solid fa-star"></i>
-                            </div>
-                        @endif
-                        @if($prod->images->isNotEmpty())
-                            <img src="{{ asset('storage/' . $prod->images->first()->image_path) }}" alt="" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
-                            <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
-                                <i class="fa-regular fa-image text-base"></i>
-                            </div>
-                        @else
-                            <div class="absolute inset-0 flex items-center justify-center bg-slate-100 text-slate-400">
-                                <i class="fa-regular fa-image text-base"></i>
-                            </div>
-                        @endif
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <span class="inline-block bg-slate-100 text-slate-500 font-semibold text-[9px] uppercase px-2 py-0.5 rounded-md mb-1.5">
-                            {{ $prod->category->name }}
-                        </span>
-                        <h4 class="font-bold text-slate-800 text-sm leading-snug line-clamp-2" title="{{ $prod->name }}">{{ $prod->name }}</h4>
-                        <p class="text-[10px] text-slate-400 font-mono mt-0.5">SKU: {{ $prod->sku ?: '-' }}</p>
-                    </div>
-                </div>
-
-                <!-- Price & Status Info -->
-                <div class="flex items-center justify-between border-t border-slate-100 pt-2.5">
-                    <div>
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Harga</p>
-                        <p class="font-bold text-slate-800 text-sm">Rp {{ number_format($prod->price, 0, ',', '.') }}</p>
-                    </div>
-                    <div>
-                        @if($prod->status === 'ready')
-                            <span class="inline-block bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-100">Ready</span>
-                        @elseif($prod->status === 'po')
-                            <span class="inline-block bg-amber-50 text-amber-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-amber-100">Pre-Order</span>
-                        @else
-                            <span class="inline-block bg-rose-50 text-rose-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-rose-100">Habis</span>
-                        @endif
-                    </div>
-                </div>
-
-                <!-- Variants Info -->
-                <div class="border-t border-slate-100 pt-2.5 space-y-1">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Varian & Stok</p>
-                    @if($prod->variants->isNotEmpty())
-                        <div class="flex flex-wrap gap-1">
-                            @foreach($prod->variants as $variant)
-                                <span class="bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded-md font-semibold text-[10px]"
-                                      title="Warna: {{ $variant->color ?: '-' }}, Stok: {{ $variant->stock }}">
-                                    {{ $variant->size ?: '-' }} ({{ $variant->stock }})
-                                </span>
-                            @endforeach
+            <div class="bg-slate-50/50 border border-slate-200 rounded-2xl p-4 flex flex-col justify-between hover:border-indigo-200 hover:shadow-xs transition-all duration-300 cursor-pointer" data-product-detail="{{ json_encode($prod) }}" onclick="handleProductRowClick(event, this)">
+                <div class="space-y-3 text-left">
+                    <!-- Header: Info & Thumbnail -->
+                    <div class="flex items-start gap-3">
+                        <div class="w-14 h-14 rounded-xl overflow-hidden border border-slate-100/80 bg-slate-50 shrink-0 relative">
+                            @if($prod->is_popular)
+                                <div class="absolute top-0.5 right-0.5 bg-amber-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[8px] z-10 shadow-sm animate-pulse">
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                            @endif
+                            @if($prod->images->isNotEmpty())
+                                <img src="{{ asset('storage/' . $prod->images->first()->image_path) }}" alt="" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                                <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
+                                    <i class="fa-regular fa-image text-base"></i>
+                                </div>
+                            @else
+                                <div class="absolute inset-0 flex items-center justify-center bg-slate-100 text-slate-400">
+                                    <i class="fa-regular fa-image text-base"></i>
+                                </div>
+                            @endif
                         </div>
-                    @else
-                        <span class="text-slate-400 text-[10px] italic">Tidak ada varian</span>
-                    @endif
+                        <div class="min-w-0 flex-1">
+                            <span class="inline-block bg-slate-100 text-slate-500 font-semibold text-[9px] uppercase px-2 py-0.5 rounded-md mb-1.5">
+                                {{ $prod->category->name }}
+                            </span>
+                            <h4 class="font-bold text-slate-800 text-sm leading-snug line-clamp-2" title="{{ $prod->name }}">{{ $prod->name }}</h4>
+                            <p class="text-[10px] text-slate-400 font-mono mt-0.5">SKU: {{ $prod->sku ?: '-' }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Price & Status Info -->
+                    <div class="flex items-center justify-between border-t border-slate-100 pt-2.5">
+                        <div>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Harga</p>
+                            <p class="font-bold text-slate-800 text-sm">Rp {{ number_format($prod->price, 0, ',', '.') }}</p>
+                        </div>
+                        <div>
+                            @if($prod->status === 'ready')
+                                <span class="inline-block bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-100">Ready</span>
+                            @elseif($prod->status === 'po')
+                                <span class="inline-block bg-amber-50 text-amber-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-amber-100">Pre-Order</span>
+                            @else
+                                <span class="inline-block bg-rose-50 text-rose-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-rose-100">Habis</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Variants Info -->
+                    <div class="border-t border-slate-100 pt-2.5 space-y-1">
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Varian & Stok</p>
+                        @if($prod->variants->isNotEmpty())
+                            <div class="flex flex-wrap gap-1">
+                                @foreach($prod->variants as $variant)
+                                    <span class="border px-2 py-0.5 rounded-lg font-bold text-[10px] inline-flex items-center gap-1.5 {{ $variant->stock > 0 ? 'bg-emerald-50/50 border-emerald-100 text-emerald-700' : 'bg-rose-50/50 border-rose-100 text-rose-700' }}"
+                                          title="Warna: {{ $variant->color ?: '-' }}, Stok: {{ $variant->stock }}">
+                                        <span>{{ $variant->size ?: '-' }}</span>
+                                        <span class="w-1 h-1 rounded-full {{ $variant->stock > 0 ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
+                                        <span class="font-semibold text-[9px] opacity-90">{{ $variant->stock > 0 ? 'Tersedia' : 'Habis' }} ({{ $variant->stock }})</span>
+                                    </span>
+                                @endforeach
+                            </div>
+                        @else
+                            <span class="text-slate-400 text-[10px] italic">Tidak ada varian</span>
+                        @endif
+                    </div>
                 </div>
 
                 <!-- Action Buttons Row (Finger-friendly targets) -->
-                <div class="flex items-center gap-2 border-t border-slate-100 pt-3">
+                <div class="flex items-center gap-2 border-t border-slate-100 pt-3 mt-3">
                     <form action="{{ route('admin.products.togglePopular', $prod->id) }}" method="POST" class="grow">
                         @csrf
-                        <button type="submit" class="w-full font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all {{ $prod->is_popular ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200' }}">
+                        <button type="submit" class="w-full font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer {{ $prod->is_popular ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200' }}">
                             <i class="fa-{{ $prod->is_popular ? 'solid' : 'regular' }} fa-star text-amber-500"></i>
                             <span>{{ $prod->is_popular ? 'Populer' : 'Jadikan Populer' }}</span>
                         </button>
@@ -591,7 +611,7 @@
                             onclick="openEditProductModal(this)"
                             data-product="{{ json_encode($prod) }}"
                             data-update-url="{{ route('admin.products.update', $prod->id) }}"
-                            class="grow bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all">
+                            class="grow bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer">
                         <i class="fa-solid fa-pen-to-square"></i>
                         <span>Edit</span>
                     </button>
@@ -608,7 +628,7 @@
                 </div>
             </div>
         @empty
-            <div class="bg-white border border-slate-200 rounded-2xl py-12 text-center text-slate-400">
+            <div class="col-span-full bg-white border border-slate-200 rounded-2xl py-12 text-center text-slate-400">
                 <i class="fa-solid fa-boxes-open text-3xl mb-3 block text-slate-300"></i>
                 Belum ada data produk atau produk tidak ditemukan.
             </div>
@@ -618,6 +638,113 @@
     <!-- Pagination -->
     <div class="pt-6">
         {{ $products->links() }}
+    </div>
+</div>
+
+<!-- Detail Produk Modal (Scrollable Large Modal) -->
+<div id="product-detail-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none opacity-0 transition-opacity duration-300" aria-labelledby="detail-modal-title" role="dialog" aria-modal="true">
+    <!-- Backdrop Overlay -->
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" aria-hidden="true" onclick="closeProductDetailModal()"></div>
+
+    <!-- Modal Panel -->
+    <div id="product-detail-modal-panel" class="relative z-10 bg-white rounded-3xl text-left shadow-2xl w-full max-w-3xl max-h-[85vh] flex flex-col overflow-hidden p-6 sm:p-8 transform scale-95 transition-all duration-300 ease-out">
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-4 shrink-0">
+            <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-circle-info text-indigo-500"></i>
+                <span>Detail Info Produk</span>
+            </h3>
+            <button type="button" onclick="closeProductDetailModal()" class="text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- Modal Body (Scrollable info wrapper) -->
+        <div class="flex-1 overflow-y-auto px-2.5 pb-4 no-scrollbar space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                
+                <!-- Left Column: Image Showcase -->
+                <div class="md:col-span-5 flex flex-col gap-3">
+                    <!-- Main Image Preview Container -->
+                    <div class="w-full aspect-square rounded-2xl border border-slate-100 bg-slate-50 relative overflow-hidden flex items-center justify-center">
+                        <img id="detail-main-img" src="" alt="" class="w-full h-full object-cover hidden" onerror="showDetailMainFallback()">
+                        <!-- Identical Gray Box Fallback -->
+                        <div id="detail-img-fallback" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-50 text-slate-400">
+                            <i class="fa-regular fa-image text-3xl mb-2"></i>
+                            <span class="text-xs font-semibold">Gambar tidak tersedia</span>
+                        </div>
+                    </div>
+                    <!-- Thumbnail List -->
+                    <div id="detail-thumbnails" class="grid grid-cols-4 gap-2">
+                        <!-- Dynamic Thumbnails inserted via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Right Column: Details -->
+                <div class="md:col-span-7 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <!-- Category & Popular Badge -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span id="detail-category" class="inline-block bg-indigo-50 text-indigo-700 border border-indigo-100 text-[10px] font-bold px-2.5 py-1 rounded-lg"></span>
+                            <span id="detail-status" class="text-[10px] font-bold px-2.5 py-1 rounded-full border"></span>
+                            <span id="detail-popular-badge" class="hidden bg-amber-50 text-amber-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-amber-100 items-center gap-1">
+                                <i class="fa-solid fa-star text-amber-500 text-[9px]"></i> Populer
+                            </span>
+                        </div>
+
+                        <!-- Product Name -->
+                        <h4 id="detail-name" class="text-xl font-bold text-slate-800 leading-snug"></h4>
+                        
+                        <!-- SKU -->
+                        <p class="text-xs text-slate-400 font-mono">SKU: <span id="detail-sku" class="text-slate-600 font-semibold"></span></p>
+
+                        <!-- Price -->
+                        <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Harga Retail</p>
+                            <p id="detail-price" class="text-2xl font-black text-indigo-600"></p>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="space-y-1.5 flex-1 min-h-0">
+                        <h5 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Deskripsi</h5>
+                        <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3 max-h-[150px] overflow-y-auto">
+                            <p id="detail-description" class="text-xs text-slate-650 leading-relaxed whitespace-pre-line text-left"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variants & Stock Section -->
+            <div class="space-y-3 pt-2">
+                <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wider border-b border-slate-100 pb-1">Varian & Ketersediaan Stok</h4>
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="min-w-full text-xs text-slate-650">
+                        <thead class="bg-slate-50 text-slate-500 uppercase font-semibold text-[10px] border-b border-slate-200">
+                            <tr>
+                                <th class="py-2 px-3 text-left">Ukuran</th>
+                                <th class="py-2 px-3 text-left">Warna</th>
+                                <th class="py-2 px-3 text-left w-32">Stok</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detail-variants-body" class="divide-y divide-slate-100">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal Actions Footer -->
+        <div class="flex gap-3 pt-4 border-t border-slate-100 justify-end mt-4 shrink-0">
+            <button type="button" onclick="closeProductDetailModal()" class="border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold py-2.5 px-6 rounded-xl transition-all text-xs cursor-pointer">
+                Tutup
+            </button>
+            <button type="button" id="detail-edit-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-8 rounded-xl transition-all shadow-sm text-xs cursor-pointer flex items-center gap-1.5">
+                <i class="fa-solid fa-pen-to-square"></i>
+                <span>Edit Produk</span>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -1579,6 +1706,219 @@
                 form.submit();
             }
         );
+    }
+
+    // Toggle Layout Mode (Table vs Grid)
+    const productTableView = document.getElementById('product-table-view');
+    const productGridView = document.getElementById('product-grid-view');
+    const toggleBtnTable = document.getElementById('layout-toggle-table');
+    const toggleBtnGrid = document.getElementById('layout-toggle-grid');
+
+    function applyLayoutMode(mode) {
+        if (mode === 'table') {
+            productTableView.style.display = 'block';
+            productGridView.style.display = 'none';
+            
+            // Update active states for toggles
+            toggleBtnTable.classList.add('bg-white', 'text-indigo-600', 'shadow-xs');
+            toggleBtnTable.classList.remove('text-slate-500');
+            toggleBtnGrid.classList.remove('bg-white', 'text-indigo-600', 'shadow-xs');
+            toggleBtnGrid.classList.add('text-slate-500');
+        } else {
+            productTableView.style.display = 'none';
+            productGridView.style.display = 'grid';
+            
+            // Update active states for toggles
+            toggleBtnGrid.classList.add('bg-white', 'text-indigo-600', 'shadow-xs');
+            toggleBtnGrid.classList.remove('text-slate-500');
+            toggleBtnTable.classList.remove('bg-white', 'text-indigo-600', 'shadow-xs');
+            toggleBtnTable.classList.add('text-slate-500');
+        }
+    }
+
+    window.toggleLayoutMode = function(mode) {
+        localStorage.setItem('product-layout-mode', mode);
+        applyLayoutMode(mode);
+    };
+
+    // Initialize layout mode
+    const isMobile = window.innerWidth < 768;
+    const savedLayout = localStorage.getItem('product-layout-mode');
+    if (savedLayout) {
+        applyLayoutMode(savedLayout);
+    } else {
+        // Fallback to responsive defaults (desktop = table, mobile = grid)
+        applyLayoutMode(isMobile ? 'grid' : 'table');
+    }
+
+    // Product Detail Modal functions
+    const productDetailModal = document.getElementById('product-detail-modal');
+
+    window.showDetailMainFallback = function() {
+        const mainImg = document.getElementById('detail-main-img');
+        const fallbackImg = document.getElementById('detail-img-fallback');
+        if (mainImg) mainImg.classList.add('hidden');
+        if (fallbackImg) fallbackImg.classList.remove('hidden');
+    };
+
+    function handleProductRowClick(event, element) {
+        const interactiveSelector = 'button, input, a, form, label, select, textarea, .custom-dropdown, [onclick]';
+        const target = event.target;
+        if (target.closest(interactiveSelector) && target.closest(interactiveSelector) !== element) {
+            return;
+        }
+        const productData = element.getAttribute('data-product-detail');
+        if (productData) {
+            const product = JSON.parse(productData);
+            openProductDetailModal(product);
+        }
+    }
+
+    function openProductDetailModal(product) {
+        // Set Name, Category, SKU, Price, Description
+        document.getElementById('detail-name').innerText = product.name;
+        document.getElementById('detail-category').innerText = product.category ? product.category.name : '';
+        document.getElementById('detail-sku').innerText = product.sku || '-';
+        
+        const formatter = new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        });
+        document.getElementById('detail-price').innerText = formatter.format(product.price);
+        document.getElementById('detail-description').innerText = product.description || 'Tidak ada deskripsi produk.';
+
+        // Status Badge
+        const statusBadge = document.getElementById('detail-status');
+        statusBadge.innerText = statusLabels[product.status] || 'Ready';
+        statusBadge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full border ';
+        if (product.status === 'ready') {
+            statusBadge.className += 'bg-emerald-50 text-emerald-700 border-emerald-100';
+        } else if (product.status === 'po') {
+            statusBadge.className += 'bg-amber-50 text-amber-700 border-amber-100';
+        } else {
+            statusBadge.className += 'bg-rose-50 text-rose-700 border-rose-100';
+        }
+
+        // Popular badge
+        const popularBadge = document.getElementById('detail-popular-badge');
+        if (product.is_popular) {
+            popularBadge.classList.remove('hidden');
+            popularBadge.classList.add('inline-flex');
+        } else {
+            popularBadge.classList.remove('inline-flex');
+            popularBadge.classList.add('hidden');
+        }
+
+        // Image Gallery
+        const mainImg = document.getElementById('detail-main-img');
+        const fallbackImg = document.getElementById('detail-img-fallback');
+        const thumbsContainer = document.getElementById('detail-thumbnails');
+        thumbsContainer.innerHTML = '';
+
+        if (product.images && product.images.length > 0) {
+            mainImg.src = '/storage/' + product.images[0].image_path;
+            mainImg.classList.remove('hidden');
+            fallbackImg.classList.add('hidden');
+
+            product.images.forEach((img, index) => {
+                const thumb = document.createElement('button');
+                thumb.type = 'button';
+                thumb.className = `aspect-square rounded-xl border overflow-hidden bg-slate-50 relative cursor-pointer focus:outline-none transition-all ${index === 0 ? 'border-indigo-500 ring-2 ring-indigo-400/20' : 'border-slate-200 hover:border-slate-400'}`;
+                thumb.innerHTML = `
+                    <img src="/storage/${img.image_path}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                    <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
+                        <i class="fa-regular fa-image text-xs"></i>
+                    </div>
+                `;
+                thumb.onclick = () => {
+                    // Update main image src
+                    mainImg.src = '/storage/' + img.image_path;
+                    mainImg.classList.remove('hidden');
+                    fallbackImg.classList.add('hidden');
+                    // Update active thumbnail borders
+                    Array.from(thumbsContainer.children).forEach(child => {
+                        child.classList.remove('border-indigo-500', 'ring-2', 'ring-indigo-400/20');
+                        child.classList.add('border-slate-200');
+                    });
+                    thumb.classList.remove('border-slate-200');
+                    thumb.classList.add('border-indigo-500', 'ring-2', 'ring-indigo-400/20');
+                };
+                thumbsContainer.appendChild(thumb);
+            });
+        } else {
+            mainImg.classList.add('hidden');
+            fallbackImg.classList.remove('hidden');
+        }
+
+        // Variants Table
+        const variantsBody = document.getElementById('detail-variants-body');
+        variantsBody.innerHTML = '';
+        if (product.variants && product.variants.length > 0) {
+            product.variants.forEach(variant => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50/50 transition-colors';
+                
+                const stockDot = variant.stock > 0 
+                    ? `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1.5"></span>` 
+                    : `<span class="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block mr-1.5"></span>`;
+                
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 font-semibold text-slate-700">${variant.size || '-'}</td>
+                    <td class="py-2.5 px-3 text-slate-650">${variant.color || '-'}</td>
+                    <td class="py-2.5 px-3 font-bold text-slate-700 flex items-center">
+                        ${stockDot}
+                        <span>${variant.stock}</span>
+                    </td>
+                `;
+                variantsBody.appendChild(tr);
+            });
+        } else {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="3" class="py-4 text-center text-slate-400 italic">Tidak ada varian</td>`;
+            variantsBody.appendChild(tr);
+        }
+
+        // Set Edit Button click handler
+        const editBtn = document.getElementById('detail-edit-btn');
+        editBtn.onclick = () => {
+            closeProductDetailModal();
+            setTimeout(() => {
+                const editButtons = Array.from(document.querySelectorAll('[onclick="openEditProductModal(this)"]'));
+                const matchBtn = editButtons.find(btn => {
+                    try {
+                        const p = JSON.parse(btn.getAttribute('data-product'));
+                        return p.id === product.id;
+                    } catch(e) {
+                        return false;
+                    }
+                });
+                if (matchBtn) {
+                    openEditProductModal(matchBtn);
+                }
+            }, 350);
+        };
+
+        // Open modal animations
+        productDetailModal.classList.remove('pointer-events-none');
+        document.body.classList.add('overflow-hidden');
+        requestAnimationFrame(() => {
+            productDetailModal.classList.remove('opacity-0');
+            productDetailModal.classList.add('opacity-100');
+            document.getElementById('product-detail-modal-panel').classList.remove('scale-95');
+            document.getElementById('product-detail-modal-panel').classList.add('scale-100');
+        });
+    }
+
+    function closeProductDetailModal() {
+        productDetailModal.classList.remove('opacity-100');
+        productDetailModal.classList.add('opacity-0');
+        document.getElementById('product-detail-modal-panel').classList.remove('scale-100');
+        document.getElementById('product-detail-modal-panel').classList.add('scale-95');
+        setTimeout(() => {
+            productDetailModal.classList.add('pointer-events-none');
+            document.body.classList.remove('overflow-hidden');
+        }, 300);
     }
 </script>
 @endsection

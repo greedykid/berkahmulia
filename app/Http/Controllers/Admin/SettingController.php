@@ -49,12 +49,14 @@ class SettingController extends Controller
     public function kontak()
     {
         $contact = [
-            'whatsapp_number' => config('app.whatsapp_number', '628123456789'),
-            'admin_email' => config('app.admin_email', 'admin@bmberkahmulia.com'),
+            'whatsapp_number' => Setting::get('whatsapp_number', config('app.whatsapp_number', '628123456789')),
+            'admin_email' => Setting::get('admin_email', config('app.admin_email', 'admin@bmberkahmulia.com')),
             'whatsapp_message_template' => Setting::get('whatsapp_message_template', 'Halo Admin Berkah Mulia, saya ingin bertanya mengenai produk...'),
             'instagram_url' => Setting::get('instagram_url', 'https://www.instagram.com'),
             'shopee_url' => Setting::get('shopee_url', 'https://shopee.co.id'),
             'show_instagram_nav' => Setting::get('show_instagram_nav', true),
+            'show_whatsapp_nav' => Setting::get('show_whatsapp_nav', true),
+            'show_whatsapp_floating' => Setting::get('show_whatsapp_floating', true),
         ];
         return view('admin.settings.kontak', compact('contact'));
     }
@@ -89,44 +91,24 @@ class SettingController extends Controller
 
         $fullWhatsapp = '62' . $request->input('whatsapp_number');
 
-        $this->updateEnvFile('WHATSAPP_NUMBER', $fullWhatsapp);
-        $this->updateEnvFile('ADMIN_EMAIL', $request->input('admin_email'));
-
+        Setting::set('whatsapp_number', $fullWhatsapp);
+        Setting::set('admin_email', $request->input('admin_email'));
         Setting::set('whatsapp_message_template', $request->input('whatsapp_message_template'));
         Setting::set('instagram_url', $request->input('instagram_url'));
         Setting::set('shopee_url', $request->input('shopee_url'));
         Setting::set('show_instagram_nav', $request->boolean('show_instagram_nav'));
+        Setting::set('show_whatsapp_nav', $request->boolean('show_whatsapp_nav'));
+        Setting::set('show_whatsapp_floating', $request->boolean('show_whatsapp_floating'));
 
-        // Clear config cache so Laravel reads the new env variables immediately
+        // Clear cache so Laravel reads the new settings immediately
         try {
-            \Illuminate\Support\Facades\Artisan::call('config:clear');
             \Illuminate\Support\Facades\Cache::flush();
         } catch (\Exception $e) {
-            // Ignore if artisan command fails in certain restricted environments
+            // Ignore if cache flushing fails
         }
 
         return redirect()->route('admin.settings.kontak')
             ->with('success', 'Kontak WhatsApp, Email, dan Media Sosial berhasil diperbarui!');
-    }
-
-    protected function updateEnvFile(string $key, string $value)
-    {
-        $path = base_path('.env');
-
-        if (file_exists($path)) {
-            $content = file_get_contents($path);
-            
-            // Check if key exists in env file (multiline search)
-            if (preg_match("/^{$key}=/m", $content)) {
-                // Replace existing key
-                $content = preg_replace("/^{$key}=.*/m", "{$key}=\"{$value}\"", $content);
-            } else {
-                // Append key to the end
-                $content .= "\n{$key}=\"{$value}\"\n";
-            }
-            
-            file_put_contents($path, $content);
-        }
     }
 
     public function panduanUkuran()

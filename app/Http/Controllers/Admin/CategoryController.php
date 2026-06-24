@@ -12,7 +12,15 @@ class CategoryController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Category::withCount('products');
+        $query = Category::withCount('products')
+            ->with(['products' => function($q) {
+                $q->select('id', 'category_id', 'name', 'slug', 'sku', 'price', 'status')
+                  ->with(['images' => function($imgQ) {
+                      $imgQ->select('id', 'product_id', 'image_path')->orderBy('id')->limit(1);
+                  }])
+                  ->withCount('variants')
+                  ->orderBy('name');
+            }]);
         
         // Sorting
         $sortableColumns = ['name', 'products_count', 'created_at'];
@@ -26,7 +34,7 @@ class CategoryController extends Controller
             $direction = 'desc';
         }
 
-        $categories = $query->orderBy($sort, $direction)->get();
+        $categories = $query->orderBy($sort, $direction)->paginate(10)->withQueryString();
         
         $totalCategories = Category::count();
         $activeCategories = Category::has('products')->count();

@@ -23,6 +23,22 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
+        // Dynamically override contact settings from database
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+                $whatsapp = \App\Models\Setting::get('whatsapp_number');
+                if ($whatsapp) {
+                    config(['app.whatsapp_number' => $whatsapp]);
+                }
+                $email = \App\Models\Setting::get('admin_email');
+                if ($email) {
+                    config(['app.admin_email' => $email]);
+                }
+            }
+        } catch (\Exception $e) {
+            // Silence exceptions during migration / setup
+        }
+
         // Share nav categories with all public layout views
         \Illuminate\Support\Facades\View::composer('layouts.app', function ($view) {
             $navCategories = collect(\Illuminate\Support\Facades\Cache::remember('nav_categories', 3600, function () {

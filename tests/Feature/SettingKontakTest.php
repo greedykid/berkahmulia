@@ -10,30 +10,6 @@ class SettingKontakTest extends TestCase
 {
     use RefreshDatabase;
 
-    private $originalEnv = null;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        
-        // Backup .env
-        $path = base_path('.env');
-        if (file_exists($path)) {
-            $this->originalEnv = file_get_contents($path);
-        }
-    }
-
-    protected function tearDown(): void
-    {
-        // Restore .env
-        $path = base_path('.env');
-        if ($this->originalEnv !== null && file_exists($path)) {
-            file_put_contents($path, $this->originalEnv);
-        }
-        
-        parent::tearDown();
-    }
-
     public function test_settings_kontak_page_requires_admin_auth()
     {
         $response = $this->get(route('admin.settings.kontak'));
@@ -65,8 +41,9 @@ class SettingKontakTest extends TestCase
         $response->assertRedirect(route('admin.settings.kontak'));
         $response->assertSessionHas('success');
 
-        // Check if config / env is updated with country code prepended
-        $this->assertEquals('6282112619691', env('WHATSAPP_NUMBER') ?? config('app.whatsapp_number'));
+        // Check if DB setting is updated with country code prepended
+        $this->assertEquals('6282112619691', \App\Models\Setting::get('whatsapp_number'));
+        $this->assertEquals('testadmin@bmberkahmulia.com', \App\Models\Setting::get('admin_email'));
     }
 
     public function test_admin_saving_whatsapp_number_with_redundant_prefixes_is_normalized()
@@ -82,8 +59,9 @@ class SettingKontakTest extends TestCase
 
         $response->assertRedirect(route('admin.settings.kontak'));
         
-        // Ensure env has normalized value starting with 628
-        $this->assertEquals('6282112619691', env('WHATSAPP_NUMBER') ?? config('app.whatsapp_number'));
+        // Ensure DB setting has normalized value starting with 628
+        $this->assertEquals('6282112619691', \App\Models\Setting::get('whatsapp_number'));
+        $this->assertEquals('testadmin@bmberkahmulia.com', \App\Models\Setting::get('admin_email'));
 
         // Test with 628... prefix
         $response = $this->actingAs($admin)
@@ -94,8 +72,9 @@ class SettingKontakTest extends TestCase
 
         $response->assertRedirect(route('admin.settings.kontak'));
         
-        // Ensure env has normalized value starting with 628
-        $this->assertEquals('6282112619691', env('WHATSAPP_NUMBER') ?? config('app.whatsapp_number'));
+        // Ensure DB setting has normalized value starting with 628
+        $this->assertEquals('6282112619691', \App\Models\Setting::get('whatsapp_number'));
+        $this->assertEquals('testadmin@bmberkahmulia.com', \App\Models\Setting::get('admin_email'));
     }
 
     public function test_validation_fails_for_invalid_whatsapp_numbers()

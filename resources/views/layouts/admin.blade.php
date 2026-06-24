@@ -300,9 +300,17 @@
                 </button>
                 <h1 class="font-semibold text-lg text-slate-800">@yield('page_title', 'Dashboard')</h1>
             </div>
-            <div class="text-sm text-slate-500 flex items-center gap-2">
-                <i class="fa-solid fa-calendar text-slate-400"></i>
-                <span>{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
+            <div class="flex items-center gap-4 bg-slate-50 border border-slate-100 px-4 py-2 rounded-2xl shadow-xs text-xs font-semibold text-slate-600 select-none">
+                <!-- Date Section -->
+                <div class="flex items-center gap-2 pr-3 border-r border-slate-200/60">
+                    <i class="fa-regular fa-calendar text-indigo-500 text-sm"></i>
+                    <span id="realtime-date">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
+                </div>
+                <!-- Time Section -->
+                <div class="flex items-center gap-2 min-w-[70px]">
+                    <i class="fa-regular fa-clock text-indigo-500 text-sm animate-pulse"></i>
+                    <span id="realtime-clock" class="font-mono text-slate-700 tracking-wider">--:--:--</span>
+                </div>
             </div>
         </header>
 
@@ -548,6 +556,31 @@
             }
         });
     });
+
+    // Realtime Clock and Date Update
+    function updateRealtimeClock() {
+        const clockEl = document.getElementById('realtime-clock');
+        const dateEl = document.getElementById('realtime-date');
+        if (!clockEl) return;
+
+        const now = new Date();
+        
+        // Format time: HH:MM:SS
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+
+        // Format date: Hari, Tanggal Bulan Tahun
+        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        try {
+            dateEl.textContent = now.toLocaleDateString('id-ID', options);
+        } catch (e) {
+            // tetap gunakan render dari Carbon jika error
+        }
+    }
+    setInterval(updateRealtimeClock, 1000);
+    updateRealtimeClock(); // panggil langsung pertama kali
     </script>
 
     @yield('scripts')

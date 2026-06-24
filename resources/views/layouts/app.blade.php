@@ -51,6 +51,17 @@
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
+    @php
+        $whatsappTemplate = \App\Models\Setting::get('whatsapp_message_template', '');
+        $whatsappLink = 'https://wa.me/' . config('app.whatsapp_number', '628123456789');
+        if (!empty($whatsappTemplate)) {
+            $whatsappLink .= '?text=' . urlencode($whatsappTemplate);
+        }
+        $instagramUrl = \App\Models\Setting::get('instagram_url', '');
+        $shopeeUrl = \App\Models\Setting::get('shopee_url', '');
+        $showInstagramNav = \App\Models\Setting::get('show_instagram_nav', true);
+    @endphp
+
     <!-- Top Announcement Bar -->
     <div id="announcement-bar" class="bg-primary-600 text-white text-xs py-2 px-4 text-center font-medium tracking-wide relative hidden">
         <i class="fa-solid fa-gift mr-1 animate-pulse"></i>
@@ -128,17 +139,6 @@
                         <span id="cart-count-badge" class="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[9px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white hidden">0</span>
                     </button>
 
-                    @php
-                        $whatsappTemplate = \App\Models\Setting::get('whatsapp_message_template', '');
-                        $whatsappLink = 'https://wa.me/' . config('app.whatsapp_number', '628123456789');
-                        if (!empty($whatsappTemplate)) {
-                            $whatsappLink .= '?text=' . urlencode($whatsappTemplate);
-                        }
-                        $instagramUrl = \App\Models\Setting::get('instagram_url', '');
-                        $shopeeUrl = \App\Models\Setting::get('shopee_url', '');
-                        $showInstagramNav = \App\Models\Setting::get('show_instagram_nav', true);
-                    @endphp
-
                     <!-- Instagram CTA -->
                     @if(!empty($instagramUrl) && $showInstagramNav)
                     <a href="{{ $instagramUrl }}" target="_blank" aria-label="Instagram Berkah Mulia"
@@ -159,11 +159,13 @@
 
 
                     <!-- WhatsApp CTA -->
+                    @if(\App\Models\Setting::get('show_whatsapp_nav', true))
                     <a href="{{ $whatsappLink }}" target="_blank" aria-label="Hubungi Admin Berkah Mulia via WhatsApp"
                        class="flex items-center justify-center gap-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3.5 sm:px-4 h-11 rounded-full text-xs font-semibold border border-emerald-200 transition-all hover:scale-105 shrink-0">
                         <i class="fa-brands fa-whatsapp text-lg text-emerald-500"></i>
                         <span class="hidden md:inline">Hubungi Admin</span>
                     </a>
+                    @endif
                 </div>
             </div>
 
@@ -327,8 +329,29 @@
         </div>
     </footer>
 
+    @php
+        $showWhatsappFloating = \App\Models\Setting::get('show_whatsapp_floating', true);
+        $backToTopBottom = $showWhatsappFloating ? '80px' : '24px';
+    @endphp
+
+    <!-- WhatsApp Floating Button -->
+    @if($showWhatsappFloating)
+    <a href="{{ $whatsappLink }}" target="_blank" id="whatsapp-floating-button" style="bottom: 24px;"
+       class="fixed right-6 z-40 w-12 h-12 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group" 
+       aria-label="Tanya Admin via WhatsApp">
+        <i class="fa-brands fa-whatsapp text-2xl animate-pulse"></i>
+        <!-- Tooltip / Label -->
+        <span class="absolute bg-slate-900 text-white text-xs font-semibold px-3 py-1.5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none shadow-md"
+              style="right: calc(100% + 12px); top: 50%; transform: translateY(-50%);">
+            Ada Pertanyaan? Chat Kami!
+        </span>
+        <!-- Pulse ring animation -->
+        <span class="absolute inset-0 rounded-full bg-emerald-500/30 animate-ping -z-10"></span>
+    </a>
+    @endif
+
     <!-- Back to Top Button -->
-    <button id="back-to-top" onclick="scrollToTopWithAnimation()" class="fixed bottom-6 right-6 z-40 w-10 h-10 bg-primary-500 hover:bg-primary-600 text-white rounded-full shadow-lg flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 translate-y-4 hover:scale-110 active:scale-95 group" aria-label="Kembali ke atas">
+    <button id="back-to-top" onclick="scrollToTopWithAnimation()" style="bottom: {{ $backToTopBottom }};" class="fixed right-6 z-40 w-10 h-10 bg-primary-500 hover:bg-primary-600 text-white rounded-full shadow-lg flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 translate-y-4 hover:scale-110 active:scale-95 group" aria-label="Kembali ke atas">
         <i class="fa-solid fa-chevron-up text-sm group-hover:-translate-y-1 transition-transform duration-300"></i>
     </button>
 

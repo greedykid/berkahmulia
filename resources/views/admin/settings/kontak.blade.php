@@ -38,7 +38,7 @@
                     </div>
                     <div>
                         <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Form Pengaturan Kontak</h4>
-                        <p class="text-[11px] text-slate-500 mt-0.5">Ubah kontak global yang tersimpan di environment system (.env).</p>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Atur kontak toko, nomor WhatsApp, email, dan link media sosial yang ditampilkan di website.</p>
                     </div>
                 </div>
 
@@ -79,6 +79,38 @@
                         <span class="block text-[10px] text-slate-400 mt-1.5 leading-relaxed">
                             *Pesan otomatis yang akan langsung terisi saat pelanggan mengklik tombol "Hubungi Admin" di WhatsApp.
                         </span>
+                    </div>
+
+                    <!-- Toggle Show WhatsApp in Navbar -->
+                    <div class="flex items-center bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 hover:bg-slate-100/50 transition-all">
+                        <div class="flex items-center h-5">
+                            <input type="checkbox" name="show_whatsapp_nav" id="show_whatsapp_nav" value="1"
+                                   {{ old('show_whatsapp_nav', $contact['show_whatsapp_nav'] ?? true) ? 'checked' : '' }}
+                                   class="w-4 h-4 rounded border-slate-300 text-indigo-650 focus:ring-indigo-400 cursor-pointer">
+                        </div>
+                        <div class="ms-3 text-xs select-none">
+                            <label for="show_whatsapp_nav" class="font-bold text-slate-700 cursor-pointer flex items-center gap-1.5">
+                                <i class="fa-brands fa-whatsapp text-emerald-500 text-[10px]"></i>
+                                Tampilkan Hubungi Admin di Navbar
+                            </label>
+                            <p class="text-[10px] text-slate-500 mt-0.5">Aktifkan untuk menampilkan tombol WhatsApp "Hubungi Admin" di bagian atas navigasi (navbar) utama.</p>
+                        </div>
+                    </div>
+
+                    <!-- Toggle Show WhatsApp Floating Button -->
+                    <div class="flex items-center bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 hover:bg-slate-100/50 transition-all">
+                        <div class="flex items-center h-5">
+                            <input type="checkbox" name="show_whatsapp_floating" id="show_whatsapp_floating" value="1"
+                                   {{ old('show_whatsapp_floating', $contact['show_whatsapp_floating'] ?? true) ? 'checked' : '' }}
+                                   class="w-4 h-4 rounded border-slate-300 text-indigo-650 focus:ring-indigo-400 cursor-pointer">
+                        </div>
+                        <div class="ms-3 text-xs select-none">
+                            <label for="show_whatsapp_floating" class="font-bold text-slate-700 cursor-pointer flex items-center gap-1.5">
+                                <i class="fa-brands fa-whatsapp text-emerald-500 text-[10px]"></i>
+                                Tampilkan Tombol Melayang WhatsApp
+                            </label>
+                            <p class="text-[10px] text-slate-500 mt-0.5">Aktifkan untuk menampilkan tombol ikon WhatsApp melayang di sudut kanan bawah website.</p>
+                        </div>
                     </div>
 
                     <!-- Instagram Link Field -->
@@ -215,6 +247,8 @@
         const previewInstagramFooterItem = document.getElementById('preview-instagram-footer-item');
         const previewInstagramFooterText = document.getElementById('preview-instagram-footer-text');
         const inputShowInstagramNav = document.getElementById('show_instagram_nav');
+        const inputShowWhatsappNav = document.getElementById('show_whatsapp_nav');
+        const inputShowWhatsappFloating = document.getElementById('show_whatsapp_floating');
 
         function updateLivePreview() {
             let whatsapp = inputWhatsapp.value || '';
@@ -239,13 +273,15 @@
             }
 
             // Sync whatsapp link & text
-            if (whatsapp) {
+            const showWhatsappNavVal = inputShowWhatsappNav ? inputShowWhatsappNav.checked : true;
+            if (whatsapp && showWhatsappNavVal) {
                 const fullWhatsapp = '62' + whatsapp;
                 let waHref = `https://wa.me/${fullWhatsapp}`;
                 if (template) {
                     waHref += `?text=${encodeURIComponent(template)}`;
                 }
                 if (previewWhatsappNav) {
+                    previewWhatsappNav.classList.remove('hidden');
                     previewWhatsappNav.href = waHref;
                 }
                 if (previewWhatsappText) {
@@ -253,10 +289,14 @@
                 }
             } else {
                 if (previewWhatsappNav) {
-                    previewWhatsappNav.href = '#';
+                    previewWhatsappNav.classList.add('hidden');
                 }
                 if (previewWhatsappText) {
-                    previewWhatsappText.textContent = '+628123456789 (Sales Admin)';
+                    if (whatsapp) {
+                        previewWhatsappText.textContent = `+62${whatsapp} (Sales Admin)`;
+                    } else {
+                        previewWhatsappText.textContent = '+628123456789 (Sales Admin)';
+                    }
                 }
             }
 
@@ -289,12 +329,12 @@
                         if (instagram.includes('instagram.com/')) {
                             let parts = instagram.split('instagram.com/');
                             if (parts[1]) {
-                                let path = parts[1].replace(/^\/|\/$/g, '');
-                                let segments = path.split('/');
-                                let firstSegment = segments[0] || '';
-                                if (firstSegment && !['explore', 'p', 'reels', 'stories'].includes(firstSegment.toLowerCase())) {
-                                    instagramUsername = '@' + firstSegment;
-                                }
+                                  let path = parts[1].replace(/^\/|\/$/g, '');
+                                  let segments = path.split('/');
+                                  let firstSegment = segments[0] || '';
+                                  if (firstSegment && !['explore', 'p', 'reels', 'stories'].includes(firstSegment.toLowerCase())) {
+                                      instagramUsername = '@' + firstSegment;
+                                  }
                             }
                         }
                     }
@@ -328,6 +368,8 @@
         if (inputInstagram) inputInstagram.addEventListener('input', updateLivePreview);
         if (inputShopee) inputShopee.addEventListener('input', updateLivePreview);
         if (inputShowInstagramNav) inputShowInstagramNav.addEventListener('change', updateLivePreview);
+        if (inputShowWhatsappNav) inputShowWhatsappNav.addEventListener('change', updateLivePreview);
+        if (inputShowWhatsappFloating) inputShowWhatsappFloating.addEventListener('change', updateLivePreview);
 
         // Run once initially
         updateLivePreview();
