@@ -35,14 +35,14 @@
                              height="600"
                              class="w-full h-full object-cover transition-all duration-300"
                              onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
-                        <div class="hidden absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-slate-400 p-4">
+                        <div class="hidden absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-slate-500 p-4">
                             <i class="fa-regular fa-image text-6xl mb-2"></i>
-                            <span class="text-xs sm:text-sm font-medium">Gambar tidak tersedia</span>
+                            <span class="text-xs sm:text-sm font-semibold text-slate-600">Gambar tidak tersedia</span>
                         </div>
                     @else
-                        <div class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-slate-400 p-4">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-slate-500 p-4">
                             <i class="fa-regular fa-image text-6xl mb-2"></i>
-                            <span class="text-xs sm:text-sm font-medium">Gambar tidak tersedia</span>
+                            <span class="text-xs sm:text-sm font-semibold text-slate-600">Gambar tidak tersedia</span>
                         </div>
                     @endif
                     
@@ -243,21 +243,21 @@
                                          class="w-full h-full object-cover"
                                          loading="lazy"
                                          onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
-                                    <div class="hidden absolute inset-0 flex-col items-center justify-center bg-slate-100 text-slate-400 p-2">
+                                    <div class="hidden absolute inset-0 flex-col items-center justify-center bg-slate-100 text-slate-500 p-2">
                                         <i class="fa-regular fa-image text-3xl mb-1"></i>
-                                        <span class="text-[10px] text-slate-400 font-medium">Gambar tidak tersedia</span>
+                                        <span class="text-[10px] text-slate-600 font-medium">Gambar tidak tersedia</span>
                                     </div>
                                 @else
-                                    <div class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-slate-400 p-2">
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-slate-500 p-2">
                                         <i class="fa-regular fa-image text-3xl mb-1"></i>
-                                        <span class="text-[10px] text-slate-400 font-medium">Gambar tidak tersedia</span>
+                                        <span class="text-[10px] text-slate-600 font-medium">Gambar tidak tersedia</span>
                                     </div>
                                 @endif
                             </div>
                         </a>
                         <div class="p-4 flex flex-col justify-between grow">
                             <div>
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                                <span class="text-[10px] font-bold text-slate-600 uppercase tracking-wider block mb-1">
                                     {{ $relProduct->category->name }}
                                 </span>
                                 <a href="{{ route('catalog.show', $relProduct->slug) }}" class="text-sm font-bold text-slate-800 hover:text-primary-500 transition-colors line-clamp-2 mb-2 min-h-[40px]">
@@ -745,7 +745,7 @@
         <img id="lightbox-image" src="" alt="Fullscreen Preview" class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl border border-white/10 object-contain animate-zoom-in" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
         <div class="hidden flex flex-col items-center justify-center text-slate-300 p-8">
             <i class="fa-regular fa-image text-8xl mb-3 text-slate-400"></i>
-            <span class="text-sm font-medium text-slate-400">Gambar tidak tersedia</span>
+            <span class="text-sm font-medium text-slate-200">Gambar tidak tersedia</span>
         </div>
     </div>
 </div>

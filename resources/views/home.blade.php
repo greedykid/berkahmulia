@@ -109,7 +109,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                     </div>
-                                    <h3 class="text-sm font-bold text-slate-800 tracking-tight px-4 leading-snug">{{ $slide['title'] }}</h3>
+                                    <h2 class="text-sm font-bold text-slate-800 tracking-tight px-4 leading-snug">{{ $slide['title'] }}</h2>
                                     <p class="text-[11px] text-slate-500 font-semibold mt-1.5">{{ $slide['description'] }}</p>
                                     <a href="{{ $slide['url'] }}" class="mt-4 inline-flex items-center justify-center px-4 py-2 bg-primary-500 hover:bg-primary-600 active:scale-95 text-white text-xs font-bold rounded-xl shadow-xs transition-all z-10">
                                         Lihat Detail
@@ -140,7 +140,7 @@
                         </div>
                         
                         <!-- Title & Subtitle -->
-                        <h3 class="text-sm sm:text-base font-bold text-slate-800 tracking-tight">Berkah Mulia</h3>
+                        <h2 class="text-sm sm:text-base font-bold text-slate-800 tracking-tight">Berkah Mulia</h2>
                         <p class="text-[11px] sm:text-xs text-slate-500 mt-1.5 max-w-xs leading-relaxed font-semibold">
                             Pusat pakaian bayi & anak berkualitas premium. Gambar sedang disiapkan oleh admin.
                         </p>
@@ -261,14 +261,14 @@
                                  class="w-full h-full object-cover"
                                  loading="lazy"
                                  onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
-                            <div class="hidden absolute inset-0 flex-col items-center justify-center bg-slate-100 text-slate-400 p-2">
+                            <div class="hidden absolute inset-0 flex-col items-center justify-center bg-slate-100 text-slate-500 p-2">
                                 <i class="fa-regular fa-image text-3xl mb-1"></i>
-                                <span class="text-[10px] text-slate-400 font-medium">Gambar tidak tersedia</span>
+                                <span class="text-[10px] text-slate-600 font-medium">Gambar tidak tersedia</span>
                             </div>
                         @else
-                            <div class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-slate-400 p-2">
+                            <div class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-slate-500 p-2">
                                 <i class="fa-regular fa-image text-3xl mb-1"></i>
-                                <span class="text-[10px] text-slate-400 font-medium">Gambar tidak tersedia</span>
+                                <span class="text-[10px] text-slate-600 font-medium">Gambar tidak tersedia</span>
                             </div>
                         @endif
                         
@@ -411,7 +411,7 @@
                             <i class="fa-solid fa-location-dot"></i>
                         </div>
                         <div class="space-y-0.5">
-                            <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Alamat Lengkap</h3>
+                            <h3 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Alamat Lengkap</h3>
                             <p class="text-xs text-slate-700 font-semibold leading-relaxed">
                                 {{ $storeAddress }}
                             </p>
@@ -424,7 +424,7 @@
                             <i class="fa-solid fa-clock"></i>
                         </div>
                         <div class="space-y-0.5">
-                            <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Jam Operasional</h3>
+                            <h3 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Jam Operasional</h3>
                             <p class="text-xs text-slate-700 font-semibold leading-relaxed">
                                 {{ $storeHours }}
                             </p>
@@ -437,7 +437,7 @@
                             <i class="fa-brands fa-whatsapp text-[15px]"></i>
                         </div>
                         <div class="space-y-0.5">
-                            <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hubungi Kami</h3>
+                            <h3 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Hubungi Kami</h3>
                             <p class="text-xs text-slate-700 font-semibold leading-relaxed">
                                 WhatsApp: <span class="font-mono">+{{ $storePhone }}</span>
                             </p>
@@ -573,7 +573,7 @@
     });
 
     // === Category Carousel ===
-    document.addEventListener('DOMContentLoaded', function() {
+    window.addEventListener('load', function() {
         // Init hero carousel
         updateHeroCarousel();
         startHeroAutoplay();

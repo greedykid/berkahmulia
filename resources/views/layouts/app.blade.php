@@ -457,7 +457,7 @@
             <!-- Header -->
             <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <span class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Pilih Varian</span>
-                <button type="button" onclick="closeQuickAddModal()" class="text-slate-400 hover:text-slate-600 hover:bg-slate-100 w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer">
+                <button type="button" onclick="closeQuickAddModal()" class="text-slate-400 hover:text-slate-600 hover:bg-slate-100 w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer" aria-label="Tutup Modal">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
@@ -467,9 +467,9 @@
                 <div class="flex gap-4 pb-4 border-b border-slate-100">
                     <div class="w-16 h-16 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0 relative">
                         <img id="quick-product-image" src="" alt="" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
-                        <div class="hidden absolute inset-0 flex-col items-center justify-center bg-slate-100 text-slate-400 p-1">
+                        <div class="hidden absolute inset-0 flex-col items-center justify-center bg-slate-100 text-slate-500 p-1">
                             <i class="fa-regular fa-image text-xl mb-0.5"></i>
-                            <span class="text-[8px] text-slate-400 font-medium text-center">Gambar tidak tersedia</span>
+                            <span class="text-[8px] text-slate-600 font-medium text-center">Gambar tidak tersedia</span>
                         </div>
                     </div>
                     <div class="flex flex-col justify-between py-1">
@@ -537,7 +537,7 @@
                 </div>
                 <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Keranjang Belanja</h2>
             </div>
-            <button type="button" onclick="toggleCartDrawer(false)" class="text-slate-400 hover:text-slate-600 hover:bg-slate-50 w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer">
+            <button type="button" onclick="toggleCartDrawer(false)" class="text-slate-400 hover:text-slate-600 hover:bg-slate-50 w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer" aria-label="Tutup Keranjang Belanja">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
@@ -742,9 +742,9 @@
                             ${item.image ? `
                                 <img src="/storage/${item.image}" alt="${item.name}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
                             ` : ''}
-                            <div class="${item.image ? 'hidden' : 'flex'} absolute inset-0 flex-col items-center justify-center bg-slate-100 text-slate-400 p-1">
+                            <div class="${item.image ? 'hidden' : 'flex'} absolute inset-0 flex-col items-center justify-center bg-slate-100 text-slate-500 p-1">
                                 <i class="fa-regular fa-image text-lg mb-0.5"></i>
-                                <span class="text-[8px] text-slate-400 font-medium text-center leading-tight">Gambar tidak tersedia</span>
+                                <span class="text-[8px] text-slate-600 font-medium text-center leading-tight">Gambar tidak tersedia</span>
                             </div>
                         </div>
                         

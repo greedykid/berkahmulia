@@ -324,14 +324,14 @@
                                                  class="w-full h-full object-cover"
                                                  loading="lazy"
                                                  onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
-                                            <div class="hidden absolute inset-0 flex-col items-center justify-center bg-slate-100 text-slate-400 p-2">
+                                            <div class="hidden absolute inset-0 flex-col items-center justify-center bg-slate-100 text-slate-500 p-2">
                                                 <i class="fa-regular fa-image text-3xl mb-1"></i>
-                                                <span class="text-[10px] text-slate-400 font-medium">Gambar tidak tersedia</span>
+                                                <span class="text-[10px] text-slate-600 font-medium">Gambar tidak tersedia</span>
                                             </div>
                                         @else
-                                            <div class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-slate-400 p-2">
+                                            <div class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 text-slate-500 p-2">
                                                 <i class="fa-regular fa-image text-3xl mb-1"></i>
-                                                <span class="text-[10px] text-slate-400 font-medium">Gambar tidak tersedia</span>
+                                                <span class="text-[10px] text-slate-600 font-medium">Gambar tidak tersedia</span>
                                             </div>
                                         @endif
                                         
