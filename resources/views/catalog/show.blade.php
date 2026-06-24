@@ -655,8 +655,8 @@
             }, 2000);
         }
         
-        // 5. Open side drawer
-        toggleCartDrawer(true);
+        // 5. Show toast notification instead of opening side drawer automatically
+        showToast(`Berhasil menambahkan "${productName}" ke keranjang!`);
     }
 
     // Run once on page load to pre-initialize the message

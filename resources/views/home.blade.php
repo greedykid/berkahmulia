@@ -31,7 +31,7 @@
             </div>
 
             <!-- Right Side: Contained Visual Image Carousel (Aligned with parent grid) -->
-            <div class="lg:col-span-6 aspect-square sm:aspect-auto sm:h-80 lg:h-auto relative bg-slate-100 flex items-stretch overflow-hidden group/carousel-hero order-1 lg:order-2">
+            <div id="hero-carousel-container" class="lg:col-span-6 aspect-square sm:aspect-auto sm:h-80 lg:h-auto relative bg-slate-100 flex items-stretch overflow-hidden group/carousel-hero order-1 lg:order-2">
                 @php
                     $fileExists = function($path) {
                         if (!$path) return false;
@@ -541,6 +541,36 @@
             startHeroAutoplay();
         }
     }
+
+    // === Swipe Support on Mobile for Hero Carousel ===
+    document.addEventListener('DOMContentLoaded', function() {
+        const heroContainer = document.getElementById('hero-carousel-container');
+        if (heroContainer) {
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            heroContainer.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            heroContainer.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleHeroSwipe();
+            }, { passive: true });
+
+            function handleHeroSwipe() {
+                const swipeDistance = touchEndX - touchStartX;
+                const threshold = 50; // minimum distance in pixels to count as swipe
+                if (swipeDistance > threshold) {
+                    // Swiped right (show previous slide)
+                    prevHeroSlide();
+                } else if (swipeDistance < -threshold) {
+                    // Swiped left (show next slide)
+                    nextHeroSlide();
+                }
+            }
+        }
+    });
 
     // === Category Carousel ===
     document.addEventListener('DOMContentLoaded', function() {

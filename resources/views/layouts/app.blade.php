@@ -528,7 +528,7 @@
     <div id="cart-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden opacity-0 transition-opacity duration-300" style="z-index: 1000;" onclick="toggleCartDrawer(false)"></div>
 
     <!-- Shopping Cart Side Drawer -->
-    <div id="cart-drawer" class="fixed right-0 top-0 h-screen max-w-md w-full bg-white shadow-2xl flex flex-col translate-x-full transition-transform duration-300 ease-out border-l border-slate-100" style="z-index: 1001;">
+    <div id="cart-drawer" class="fixed right-0 top-0 max-w-md w-full bg-white shadow-2xl flex flex-col translate-x-full transition-transform duration-300 ease-out border-l border-slate-100" style="z-index: 1001; height: 100vh; height: 100dvh;">
         <!-- Header -->
         <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -614,6 +614,9 @@
                 // Render freshest cart data before opening
                 renderCart();
                 
+                // Adjust height dynamically for mobile Chrome viewport bug
+                drawer.style.height = `${window.innerHeight}px`;
+                
                 backdrop.classList.remove("hidden");
                 // Trigger reflow to apply smooth transition
                 requestAnimationFrame(() => {
@@ -633,6 +636,67 @@
                 }, 300);
                 document.body.classList.remove("overflow-hidden");
             }
+        }
+
+        // Adjust drawer height on window resize to prevent cut-off in mobile browsers when URL bar is toggled
+        window.addEventListener('resize', () => {
+            const drawer = document.getElementById("cart-drawer");
+            if (drawer && !drawer.classList.contains("translate-x-full")) {
+                drawer.style.height = `${window.innerHeight}px`;
+            }
+        });
+
+        // Global Toast Notification function
+        function showToast(message, type = 'success') {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.className = 'fixed top-4 left-4 right-4 md:left-auto md:w-96 z-[9999] flex flex-col gap-2 pointer-events-none';
+                document.body.appendChild(container);
+            }
+            
+            const toast = document.createElement('div');
+            toast.className = 'transform translate-y-[-20px] opacity-0 transition-all duration-300 pointer-events-auto bg-white/95 backdrop-blur-xs border border-slate-100 shadow-xl px-4 py-3.5 rounded-2xl flex items-center gap-3 w-full';
+            
+            let icon = '<i class="fa-solid fa-circle-check text-emerald-500 text-lg shrink-0"></i>';
+            if (type === 'error') {
+                icon = '<i class="fa-solid fa-circle-xmark text-rose-500 text-lg shrink-0"></i>';
+            }
+            
+            toast.innerHTML = `
+                ${icon}
+                <p class="text-xs font-bold text-slate-800 flex-1">${message}</p>
+                <button type="button" class="text-slate-400 hover:text-slate-650 transition-colors shrink-0 cursor-pointer">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            `;
+            
+            // Close button functionality
+            toast.querySelector('button').onclick = () => {
+                toast.classList.add('opacity-0', 'translate-y-[-20px]');
+                setTimeout(() => toast.remove(), 300);
+            };
+            
+            container.appendChild(toast);
+            
+            // Trigger transition
+            requestAnimationFrame(() => {
+                toast.classList.remove('opacity-0', 'translate-y-[-20px]');
+                toast.classList.add('opacity-100', 'translate-y-0');
+            });
+            
+            // Auto-dismiss
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.classList.add('opacity-0', 'translate-y-[-20px]');
+                    setTimeout(() => {
+                        if (toast.parentElement) {
+                            toast.remove();
+                        }
+                    }, 300);
+                }
+            }, 3000);
         }
 
         function renderCart() {
@@ -671,13 +735,17 @@
                 const itemTotal = item.price * item.qty;
                 subtotal += itemTotal;
 
-                const imageSrc = item.image ? `/storage/${item.image}` : '/storage/assets/product_baju.webp';
-
                 html += `
                     <div class="flex gap-3 bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs hover:border-slate-200 transition-all select-none group">
                         <!-- Thumbnail -->
-                        <div class="w-16 h-16 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0">
-                            <img src="${imageSrc}" alt="${item.name}" class="w-full h-full object-cover" onerror="this.src='/storage/assets/product_baju.webp'">
+                        <div class="w-16 h-16 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0 relative flex items-center justify-center">
+                            ${item.image ? `
+                                <img src="/storage/${item.image}" alt="${item.name}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                            ` : ''}
+                            <div class="${item.image ? 'hidden' : 'flex'} absolute inset-0 flex-col items-center justify-center bg-slate-100 text-slate-400 p-1">
+                                <i class="fa-regular fa-image text-lg mb-0.5"></i>
+                                <span class="text-[8px] text-slate-400 font-medium text-center leading-tight">Gambar tidak tersedia</span>
+                            </div>
                         </div>
                         
                         <!-- Item details -->
@@ -984,7 +1052,7 @@
 
             saveCart();
             closeQuickAddModal();
-            toggleCartDrawer(true);
+            showToast(`Berhasil menambahkan "${quickProduct.name}" ke keranjang!`);
         }
     </script>
 </body>
