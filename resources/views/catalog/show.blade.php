@@ -176,8 +176,26 @@
                     </div>
                 </div>
 
-                <!-- Call To Action (WhatsApp Button) -->
-                <div class="border-t border-slate-100 pt-6 sm:pt-8 mt-6 sm:mt-8">
+                <!-- Call To Action (WhatsApp & Cart Buttons) -->
+                <div class="border-t border-slate-100 pt-6 sm:pt-8 mt-6 sm:mt-8 space-y-4">
+                    <!-- Qty & Cart Row -->
+                    <div class="flex items-center gap-3">
+                        <!-- Quantity Selector -->
+                        <div class="flex items-center border border-slate-200 rounded-2xl bg-slate-50/50 shadow-inner px-1 py-1">
+                            <button type="button" onclick="decrementProductQty()" class="w-10 h-10 flex items-center justify-center text-lg font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100/50 rounded-xl transition-all cursor-pointer">-</button>
+                            <input type="text" id="product-qty" value="1" readonly class="w-10 text-center font-bold text-slate-700 bg-transparent text-sm border-0 focus:ring-0 select-none">
+                            <button type="button" onclick="incrementProductQty()" class="w-10 h-10 flex items-center justify-center text-lg font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100/50 rounded-xl transition-all cursor-pointer">+</button>
+                        </div>
+                        
+                        <!-- Add to Cart Button -->
+                        <button type="button" onclick="addToCart()"
+                                class="flex-1 flex items-center justify-center gap-2 bg-primary-500 hover:bg-primary-600 active:scale-95 text-white font-bold py-3.5 px-4 rounded-2xl transition-all duration-200 text-xs sm:text-sm cursor-pointer shadow-md shadow-primary-500/10 border border-primary-400">
+                            <i class="fa-solid fa-cart-plus text-base"></i>
+                            <span>Tambah ke Keranjang</span>
+                        </button>
+                    </div>
+
+                    <!-- WhatsApp CTA -->
                     <a id="whatsapp-cta" href="https://wa.me/{{ config('app.whatsapp_number', '628123456789') }}" target="_blank"
                        class="w-full flex items-center justify-center gap-2 sm:gap-2.5 bg-emerald-500 hover:bg-emerald-650 text-white font-bold sm:font-extrabold py-3.5 sm:py-4 px-4 rounded-2xl shadow-lg shadow-emerald-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 text-xs sm:text-sm tracking-wide sm:tracking-wider">
                         <i class="fa-brands fa-whatsapp text-xl sm:text-2xl shrink-0"></i>
@@ -249,11 +267,18 @@
                                 <p class="text-primary-500 font-bold text-base mb-3">
                                     Rp {{ number_format($relProduct->price, 0, ',', '.') }}
                                 </p>
-                                <a href="{{ route('catalog.show', $relProduct->slug) }}" 
-                                   class="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold text-secondary-500 bg-secondary-50 hover:bg-primary-500 hover:text-white transition-all">
-                                    <span>Detail Produk</span>
-                                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                                </a>
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('catalog.show', $relProduct->slug) }}" 
+                                       class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-secondary-500 bg-secondary-50 hover:bg-primary-500 hover:text-white transition-all font-sans">
+                                        <span>Detail</span>
+                                        <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                                    </a>
+                                    <button type="button" onclick="openQuickAddModal({{ $relProduct->id }}, '{{ addslashes($relProduct->name) }}', {{ $relProduct->price }}, '{{ $relProduct->sku ?: 'BM-' . $relProduct->id }}', '{{ $relProduct->images->isNotEmpty() ? $relProduct->images->first()->image_path : '' }}', {{ $relProduct->variants->toJson() }})"
+                                            class="w-8 h-8 rounded-xl flex items-center justify-center bg-primary-50 text-primary-600 hover:bg-primary-500 hover:text-white border border-primary-100 transition-all cursor-pointer shrink-0"
+                                            title="Tambah ke Keranjang">
+                                        <i class="fa-solid fa-cart-plus text-xs"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -341,6 +366,12 @@
     const productName = "{{ $product->name }}";
     const productCategory = "{{ $product->category->name }}";
     const whatsappBaseUrl = "https://wa.me/{{ config('app.whatsapp_number', '628123456789') }}";
+    
+    // Product details for cart
+    const productId = {{ $product->id }};
+    const productPrice = {{ $product->price }};
+    const productSku = "{{ $product->sku ?: 'BM-' . $product->id }}";
+    const productImage = "{{ $product->images->isNotEmpty() ? $product->images->first()->image_path : '' }}";
 
     const productImages = [
         @foreach($product->images as $img)
@@ -486,6 +517,145 @@
         const encodedMessage = encodeURIComponent(template);
         
         whatsappBtn.href = `${whatsappBaseUrl}?text=${encodedMessage}`;
+    }
+
+    // Product quantity helper functions
+    function incrementProductQty() {
+        const qtyInput = document.getElementById('product-qty');
+        if (!qtyInput) return;
+        let qty = parseInt(qtyInput.value) || 1;
+        if (qty < 99) {
+            qtyInput.value = qty + 1;
+        }
+    }
+
+    function decrementProductQty() {
+        const qtyInput = document.getElementById('product-qty');
+        if (!qtyInput) return;
+        let qty = parseInt(qtyInput.value) || 1;
+        if (qty > 1) {
+            qtyInput.value = qty - 1;
+        }
+    }
+
+    function addToCart() {
+        // Find selected size & color
+        const sizeInput = document.querySelector('input[name="size_select"]:checked');
+        const colorInput = document.querySelector('input[name="color_select"]:checked');
+        
+        const totalSizes = document.getElementsByName('size_select').length;
+        const totalColors = document.getElementsByName('color_select').length;
+        
+        const sizeSelected = totalSizes === 0 || sizeInput !== null;
+        const colorSelected = totalColors === 0 || colorInput !== null;
+        
+        const stockIndicator = document.getElementById('stock-indicator');
+        
+        // 1. Validation: Make sure size and color are selected if they exist
+        if (!sizeSelected || !colorSelected) {
+            if (stockIndicator) {
+                stockIndicator.innerHTML = `<span class="text-rose-500 font-bold"><i class="fa-solid fa-circle-exclamation mr-1 animate-pulse"></i>Silakan pilih ${!sizeSelected && !colorSelected ? 'Ukuran dan Warna' : (!sizeSelected ? 'Ukuran' : 'Warna')} terlebih dahulu!</span>`;
+                stockIndicator.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Add a temporary red border/shadow highlight to stock indicator
+                stockIndicator.classList.add('border-rose-300', 'bg-rose-50/50');
+                setTimeout(() => {
+                    stockIndicator.classList.remove('border-rose-300', 'bg-rose-50/50');
+                }, 2000);
+            }
+            return;
+        }
+        
+        const sizeVal = sizeInput ? sizeInput.value : '-';
+        const colorVal = colorInput ? colorInput.value : '-';
+        
+        // 2. Find matching variant & check stock
+        let stock = 0;
+        let variantFound = false;
+        
+        const match = productVariants.find(v => {
+            const sizeMatch = totalSizes === 0 || v.size === sizeVal;
+            const colorMatch = totalColors === 0 || v.color === colorVal;
+            return sizeMatch && colorMatch;
+        });
+
+        if (match) {
+            stock = match.stock;
+            variantFound = true;
+        }
+        
+        if (!variantFound) {
+            if (stockIndicator) {
+                stockIndicator.innerHTML = `<span class="text-amber-600 font-semibold"><i class="fa-solid fa-circle-exclamation mr-1"></i>Kombinasi ini tidak tersedia!</span>`;
+            }
+            return;
+        }
+        
+        if (stock <= 0) {
+            if (stockIndicator) {
+                stockIndicator.innerHTML = `<span class="text-rose-500 font-bold"><i class="fa-solid fa-circle-xmark mr-1"></i>Stok Habis! Tidak bisa menambahkan ke keranjang.</span>`;
+            }
+            return;
+        }
+        
+        // 3. Read quantity
+        const qtyInput = document.getElementById('product-qty');
+        const qtyToAdd = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+        
+        // Check if there's enough stock
+        if (qtyToAdd > stock) {
+            if (stockIndicator) {
+                stockIndicator.innerHTML = `<span class="text-rose-500 font-bold"><i class="fa-solid fa-circle-exclamation mr-1"></i>Jumlah melebihi stok yang tersedia (Maks. ${stock} pcs)</span>`;
+            }
+            return;
+        }
+        
+        // 4. Update or push to cart
+        let existingIndex = -1;
+        for (let i = 0; i < cart.length; i++) {
+            if (cart[i].id === productId && cart[i].size === sizeVal && cart[i].color === colorVal) {
+                existingIndex = i;
+                break;
+            }
+        }
+        
+        if (existingIndex !== -1) {
+            const newQty = cart[existingIndex].qty + qtyToAdd;
+            if (newQty > stock) {
+                // Warn user and cap at stock
+                if (stockIndicator) {
+                    stockIndicator.innerHTML = `<span class="text-rose-500 font-bold"><i class="fa-solid fa-circle-exclamation mr-1"></i>Total di keranjang (${newQty}) melebihi stok yang tersedia (Maks. ${stock} pcs)</span>`;
+                }
+                cart[existingIndex].qty = stock;
+            } else {
+                cart[existingIndex].qty = newQty;
+            }
+        } else {
+            const newItem = {
+                id: productId,
+                name: productName,
+                qty: qtyToAdd,
+                price: productPrice,
+                size: sizeVal,
+                color: colorVal,
+                sku: productSku,
+                image: productImage
+            };
+            cart.push(newItem);
+        }
+        
+        // Save and update
+        saveCart();
+        
+        // Show success visual feedback on stock indicator or button
+        if (stockIndicator) {
+            stockIndicator.innerHTML = `<span class="text-emerald-600 font-bold animate-pulse"><i class="fa-solid fa-circle-check mr-1"></i>Berhasil ditambahkan ke keranjang belanja!</span>`;
+            setTimeout(() => {
+                updateVariantDetails();
+            }, 2000);
+        }
+        
+        // 5. Open side drawer
+        toggleCartDrawer(true);
     }
 
     // Run once on page load to pre-initialize the message

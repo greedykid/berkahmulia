@@ -354,11 +354,18 @@
                                         </p>
                                         
                                         <!-- Button CTA -->
-                                        <a href="{{ route('catalog.show', $product->slug) }}" 
-                                           class="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold text-secondary-500 bg-secondary-50 hover:bg-primary-500 hover:text-white transition-all">
-                                            <span>Detail Produk</span>
-                                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                                        </a>
+                                        <div class="flex items-center gap-2">
+                                            <a href="{{ route('catalog.show', $product->slug) }}" 
+                                               class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-secondary-500 bg-secondary-50 hover:bg-primary-500 hover:text-white transition-all font-sans">
+                                                <span>Detail</span>
+                                                <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                                            </a>
+                                            <button type="button" onclick="openQuickAddModal({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ $product->sku ?: 'BM-' . $product->id }}', '{{ $product->images->isNotEmpty() ? $product->images->first()->image_path : '' }}', {{ $product->variants->toJson() }})"
+                                                    class="w-8 h-8 rounded-xl flex items-center justify-center bg-primary-50 text-primary-600 hover:bg-primary-500 hover:text-white border border-primary-100 transition-all cursor-pointer shrink-0"
+                                                    title="Tambah ke Keranjang">
+                                                <i class="fa-solid fa-cart-plus text-xs"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

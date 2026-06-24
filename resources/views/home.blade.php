@@ -8,7 +8,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-12 bg-slate-100 rounded-3xl overflow-hidden shadow-sm border border-slate-100">
             <!-- Left Side: Copywriting Content -->
-            <div class="lg:col-span-6 px-6 py-12 sm:px-12 sm:py-16 lg:py-20 flex flex-col justify-center select-none">
+            <div class="lg:col-span-6 px-6 py-12 sm:px-12 sm:py-16 lg:py-20 flex flex-col justify-center select-none order-2 lg:order-1">
                 <span class="inline-block self-start text-xs uppercase tracking-widest font-semibold text-primary-600 bg-primary-50 px-3 py-1 rounded-full mb-4">
                     {{ $heroBadge }}
                 </span>
@@ -30,7 +30,7 @@
             </div>
 
             <!-- Right Side: Contained Visual Image Carousel (Aligned with parent grid) -->
-            <div class="lg:col-span-6 aspect-square sm:aspect-auto sm:h-80 lg:h-auto relative bg-slate-100 flex items-stretch overflow-hidden group/carousel-hero">
+            <div class="lg:col-span-6 aspect-square sm:aspect-auto sm:h-80 lg:h-auto relative bg-slate-100 flex items-stretch overflow-hidden group/carousel-hero order-1 lg:order-2">
                 @php
                     $fileExists = function($path) {
                         if (!$path) return false;
@@ -301,11 +301,18 @@
                         </p>
                         
                         <!-- Button CTA -->
-                        <a href="{{ route('catalog.show', $product->slug) }}" 
-                           class="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold text-secondary-800 bg-secondary-50 hover:bg-primary-500 hover:text-white transition-all">
-                            <span>Detail Produk</span>
-                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                        </a>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('catalog.show', $product->slug) }}" 
+                               class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-secondary-800 bg-secondary-50 hover:bg-primary-500 hover:text-white transition-all">
+                                <span>Detail</span>
+                                <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                            </a>
+                            <button type="button" onclick="openQuickAddModal({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ $product->sku ?: 'BM-' . $product->id }}', '{{ $product->images->isNotEmpty() ? $product->images->first()->image_path : '' }}', {{ $product->variants->toJson() }})"
+                                    class="w-8 h-8 rounded-xl flex items-center justify-center bg-primary-50 text-primary-600 hover:bg-primary-500 hover:text-white border border-primary-100 transition-all cursor-pointer shrink-0"
+                                    title="Tambah ke Keranjang">
+                                <i class="fa-solid fa-cart-plus text-xs"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

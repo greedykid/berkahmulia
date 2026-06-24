@@ -26,9 +26,9 @@ class CatalogController extends Controller
             return (object) $cat;
         });
         
-        // Eager load category and first image for products (Prioritize is_popular, fallback to latest)
+        // Eager load category, images, and variants for products (Prioritize is_popular, fallback to latest)
         $featuredProducts = collect(\Illuminate\Support\Facades\Cache::remember('featured_products', 3600, function() {
-            $baseQuery = Product::with(['category', 'images'])
+            $baseQuery = Product::with(['category', 'images', 'variants'])
                 ->where('status', 'ready');
 
             // Check if there are any products explicitly marked as popular
@@ -47,12 +47,22 @@ class CatalogController extends Controller
                         'slug' => $prod->slug,
                         'price' => $prod->price,
                         'status' => $prod->status,
+                        'sku' => $prod->sku,
                         'category' => [
                             'name' => $prod->category->name
                         ],
                         'images' => $prod->images->map(function($img) {
                             return [
                                 'image_path' => $img->image_path
+                            ];
+                        })->toArray(),
+                        'variants' => $prod->variants->map(function($v) {
+                            return [
+                                'id' => $v->id,
+                                'product_id' => $v->product_id,
+                                'size' => $v->size,
+                                'color' => $v->color,
+                                'stock' => $v->stock
                             ];
                         })->toArray()
                     ];
@@ -62,6 +72,9 @@ class CatalogController extends Controller
             $prodObj->category = (object) $prodObj->category;
             $prodObj->images = collect($prodObj->images)->map(function($img) {
                 return (object) $img;
+            });
+            $prodObj->variants = collect($prodObj->variants ?? [])->map(function($v) {
+                return (object) $v;
             });
             return $prodObj;
         });
@@ -192,7 +205,7 @@ class CatalogController extends Controller
             ->firstOrFail();
 
         // Get related products from the same category
-        $relatedProducts = Product::with(['category', 'images'])
+        $relatedProducts = Product::with(['category', 'images', 'variants'])
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->take(4)

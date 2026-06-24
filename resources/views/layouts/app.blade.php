@@ -80,7 +80,7 @@
                 <div class="shrink-0" id="header-logo">
                     <a href="{{ route('home') }}" class="flex items-center gap-2 sm:gap-3">
                         <img src="/logo.webp" alt="Berkah Mulia Logo" width="48" height="48" class="h-10 sm:h-12 w-auto rounded-xl shadow-sm border border-slate-100 object-cover">
-                        <div class="flex flex-col">
+                        <div class="hidden sm:flex flex-col">
                             <span class="flex items-center gap-0.5 text-base sm:text-2xl tracking-tight leading-none select-none">
                                 <span class="logo-letter text-apricot-cream-300">B</span>
                                 <span class="logo-letter text-pearl-aqua-300">e</span>
@@ -120,6 +120,13 @@
                         <i class="fa-solid fa-magnifying-glass text-sm"></i>
                     </button>
 
+                    <!-- Shopping Cart CTA -->
+                    <button type="button" onclick="toggleCartDrawer(true)" aria-label="Buka Keranjang Belanja"
+                       class="relative flex items-center justify-center w-11 h-11 bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-full border border-primary-200 transition-all hover:scale-105 shrink-0 cursor-pointer">
+                        <i class="fa-solid fa-shopping-cart text-lg"></i>
+                        <span id="cart-count-badge" class="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[9px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white hidden">0</span>
+                    </button>
+
                     @php
                         $whatsappTemplate = \App\Models\Setting::get('whatsapp_message_template', '');
                         $whatsappLink = 'https://wa.me/' . config('app.whatsapp_number', '628123456789');
@@ -148,6 +155,7 @@
                         </svg>
                     </a>
                     @endif
+
 
                     <!-- WhatsApp CTA -->
                     <a href="{{ $whatsappLink }}" target="_blank" aria-label="Hubungi Admin Berkah Mulia via WhatsApp"
@@ -416,6 +424,543 @@
                     window.location.reload();
                 }
             });
+        }
+    </script>
+
+    <!-- Quick Add to Cart Modal -->
+    <div id="quick-add-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4" style="z-index: 1010;" onclick="closeQuickAddModal()">
+        <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 ease-out border border-slate-100 flex flex-col" onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <span class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Pilih Varian</span>
+                <button type="button" onclick="closeQuickAddModal()" class="text-slate-400 hover:text-slate-600 hover:bg-slate-100 w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <!-- Body -->
+            <div class="p-5 space-y-4">
+                <!-- Product Overview -->
+                <div class="flex gap-4 pb-4 border-b border-slate-100">
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0 relative">
+                        <img id="quick-product-image" src="" alt="" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                        <div class="hidden absolute inset-0 flex-col items-center justify-center bg-slate-100 text-slate-400 p-1">
+                            <i class="fa-regular fa-image text-xl mb-0.5"></i>
+                            <span class="text-[8px] text-slate-400 font-medium text-center">Gambar tidak tersedia</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-between py-1">
+                        <div>
+                            <h3 id="quick-product-name" class="text-xs font-bold text-slate-800 line-clamp-1"></h3>
+                            <span id="quick-product-sku" class="text-[9px] text-slate-400 font-semibold tracking-wider uppercase mt-0.5 block"></span>
+                        </div>
+                        <span id="quick-product-price" class="text-sm font-extrabold text-primary-500"></span>
+                    </div>
+                </div>
+
+                <!-- Sizes -->
+                <div id="quick-size-section">
+                    <h4 class="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Pilih Ukuran:</h4>
+                    <div id="quick-sizes-container" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <!-- Colors -->
+                <div id="quick-color-section">
+                    <h4 class="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Pilih Warna:</h4>
+                    <div id="quick-colors-container" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <!-- Stock & Qty Selector -->
+                <div class="flex items-center justify-between pt-2 border-t border-slate-100 gap-4">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Kuantitas:</span>
+                        <div class="flex items-center border border-slate-200 rounded-xl bg-slate-50/50 shadow-inner px-0.5 py-0.5 w-max">
+                            <button type="button" onclick="decrementQuickQty()" class="w-8 h-8 flex items-center justify-center text-md font-bold text-slate-500 hover:text-slate-850 hover:bg-slate-150 rounded-lg transition-colors cursor-pointer">-</button>
+                            <input type="text" id="quick-product-qty" value="1" readonly class="w-8 text-center font-bold text-slate-750 bg-transparent text-xs border-0 focus:ring-0 select-none">
+                            <button type="button" onclick="incrementQuickQty()" class="w-8 h-8 flex items-center justify-center text-md font-bold text-slate-500 hover:text-slate-850 hover:bg-slate-150 rounded-lg transition-colors cursor-pointer">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Stock indicator inside modal -->
+                    <div class="flex-1 text-right">
+                        <div id="quick-stock-indicator" class="text-[11px] font-bold text-slate-555 bg-slate-50 py-2 px-3 rounded-lg border border-slate-100 inline-block">
+                            Silakan pilih varian...
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer (Confirm Button) -->
+            <div class="p-5 border-t border-slate-100 bg-slate-50/50 flex gap-3">
+                <button type="button" onclick="closeQuickAddModal()" class="flex-1 py-3 border border-slate-200 text-slate-600 hover:bg-slate-100 font-bold rounded-xl text-[11px] uppercase tracking-wider transition-colors cursor-pointer text-center">
+                    Batal
+                </button>
+                <button type="button" id="quick-add-submit-btn" onclick="submitQuickAddToCart()" class="flex-1 py-3 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl text-[11px] uppercase tracking-wider transition-colors shadow-lg shadow-primary-550/10 cursor-pointer text-center">
+                    Tambah
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping Cart Backdrop Overlay -->
+    <div id="cart-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden opacity-0 transition-opacity duration-300" style="z-index: 1000;" onclick="toggleCartDrawer(false)"></div>
+
+    <!-- Shopping Cart Side Drawer -->
+    <div id="cart-drawer" class="fixed right-0 top-0 h-screen max-w-md w-full bg-white shadow-2xl flex flex-col translate-x-full transition-transform duration-300 ease-out border-l border-slate-100" style="z-index: 1001;">
+        <!-- Header -->
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center text-primary-600">
+                    <i class="fa-solid fa-shopping-cart text-sm"></i>
+                </div>
+                <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Keranjang Belanja</h2>
+            </div>
+            <button type="button" onclick="toggleCartDrawer(false)" class="text-slate-400 hover:text-slate-600 hover:bg-slate-50 w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Scrollable Item List Container -->
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-5 space-y-4">
+            <!-- Cart items dynamically rendered via Javascript -->
+        </div>
+
+        <!-- Footer -->
+        <div id="cart-footer" class="p-5 border-t border-slate-100 bg-slate-50/50 space-y-4 hidden">
+            <div class="flex items-center justify-between text-slate-700">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Subtotal</span>
+                <span id="cart-subtotal" class="text-lg font-extrabold text-primary-600">Rp 0</span>
+            </div>
+            <a id="cart-checkout-btn" href="#" target="_blank"
+               class="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-500/10 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 text-xs uppercase tracking-wider text-center">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+                <span>Kirim Pesanan via WhatsApp</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Global Cart Script -->
+    <script>
+        // Cart Global State
+        let cart = [];
+
+        // Load cart from localStorage on DOM load
+        document.addEventListener("DOMContentLoaded", function() {
+            loadCart();
+            updateCartBadge();
+            renderCart();
+        });
+
+        function loadCart() {
+            try {
+                const stored = localStorage.getItem("berkah_mulia_cart");
+                cart = stored ? JSON.parse(stored) : [];
+            } catch (e) {
+                console.error("Gagal membaca keranjang belanja:", e);
+                cart = [];
+            }
+        }
+
+        function saveCart() {
+            try {
+                localStorage.setItem("berkah_mulia_cart", JSON.stringify(cart));
+                updateCartBadge();
+                renderCart();
+            } catch (e) {
+                console.error("Gagal menyimpan keranjang belanja:", e);
+            }
+        }
+
+        function updateCartBadge() {
+            const badge = document.getElementById("cart-count-badge");
+            if (!badge) return;
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+            if (totalItems > 0) {
+                badge.textContent = totalItems;
+                badge.classList.remove("hidden");
+            } else {
+                badge.classList.add("hidden");
+            }
+        }
+
+        function toggleCartDrawer(show) {
+            const drawer = document.getElementById("cart-drawer");
+            const backdrop = document.getElementById("cart-backdrop");
+            if (!drawer || !backdrop) return;
+
+            if (show) {
+                // Render freshest cart data before opening
+                renderCart();
+                
+                backdrop.classList.remove("hidden");
+                // Trigger reflow to apply smooth transition
+                requestAnimationFrame(() => {
+                    backdrop.classList.remove("opacity-0");
+                    backdrop.classList.add("opacity-100");
+                    drawer.classList.remove("translate-x-full");
+                    drawer.classList.add("translate-x-0");
+                });
+                document.body.classList.add("overflow-hidden");
+            } else {
+                backdrop.classList.remove("opacity-100");
+                backdrop.classList.add("opacity-0");
+                drawer.classList.remove("translate-x-0");
+                drawer.classList.add("translate-x-full");
+                setTimeout(() => {
+                    backdrop.classList.add("hidden");
+                }, 300);
+                document.body.classList.remove("overflow-hidden");
+            }
+        }
+
+        function renderCart() {
+            const container = document.getElementById("cart-items-container");
+            const footer = document.getElementById("cart-footer");
+            const subtotalText = document.getElementById("cart-subtotal");
+            const checkoutBtn = document.getElementById("cart-checkout-btn");
+            if (!container || !footer || !subtotalText || !checkoutBtn) return;
+
+            if (cart.length === 0) {
+                // Render empty state
+                container.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-center p-6 select-none grow bg-white">
+                        <div class="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 mb-4 border border-slate-100">
+                            <i class="fa-solid fa-cart-shopping text-2xl"></i>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-700">Keranjang Belanja Kosong</h3>
+                        <p class="text-xs text-slate-400 mt-1 max-w-[200px] leading-relaxed">
+                            Anda belum menambahkan produk apa pun ke keranjang belanja Anda.
+                        </p>
+                        <button type="button" onclick="toggleCartDrawer(false)" class="mt-5 inline-flex items-center justify-center px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer">
+                            Mulai Belanja
+                        </button>
+                    </div>
+                `;
+                footer.classList.add("hidden");
+                return;
+            }
+
+            footer.classList.remove("hidden");
+            
+            let html = "";
+            let subtotal = 0;
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.qty;
+                subtotal += itemTotal;
+
+                const imageSrc = item.image ? `/storage/${item.image}` : '/storage/assets/product_baju.webp';
+
+                html += `
+                    <div class="flex gap-3 bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs hover:border-slate-200 transition-all select-none group">
+                        <!-- Thumbnail -->
+                        <div class="w-16 h-16 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0">
+                            <img src="${imageSrc}" alt="${item.name}" class="w-full h-full object-cover" onerror="this.src='/storage/assets/product_baju.webp'">
+                        </div>
+                        
+                        <!-- Item details -->
+                        <div class="flex-1 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-start justify-between gap-1">
+                                    <h4 class="text-xs font-bold text-slate-800 line-clamp-1">${item.name}</h4>
+                                    <button type="button" onclick="removeCartItem(${index})" class="text-slate-300 hover:text-rose-500 w-5 h-5 flex items-center justify-center rounded-full hover:bg-rose-50 transition-all shrink-0 cursor-pointer">
+                                        <i class="fa-regular fa-trash-can text-xs"></i>
+                                    </button>
+                                </div>
+                                <p class="text-[10px] text-slate-400 font-semibold mt-0.5 uppercase tracking-wide">
+                                    ${item.size && item.size !== '-' ? `U: ${item.size}` : ''} ${item.color && item.color !== '-' ? ` | W: ${item.color}` : ''}
+                                </p>
+                            </div>
+                            
+                            <div class="flex items-center justify-between gap-2 mt-2">
+                                <!-- Qty selector -->
+                                <div class="flex items-center border border-slate-200 rounded-lg bg-slate-50/50 shadow-inner">
+                                    <button type="button" onclick="changeCartQty(${index}, -1)" class="w-6 h-6 flex items-center justify-center text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-l-lg transition-colors cursor-pointer">-</button>
+                                    <span class="w-7 text-center text-xs font-bold text-slate-700">${item.qty}</span>
+                                    <button type="button" onclick="changeCartQty(${index}, 1)" class="w-6 h-6 flex items-center justify-center text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-r-lg transition-colors cursor-pointer">+</button>
+                                </div>
+                                <!-- Price -->
+                                <span class="text-xs font-extrabold text-primary-500">Rp ${formatRupiah(itemTotal)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            subtotalText.textContent = "Rp " + formatRupiah(subtotal);
+
+            // Generate WhatsApp Checkout Message
+            let message = "Halo Berkah Mulia, saya ingin memesan produk-produk berikut:\n\n";
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.qty;
+                message += `${index + 1}. *${item.name}*\n`;
+                if (item.size && item.size !== '-') message += `   - Ukuran: ${item.size}\n`;
+                if (item.color && item.color !== '-') message += `   - Warna: ${item.color}\n`;
+                if (item.sku) message += `   - SKU: ${item.sku}\n`;
+                message += `   - Qty: ${item.qty} x Rp ${formatRupiah(item.price)} = *Rp ${formatRupiah(itemTotal)}*\n\n`;
+            });
+            message += `*Total Pemesanan: Rp ${formatRupiah(subtotal)}*\n\nMohon diinfokan ketersediaan stok dan kelanjutan pembayarannya. Terima kasih!`;
+
+            checkoutBtn.href = `https://wa.me/${getWhatsAppAdminNumber()}?text=${encodeURIComponent(message)}`;
+        }
+
+        function changeCartQty(index, delta) {
+            if (!cart[index]) return;
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            } else if (cart[index].qty > 99) {
+                cart[index].qty = 99;
+            }
+            saveCart();
+        }
+
+        function removeCartItem(index) {
+            if (!cart[index]) return;
+            cart.splice(index, 1);
+            saveCart();
+        }
+
+        function formatRupiah(number) {
+            return new Intl.NumberFormat("id-ID").format(number);
+        }
+
+        function getWhatsAppAdminNumber() {
+            return "{{ config('app.whatsapp_number', '628123456789') }}";
+        }
+
+        // Quick Add Modal state variables
+        let quickProduct = null;
+        let quickSelectedSize = null;
+        let quickSelectedColor = null;
+
+        function openQuickAddModal(id, name, price, sku, image, variantsJson) {
+            quickProduct = { id, name, price, sku, image, variants: variantsJson };
+            quickSelectedSize = null;
+            quickSelectedColor = null;
+
+            // Update UI contents
+            document.getElementById("quick-product-name").textContent = name;
+            document.getElementById("quick-product-sku").textContent = sku;
+            document.getElementById("quick-product-price").textContent = "Rp " + formatRupiah(price);
+            
+            const quickImg = document.getElementById("quick-product-image");
+            quickImg.style.display = ""; // Reset display
+            if (quickImg.nextElementSibling) {
+                quickImg.nextElementSibling.classList.remove("flex");
+                quickImg.nextElementSibling.classList.add("hidden");
+            }
+            quickImg.src = image ? `/storage/${image}` : '';
+            
+            document.getElementById("quick-product-qty").value = 1;
+
+            // Generate variants lists (unique sizes & colors)
+            const uniqueSizes = [...new Set(quickProduct.variants.map(v => v.size).filter(s => s && s !== '-'))];
+            const uniqueColors = [...new Set(quickProduct.variants.map(v => v.color).filter(c => c && c !== '-'))];
+
+            const sizeSection = document.getElementById("quick-size-section");
+            const sizesContainer = document.getElementById("quick-sizes-container");
+            if (uniqueSizes.length > 0) {
+                sizeSection.classList.remove("hidden");
+                sizesContainer.innerHTML = uniqueSizes.map(s => `
+                    <button type="button" onclick="selectQuickSize('${s}', this)" class="quick-size-btn inline-block px-3 py-2 border border-slate-200 text-[11px] font-bold rounded-lg text-slate-600 bg-white hover:border-slate-350 hover:bg-slate-50 transition-all select-none cursor-pointer">
+                        ${s}
+                    </button>
+                `).join("");
+            } else {
+                sizeSection.classList.add("hidden");
+            }
+
+            const colorSection = document.getElementById("quick-color-section");
+            const colorsContainer = document.getElementById("quick-colors-container");
+            if (uniqueColors.length > 0) {
+                colorSection.classList.remove("hidden");
+                colorsContainer.innerHTML = uniqueColors.map(c => `
+                    <button type="button" onclick="selectQuickColor('${c}', this)" class="quick-color-btn inline-block px-3 py-2 border border-slate-200 text-[11px] font-bold rounded-lg text-slate-600 bg-white hover:border-slate-350 hover:bg-slate-50 transition-all select-none cursor-pointer">
+                        ${c}
+                    </button>
+                `).join("");
+            } else {
+                colorSection.classList.add("hidden");
+            }
+
+            // Reset stock indicator
+            updateQuickStockDetails();
+
+            // Show Modal
+            const modal = document.getElementById("quick-add-modal");
+            modal.classList.remove("hidden");
+            requestAnimationFrame(() => {
+                modal.classList.remove("opacity-0");
+                modal.classList.add("opacity-100");
+                const dialog = modal.querySelector(".bg-white");
+                if (dialog) {
+                    dialog.classList.remove("scale-95");
+                    dialog.classList.add("scale-100");
+                }
+            });
+            document.body.classList.add("overflow-hidden");
+        }
+
+        function closeQuickAddModal() {
+            const modal = document.getElementById("quick-add-modal");
+            modal.classList.remove("opacity-100");
+            modal.classList.add("opacity-0");
+            const dialog = modal.querySelector(".bg-white");
+            if (dialog) {
+                dialog.classList.remove("scale-100");
+                dialog.classList.add("scale-95");
+            }
+            setTimeout(() => {
+                modal.classList.add("hidden");
+            }, 300);
+            document.body.classList.remove("overflow-hidden");
+        }
+
+        function selectQuickSize(size, btn) {
+            quickSelectedSize = size;
+            const btns = document.querySelectorAll(".quick-size-btn");
+            btns.forEach(b => {
+                b.classList.remove("border-primary-500", "text-primary-600", "bg-primary-50/40");
+                b.classList.add("border-slate-200", "text-slate-600", "bg-white");
+            });
+            btn.classList.remove("border-slate-200", "text-slate-600", "bg-white");
+            btn.classList.add("border-primary-500", "text-primary-600", "bg-primary-50/40");
+            updateQuickStockDetails();
+        }
+
+        function selectQuickColor(color, btn) {
+            quickSelectedColor = color;
+            const btns = document.querySelectorAll(".quick-color-btn");
+            btns.forEach(b => {
+                b.classList.remove("border-primary-500", "text-primary-600", "bg-primary-50/40");
+                b.classList.add("border-slate-200", "text-slate-600", "bg-white");
+            });
+            btn.classList.remove("border-slate-200", "text-slate-600", "bg-white");
+            btn.classList.add("border-primary-500", "text-primary-600", "bg-primary-50/40");
+            updateQuickStockDetails();
+        }
+
+        function incrementQuickQty() {
+            const qtyInput = document.getElementById("quick-product-qty");
+            let qty = parseInt(qtyInput.value) || 1;
+            if (qty < 99) {
+                qtyInput.value = qty + 1;
+            }
+        }
+
+        function decrementQuickQty() {
+            const qtyInput = document.getElementById("quick-product-qty");
+            let qty = parseInt(qtyInput.value) || 1;
+            if (qty > 1) {
+                qtyInput.value = qty - 1;
+            }
+        }
+
+        function updateQuickStockDetails() {
+            if (!quickProduct) return;
+            const hasSizes = document.getElementById("quick-size-section").classList.contains("hidden") === false;
+            const hasColors = document.getElementById("quick-color-section").classList.contains("hidden") === false;
+
+            const sizeSelected = !hasSizes || quickSelectedSize !== null;
+            const colorSelected = !hasColors || quickSelectedColor !== null;
+
+            const stockIndicator = document.getElementById("quick-stock-indicator");
+            const submitBtn = document.getElementById("quick-add-submit-btn");
+
+            if (sizeSelected && colorSelected) {
+                const sizeVal = quickSelectedSize || '-';
+                const colorVal = quickSelectedColor || '-';
+
+                const match = quickProduct.variants.find(v => {
+                    const sizeMatch = !hasSizes || v.size === sizeVal;
+                    const colorMatch = !hasColors || v.color === colorVal;
+                    return sizeMatch && colorMatch;
+                });
+
+                if (match) {
+                    const stock = match.stock;
+                    if (stock > 0) {
+                        stockIndicator.innerHTML = `<span class="text-emerald-600 font-bold"><i class="fa-solid fa-circle-check mr-1"></i>Stok: ${stock} pcs</span>`;
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove("opacity-50", "pointer-events-none");
+                    } else {
+                        stockIndicator.innerHTML = `<span class="text-rose-500 font-bold"><i class="fa-solid fa-circle-xmark mr-1"></i>Stok Habis</span>`;
+                        submitBtn.disabled = true;
+                        submitBtn.classList.add("opacity-50", "pointer-events-none");
+                    }
+                } else {
+                    stockIndicator.innerHTML = `<span class="text-amber-500 font-semibold"><i class="fa-solid fa-circle-exclamation mr-1"></i>Tidak Tersedia</span>`;
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add("opacity-50", "pointer-events-none");
+                }
+            } else {
+                stockIndicator.innerHTML = `<span class="text-slate-400 font-medium">Pilih varian...</span>`;
+                submitBtn.disabled = true;
+                submitBtn.classList.add("opacity-50", "pointer-events-none");
+            }
+        }
+
+        function submitQuickAddToCart() {
+            if (!quickProduct) return;
+            const hasSizes = document.getElementById("quick-size-section").classList.contains("hidden") === false;
+            const hasColors = document.getElementById("quick-color-section").classList.contains("hidden") === false;
+
+            const sizeSelected = !hasSizes || quickSelectedSize !== null;
+            const colorSelected = !hasColors || quickSelectedColor !== null;
+
+            if (!sizeSelected || !colorSelected) return;
+
+            const sizeVal = quickSelectedSize || '-';
+            const colorVal = quickSelectedColor || '-';
+
+            const match = quickProduct.variants.find(v => {
+                const sizeMatch = !hasSizes || v.size === sizeVal;
+                const colorMatch = !hasColors || v.color === colorVal;
+                return sizeMatch && colorMatch;
+            });
+
+            if (!match || match.stock <= 0) return;
+
+            const qtyInput = document.getElementById("quick-product-qty");
+            const qtyToAdd = parseInt(qtyInput.value) || 1;
+
+            if (qtyToAdd > match.stock) {
+                alert(`Kuantitas melebihi stok yang tersedia (Maks. ${match.stock} pcs)`);
+                return;
+            }
+
+            let existingIndex = -1;
+            for (let i = 0; i < cart.length; i++) {
+                if (cart[i].id === quickProduct.id && cart[i].size === sizeVal && cart[i].color === colorVal) {
+                    existingIndex = i;
+                    break;
+                }
+            }
+
+            if (existingIndex !== -1) {
+                const newQty = cart[existingIndex].qty + qtyToAdd;
+                if (newQty > match.stock) {
+                    cart[existingIndex].qty = match.stock;
+                } else {
+                    cart[existingIndex].qty = newQty;
+                }
+            } else {
+                const newItem = {
+                    id: quickProduct.id,
+                    name: quickProduct.name,
+                    qty: qtyToAdd,
+                    price: quickProduct.price,
+                    size: sizeVal,
+                    color: colorVal,
+                    sku: quickProduct.sku,
+                    image: quickProduct.image
+                };
+                cart.push(newItem);
+            }
+
+            saveCart();
+            closeQuickAddModal();
+            toggleCartDrawer(true);
         }
     </script>
 </body>
