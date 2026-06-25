@@ -228,9 +228,13 @@
                         $prices = [];
                         if ($product->variants && $product->variants->isNotEmpty()) {
                             foreach ($product->variants as $variant) {
-                                $prices[] = ($variant->price !== null && $variant->price !== '') ? (float) $variant->price : (float) $basePrice;
+                                $vPrice = ($variant->price !== null && $variant->price !== '') ? (float) $variant->price : 0;
+                                if ($vPrice > 0 || $basePrice > 0) {
+                                    $prices[] = $vPrice ?: (float) $basePrice;
+                                }
                             }
-                        } else {
+                        }
+                        if (empty($prices)) {
                             $prices[] = (float) $basePrice;
                         }
                         $minPrice = min($prices);
@@ -397,7 +401,7 @@
                             </div>
                             <div>
                                 <p class="text-primary-500 font-bold text-base mb-3">
-                                    Rp {{ number_format($relProduct->price, 0, ',', '.') }}
+                                    {{ $relProduct->formatted_price }}
                                 </p>
                                 <div class="flex items-center gap-2">
                                     <a href="{{ route('catalog.show', $relProduct->slug) }}" 

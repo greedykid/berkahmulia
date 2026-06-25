@@ -59,7 +59,7 @@
                         $defaultSlides[] = [
                             'path' => $hasImage ? $path : null,
                             'title' => $rb['name'],
-                            'description' => 'Rp ' . number_format($rb['price'], 0, ',', '.'),
+                            'description' => $rb['formatted_price'],
                             'url' => route('catalog.show', $rb['slug'])
                         ];
                     }
@@ -298,7 +298,7 @@
                     <div>
                         <!-- Price -->
                         <p class="text-primary-500 font-bold text-base mb-3">
-                            Rp {{ number_format($product->price, 0, ',', '.') }}
+                            {{ $product->formatted_price }}
                         </p>
                         
                         <!-- Button CTA -->

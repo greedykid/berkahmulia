@@ -82,7 +82,7 @@ class CatalogController extends Controller
         $banners = \App\Models\Setting::get('hero_banners', []);
 
         // Get 4 random products (with or without images)
-        $randomBanners = Product::with('images')
+        $randomBanners = Product::with(['images', 'variants'])
             ->where('status', 'ready')
             ->inRandomOrder()
             ->take(4)
@@ -93,6 +93,7 @@ class CatalogController extends Controller
                     'name' => $prod->name,
                     'slug' => $prod->slug,
                     'price' => $prod->price,
+                    'formatted_price' => $prod->formatted_price,
                     'image_path' => $image ? 'storage/' . $image->image_path : null
                 ];
             })

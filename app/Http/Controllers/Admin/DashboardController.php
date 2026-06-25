@@ -33,9 +33,9 @@ class DashboardController extends Controller
 
         // Low stock items details
         $lowStockVariants = ProductVariant::with('product')
+            ->whereHas('product')
             ->where('stock', '<=', 5)
-            ->latest()
-            ->take(5)
+            ->orderBy('stock', 'asc')
             ->get();
 
         return view('admin.dashboard', compact(

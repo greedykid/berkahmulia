@@ -60,4 +60,29 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariant::class);
     }
+
+    public function getFormattedPriceAttribute(): string
+    {
+        if ($this->price == 0 && $this->variants->isNotEmpty()) {
+            $prices = $this->variants->map(function ($variant) {
+                return ($variant->price !== null && $variant->price !== '') ? (float) $variant->price : 0.0;
+            })->filter(function ($p) {
+                return $p > 0;
+            })->toArray();
+
+            if (empty($prices)) {
+                $prices = [0.0];
+            }
+            
+            $minPrice = min($prices);
+            $maxPrice = max($prices);
+
+            if ($minPrice === $maxPrice) {
+                return 'Rp ' . number_format($minPrice, 0, ',', '.');
+            }
+            return 'Rp ' . number_format($minPrice, 0, ',', '.') . ' - Rp ' . number_format($maxPrice, 0, ',', '.');
+        }
+
+        return 'Rp ' . number_format($this->price, 0, ',', '.');
+    }
 }

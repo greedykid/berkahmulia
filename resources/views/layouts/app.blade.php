@@ -884,6 +884,27 @@
         let quickSelectedSize = null;
         let quickSelectedColor = null;
 
+        // Helper to format price or price range if price is 0
+        function getQuickProductDefaultPrice() {
+            if (!quickProduct) return "Rp 0";
+            if (quickProduct.price === 0 && quickProduct.variants && quickProduct.variants.length > 0) {
+                const variantPrices = quickProduct.variants.map(v => {
+                    return (v.price !== null && v.price !== undefined && v.price !== '') ? parseFloat(v.price) : 0;
+                }).filter(p => p > 0);
+                if (variantPrices.length > 0) {
+                    const minP = Math.min(...variantPrices);
+                    const maxP = Math.max(...variantPrices);
+                    if (minP === maxP) {
+                        return "Rp " + formatRupiah(minP);
+                    } else {
+                        return "Rp " + formatRupiah(minP) + " - Rp " + formatRupiah(maxP);
+                    }
+                }
+                return "Rp 0";
+            }
+            return "Rp " + formatRupiah(quickProduct.price);
+        }
+
         function openQuickAddModal(id, name, price, sku, image, variantsJson) {
             quickProduct = { id, name, price, sku, image, variants: variantsJson };
             quickSelectedSize = null;
@@ -892,7 +913,7 @@
             // Update UI contents
             document.getElementById("quick-product-name").textContent = name;
             document.getElementById("quick-product-sku").textContent = sku;
-            document.getElementById("quick-product-price").textContent = "Rp " + formatRupiah(price);
+            document.getElementById("quick-product-price").textContent = getQuickProductDefaultPrice();
             
             const quickImg = document.getElementById("quick-product-image");
             quickImg.style.display = ""; // Reset display
@@ -1053,14 +1074,14 @@
                         submitBtn.classList.add("opacity-50", "pointer-events-none");
                     }
                 } else {
-                    document.getElementById("quick-product-price").textContent = "Rp " + formatRupiah(quickProduct.price);
+                    document.getElementById("quick-product-price").textContent = getQuickProductDefaultPrice();
                     quickImg.src = quickProduct.image ? "/storage/" + quickProduct.image : '';
                     stockIndicator.innerHTML = `<span class="text-amber-500 font-semibold"><i class="fa-solid fa-circle-exclamation mr-1"></i>Tidak Tersedia</span>`;
                     submitBtn.disabled = true;
                     submitBtn.classList.add("opacity-50", "pointer-events-none");
                 }
             } else {
-                document.getElementById("quick-product-price").textContent = "Rp " + formatRupiah(quickProduct.price);
+                document.getElementById("quick-product-price").textContent = getQuickProductDefaultPrice();
                 quickImg.src = quickProduct.image ? "/storage/" + quickProduct.image : '';
                 stockIndicator.innerHTML = `<span class="text-slate-400 font-medium">Pilih varian...</span>`;
                 submitBtn.disabled = true;

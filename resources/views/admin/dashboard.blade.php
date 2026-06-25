@@ -91,10 +91,10 @@
 </div>
 
 <!-- Recent Products + Low Stock -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
 
     <!-- Recent Products Table -->
-    <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm lg:col-span-2">
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm lg:col-span-2 flex flex-col justify-between">
         <div class="flex items-center gap-3 mb-5">
             <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
                 <i class="fa-solid fa-clock-rotate-left text-indigo-600"></i>
@@ -109,7 +109,8 @@
             </a>
         </div>
         
-        <div class="overflow-x-auto">
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
             <table class="min-w-full text-sm text-slate-600">
                 <thead>
                     <tr class="border-b border-slate-100 font-semibold text-xs text-left select-none">
@@ -143,7 +144,7 @@
                                 </div>
                             </td>
                             <td class="py-3.5 px-4 text-xs font-semibold text-slate-500">{{ $prod->category->name }}</td>
-                            <td class="py-3.5 px-4 font-semibold text-slate-800">Rp {{ number_format($prod->price, 0, ',', '.') }}</td>
+                            <td class="py-3.5 px-4 font-semibold text-slate-800">{{ $prod->formatted_price }}</td>
                             <td class="py-3.5 px-4">
                                 @if($prod->status === 'ready')
                                     <span class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-100">Ready</span>
@@ -162,47 +163,100 @@
                 </tbody>
             </table>
         </div>
-    </div>
 
-    <!-- Sidebar: Low Stock -->
-    <div class="space-y-6">
-        <!-- Low Stock Alerts -->
-        <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-        <div class="flex items-center gap-3 mb-5">
-            <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
-                <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
-            </div>
-            <div class="flex-1">
-                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Peringatan Stok</h4>
-                <p class="text-[11px] text-slate-500 mt-0.5">Varian dengan stok menipis (1-5 pcs).</p>
-            </div>
-        </div>
-        
-        <div class="space-y-3">
-            @forelse($lowStockVariants as $variant)
-                <div class="flex items-start justify-between border-b border-slate-100 pb-3 last:border-0 last:pb-0 gap-3">
-                    <div class="min-w-0">
-                        <p class="font-semibold text-xs text-slate-800 truncate" title="{{ $variant->product->name ?? 'Produk' }}">
-                            {{ $variant->product->name ?? 'Produk Terhapus' }}
-                        </p>
-                        <p class="text-[10px] text-slate-400 mt-1">
-                            <span class="font-semibold text-slate-500">{{ $variant->size ?: '-' }}</span> / <span class="font-semibold text-slate-500">{{ $variant->color ?: '-' }}</span>
-                        </p>
+        <!-- Mobile List View -->
+        <div class="block md:hidden space-y-4">
+            @forelse($latestProducts as $prod)
+                <div class="flex items-center gap-3 pb-3 border-b border-slate-100 last:border-0 last:pb-0">
+                    <!-- Image -->
+                    <div class="w-12 h-12 rounded-xl overflow-hidden border border-slate-100/80 bg-slate-50 shrink-0 relative">
+                        @if($prod->images->isNotEmpty())
+                            <img src="{{ asset('storage/' . $prod->images->first()->image_path) }}" alt="" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                            <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
+                                <i class="fa-regular fa-image text-base"></i>
+                            </div>
+                        @else
+                            <div class="absolute inset-0 flex items-center justify-center bg-slate-100 text-slate-400">
+                                <i class="fa-regular fa-image text-base"></i>
+                            </div>
+                        @endif
                     </div>
-                    <div class="shrink-0">
-                        <span class="bg-amber-50 text-amber-700 text-[10px] font-bold px-2.5 py-1 rounded-lg border border-amber-100">
-                            Sisa {{ $variant->stock }}
-                        </span>
+                    <!-- Info -->
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-slate-800 text-xs truncate" title="{{ $prod->name }}">{{ $prod->name }}</p>
+                        <div class="flex items-center gap-1.5 mt-1 flex-wrap">
+                            <span class="bg-indigo-50/70 text-indigo-700 text-[9px] font-bold px-1.5 py-0.5 rounded-md">
+                                {{ $prod->category->name }}
+                            </span>
+                            <span class="text-[9px] text-slate-400 font-mono">SKU: {{ $prod->sku ?: '-' }}</span>
+                        </div>
+                    </div>
+                    <!-- Price & Status -->
+                    <div class="text-right shrink-0">
+                        <p class="font-bold text-slate-800 text-xs">{{ $prod->formatted_price }}</p>
+                        <div class="mt-1">
+                            @if($prod->status === 'ready')
+                                <span class="bg-emerald-50 text-emerald-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-emerald-100">Ready</span>
+                            @elseif($prod->status === 'po')
+                                <span class="bg-amber-50 text-amber-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-amber-100">Pre-Order</span>
+                            @else
+                                <span class="bg-rose-50 text-rose-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-rose-100">Habis</span>
+                            @endif
+                        </div>
                     </div>
                 </div>
             @empty
-                <div class="py-10 text-center text-slate-400 text-xs">
-                    <i class="fa-solid fa-circle-check text-emerald-500 text-xl mb-2 block"></i>
-                    Semua stok varian aman!
-                </div>
+                <div class="py-6 text-center text-slate-400 text-xs">Belum ada data produk.</div>
             @endforelse
         </div>
     </div>
+
+    <!-- Sidebar: Low Stock -->
+    <div class="lg:col-span-1 lg:h-full">
+        <!-- Low Stock Alerts -->
+        <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between h-[415px] lg:h-full lg:max-h-[468px]">
+            <div class="flex items-center gap-3 mb-5 shrink-0">
+                <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Peringatan Stok</h4>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Varian dengan stok menipis (1-5 pcs) atau habis.</p>
+                </div>
+            </div>
+            
+            <!-- Scrollable Content -->
+            <div class="space-y-3 overflow-y-auto thin-scrollbar flex-1 pr-3">
+                @forelse($lowStockVariants as $variant)
+                    <div class="flex items-start justify-between border-b border-slate-100 pb-3 last:border-0 last:pb-0 gap-3">
+                        <div class="min-w-0">
+                            <p class="font-semibold text-xs text-slate-800 truncate" title="{{ $variant->product->name ?? 'Produk' }}">
+                                {{ $variant->product->name ?? 'Produk Terhapus' }}
+                            </p>
+                            <p class="text-[10px] text-slate-400 mt-1">
+                                <span class="font-semibold text-slate-550">{{ $variant->size ?: '-' }}</span> / <span class="font-semibold text-slate-550">{{ $variant->color ?: '-' }}</span>
+                            </p>
+                        </div>
+                        <div class="shrink-0">
+                            @if($variant->stock == 0)
+                                <span class="bg-rose-50 text-rose-700 text-[10px] font-bold px-2.5 py-1 rounded-lg border border-rose-100 whitespace-nowrap">
+                                    Habis
+                                </span>
+                            @else
+                                <span class="bg-amber-50 text-amber-700 text-[10px] font-bold px-2.5 py-1 rounded-lg border border-amber-100 whitespace-nowrap">
+                                    Sisa {{ $variant->stock }}
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-10 text-center text-slate-400 text-xs">
+                        <i class="fa-solid fa-circle-check text-emerald-500 text-xl mb-2 block"></i>
+                        Semua stok varian aman!
+                    </div>
+                @endforelse
+            </div>
+        </div>
     </div> <!-- end sidebar -->
 </div>
 @endsection

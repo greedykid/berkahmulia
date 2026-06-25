@@ -538,7 +538,7 @@
                             </td>
                             <!-- Price -->
                             <td class="py-4 px-4 font-bold text-slate-800 whitespace-nowrap text-sm">
-                                Rp {{ number_format($prod->price, 0, ',', '.') }}
+                                {{ $prod->formatted_price }}
                             </td>
                             <!-- Variants -->
                             <td class="py-4 px-4 text-xs">
@@ -697,7 +697,7 @@
                         <div class="flex items-center justify-between border-t border-slate-100 pt-2.5">
                             <div>
                                 <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Harga</p>
-                                <p class="font-bold text-slate-800 text-sm">Rp {{ number_format($prod->price, 0, ',', '.') }}
+                                <p class="font-bold text-slate-800 text-sm">{{ $prod->formatted_price }}
                                 </p>
                             </div>
                             <div>
@@ -1166,23 +1166,25 @@
                                         <label
                                             class="block md:hidden text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ukuran
                                             *</label>
-                                        <input type="text" name="variants[0][size]" placeholder="S (0-1 Tahun)" required
-                                            value="S (0-1 Tahun)"
-                                            class="w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 px-2.5 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all">
+                                        <textarea name="variants[0][size]" placeholder="S (0-1 Tahun)" required rows="1"
+                                            oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"
+                                            class="w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 px-2.5 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all resize-none overflow-hidden min-h-[38px] md:min-h-[28px] align-middle">S (0-1 Tahun)</textarea>
                                     </div>
                                     <div class="col-span-1 md:col-span-2">
                                         <label
                                             class="block md:hidden text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Warna</label>
-                                        <input type="text" name="variants[0][color]" placeholder="Kuning" value="Kuning"
-                                            class="w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 px-2.5 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all">
+                                        <textarea name="variants[0][color]" placeholder="Kuning" rows="1"
+                                            oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"
+                                            class="w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 px-2.5 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all resize-none overflow-hidden min-h-[38px] md:min-h-[28px] align-middle">Kuning</textarea>
                                     </div>
                                     <div class="col-span-1 md:col-span-2">
                                         <label
                                             class="block md:hidden text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Stok
                                             *</label>
-                                        <input type="number" name="variants[0][stock]" value="15" min="0" required
-                                            style="width: 14ch" oninput="adjustStockWidth(this)"
-                                            class="max-w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 px-2.5 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold text-left md:text-center focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all tabular-nums">
+                                        <textarea name="variants[0][stock]" required rows="1"
+                                            style="width: 14ch"
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, ''); adjustStockWidth(this); this.style.height = ''; this.style.height = this.scrollHeight + 'px'"
+                                            class="max-w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 px-2.5 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold text-left md:text-center focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all tabular-nums resize-none overflow-hidden min-h-[38px] md:min-h-[28px] align-middle">15</textarea>
                                     </div>
                                     <div class="col-span-1 md:col-span-2">
                                         <label
@@ -1190,10 +1192,10 @@
                                         <div class="relative flex items-center">
                                             <span
                                                 class="absolute left-2.5 text-[9px] font-bold text-slate-400 select-none uppercase">IDR</span>
-                                            <input type="number" name="variants[0][price]" placeholder="Harga Utama" min="0"
-                                                step="any" value="78000" style="width: 14ch"
-                                                oninput="adjustPriceWidth(this)"
-                                                class="max-w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 pl-8 pr-3 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all tabular-nums">
+                                            <textarea name="variants[0][price]" placeholder="Harga Utama" rows="1"
+                                                style="width: 14ch"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, ''); adjustPriceWidth(this); this.style.height = ''; this.style.height = this.scrollHeight + 'px'"
+                                                class="max-w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 pl-8 pr-3 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all tabular-nums resize-none overflow-hidden min-h-[38px] md:min-h-[28px] align-middle">78000</textarea>
                                         </div>
                                     </div>
                                     <div class="col-span-2 md:col-span-1">
@@ -1703,7 +1705,13 @@
             } = options;
             const removeFn = isEdit ? 'removeEditVariantRow' : 'removeVariantRow';
             const stockValue = stock !== undefined && stock !== '' ? stock : defaultStock;
-            const priceValue = price !== undefined && price !== null ? price : '';
+            
+            // Strip trailing .00 decimal places if price has it
+            let priceValue = price !== undefined && price !== null ? price : '';
+            if (priceValue !== '') {
+                priceValue = parseFloat(priceValue).toString();
+            }
+
             const stockWidth = Math.max(stockValue.toString().length + 4, 14);
             const priceWidth = Math.max(priceValue.toString().length + 6, 14);
             const fieldClass = 'max-w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 px-2.5 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all';
@@ -1722,27 +1730,31 @@
                     <div class="hidden md:flex md:col-span-1 items-center justify-center text-slate-400 font-semibold text-xs row-number">${rowNumber}</div>
                     <div class="col-span-1 md:col-span-3">
                         <label class="${labelClass}">Ukuran *</label>
-                        <input type="text" name="variants[${index}][size]" value="${size || ''}" placeholder="${sizePlaceholder}" required class="${fieldClass} w-full">
+                        <textarea name="variants[${index}][size]" placeholder="${sizePlaceholder}" required rows="1"
+                                  oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"
+                                  class="${fieldClass} w-full resize-none overflow-hidden min-h-[38px] md:min-h-[28px] align-middle">${size || ''}</textarea>
                     </div>
                     <div class="col-span-1 md:col-span-2">
                         <label class="${labelClass}">Warna</label>
-                        <input type="text" name="variants[${index}][color]" value="${color || ''}" placeholder="${colorPlaceholder}" class="${fieldClass} w-full">
+                        <textarea name="variants[${index}][color]" placeholder="${colorPlaceholder}" rows="1"
+                                  oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"
+                                  class="${fieldClass} w-full resize-none overflow-hidden min-h-[38px] md:min-h-[28px] align-middle">${color || ''}</textarea>
                     </div>
                     <div class="col-span-1 md:col-span-2">
                         <label class="${labelClass}">Stok *</label>
-                        <input type="number" name="variants[${index}][stock]" value="${stockValue}" min="0" required 
-                               style="width: ${stockWidth}ch"
-                               oninput="adjustStockWidth(this)"
-                               class="${fieldClass} md:mx-auto text-left md:text-center tabular-nums">
+                        <textarea name="variants[${index}][stock]" required rows="1"
+                                  style="width: ${stockWidth}ch"
+                                  oninput="this.value = this.value.replace(/[^0-9]/g, ''); adjustStockWidth(this); this.style.height = ''; this.style.height = this.scrollHeight + 'px'"
+                                  class="${fieldClass} md:mx-auto text-left md:text-center tabular-nums resize-none overflow-hidden min-h-[38px] md:min-h-[28px] align-middle">${stockValue}</textarea>
                     </div>
                     <div class="col-span-1 md:col-span-2">
                         <label class="${labelClass}">Harga</label>
                         <div class="relative flex items-center">
                             <span class="absolute left-2.5 text-[9px] font-bold text-slate-400 select-none uppercase">IDR</span>
-                            <input type="number" name="variants[${index}][price]" value="${priceValue}" placeholder="Harga Utama" min="0" step="any" 
-                                   style="width: ${priceWidth}ch"
-                                   oninput="adjustPriceWidth(this)"
-                                   class="${fieldClass} pl-8 pr-3 tabular-nums">
+                            <textarea name="variants[${index}][price]" placeholder="Harga Utama" rows="1"
+                                      style="width: ${priceWidth}ch"
+                                      oninput="this.value = this.value.replace(/[^0-9.]/g, ''); adjustPriceWidth(this); this.style.height = ''; this.style.height = this.scrollHeight + 'px'"
+                                      class="${fieldClass} pl-8 pr-3 tabular-nums resize-none overflow-hidden min-h-[38px] md:min-h-[28px] align-middle">${priceValue}</textarea>
                         </div>
                     </div>
                     <div class="col-span-2 md:col-span-1">
@@ -1863,6 +1875,9 @@
                 addEditVariantRowWithValue('', '', 10, '', '');
             }
 
+            // Adjust textareas height after rendering
+            setTimeout(adjustAllTextareaHeights, 50);
+
             editProductModal.classList.remove('pointer-events-none');
             document.body.classList.add('overflow-hidden');
             requestAnimationFrame(() => {
@@ -1904,6 +1919,7 @@
             });
             tbody.appendChild(tr);
             editVariantIndex++;
+            setTimeout(adjustAllTextareaHeights, 10);
         }
 
         function addEditVariantRow() {
@@ -2031,6 +2047,7 @@
                             Object.values(oldVariants).forEach(variant => {
                                 addEditVariantRowWithValue(variant.size, variant.color, variant.stock, variant.price, variant.image_path);
                             });
+                            setTimeout(adjustAllTextareaHeights, 50);
                         }
                     @endif
                 @endif
@@ -2051,6 +2068,13 @@
             input.style.width = Math.max(len + 6, 14) + 'ch';
         }
 
+        function adjustAllTextareaHeights() {
+            document.querySelectorAll('#variants-body textarea, #edit-variants-body textarea').forEach(ta => {
+                ta.style.height = '';
+                ta.style.height = ta.scrollHeight + 'px';
+            });
+        }
+
         let variantIndex = 1;     // Add a new row to variants table (Add modal)
         function addVariantRow() {
             const tbody = document.getElementById('variants-body');
@@ -2067,6 +2091,7 @@
             });
             tbody.appendChild(tr);
             variantIndex++;
+            setTimeout(adjustAllTextareaHeights, 10);
         }
 
         // Remove variant row (Add modal)

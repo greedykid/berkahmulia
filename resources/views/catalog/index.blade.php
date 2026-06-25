@@ -361,7 +361,7 @@
                                     <div>
                                         <!-- Price -->
                                         <p class="text-primary-500 font-bold text-base mb-3">
-                                            Rp {{ number_format($product->price, 0, ',', '.') }}
+                                            {{ $product->formatted_price }}
                                         </p>
                                         
                                         <!-- Button CTA -->
