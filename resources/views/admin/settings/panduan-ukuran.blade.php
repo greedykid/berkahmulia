@@ -34,11 +34,26 @@
             </div>
             <div class="flex-1">
                 <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Tabel Panduan Ukuran</h4>
-                <p class="text-[11px] text-slate-500 mt-0.5">Tambah, ubah, atau hapus baris pada tabel panduan ukuran.</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">Tambah, ubah, atau hapus kolom dan baris pada tabel panduan ukuran.</p>
             </div>
-            <button type="button" onclick="addSizeRow()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all shadow-sm cursor-pointer">
+            <button type="button" onclick="addRow()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all shadow-sm cursor-pointer">
                 <i class="fa-solid fa-plus text-[10px]"></i>
                 <span>Tambah Baris</span>
+            </button>
+        </div>
+
+        <!-- Kolom Custom Header -->
+        <div class="mb-6 bg-slate-50 p-6 border border-slate-200 rounded-2xl">
+            <h5 class="font-bold text-slate-700 text-[11px] uppercase tracking-wider mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-indigo-500"></i>
+                <span>Daftar Kolom Tabel</span>
+            </h5>
+            <div id="columns-container" class="flex flex-wrap gap-3 items-center mb-4">
+                <!-- Columns inputs will be dynamically rendered here -->
+            </div>
+            <button type="button" onclick="addColumn()" class="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-semibold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition-all shadow-sm cursor-pointer">
+                <i class="fa-solid fa-plus text-[10px]"></i>
+                <span>Tambah Kolom</span>
             </button>
         </div>
 
@@ -47,71 +62,18 @@
             <table class="min-w-full text-sm" id="size-guide-table">
                 <thead>
                     <tr class="border-b border-slate-100 text-xs font-semibold text-slate-500 text-left">
-                        <th class="py-3 px-4">Ukuran</th>
-                        <th class="py-3 px-4">Tinggi Badan</th>
-                        <th class="py-3 px-4">Berat Badan</th>
-                        <th class="py-3 px-4 w-16 text-center">Aksi</th>
+                        <!-- Dynamic THs -->
                     </tr>
                 </thead>
                 <tbody id="size-guide-body" class="divide-y divide-slate-100">
-                    @foreach($sizeGuide as $index => $row)
-                    <tr class="size-row hover:bg-slate-50/50 transition-colors">
-                        <td class="py-2.5 px-4">
-                            <input type="text" name="sizes[{{ $index }}][size]" value="{{ $row['size'] }}" required
-                                   class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
-                                   placeholder="Contoh: 0-3m / S">
-                        </td>
-                        <td class="py-2.5 px-4">
-                            <input type="text" name="sizes[{{ $index }}][height]" value="{{ $row['height'] }}" required
-                                   class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
-                                   placeholder="Contoh: 55 - 61 cm">
-                        </td>
-                        <td class="py-2.5 px-4">
-                            <input type="text" name="sizes[{{ $index }}][weight]" value="{{ $row['weight'] }}" required
-                                   class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
-                                   placeholder="Contoh: 4 - 5.7 kg">
-                        </td>
-                        <td class="py-2.5 px-4 text-center">
-                            <button type="button" onclick="removeSizeRow(this)" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-1.5 rounded-lg transition-all cursor-pointer">
-                                <i class="fa-solid fa-trash-can text-xs"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    @endforeach
+                    <!-- Dynamic Rows -->
                 </tbody>
             </table>
         </div>
 
         <!-- Size Guide Cards (Mobile) -->
         <div class="sm:hidden space-y-3 mb-5" id="size-guide-mobile">
-            @foreach($sizeGuide as $index => $row)
-            <div class="size-row-mobile bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3 relative">
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Ukuran</label>
-                    <input type="text" name="sizes[{{ $index }}][size]" value="{{ $row['size'] }}" required
-                           class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all bg-white"
-                           placeholder="Contoh: 0-3m / S">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Tinggi Badan</label>
-                        <input type="text" name="sizes[{{ $index }}][height]" value="{{ $row['height'] }}" required
-                               class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all bg-white"
-                               placeholder="55 - 61 cm">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Berat Badan</label>
-                        <input type="text" name="sizes[{{ $index }}][weight]" value="{{ $row['weight'] }}" required
-                               class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all bg-white"
-                               placeholder="4 - 5.7 kg">
-                    </div>
-                </div>
-                <button type="button" onclick="removeSizeRowMobile(this)" class="w-full flex items-center justify-center gap-1.5 text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 py-2 rounded-lg transition-all cursor-pointer text-xs font-semibold">
-                    <i class="fa-solid fa-trash-can text-[10px]"></i>
-                    <span>Hapus Baris</span>
-                </button>
-            </div>
-            @endforeach
+            <!-- Dynamic Mobile Cards -->
         </div>
 
         <!-- Note -->
@@ -134,117 +96,209 @@
 
 @section('scripts')
 <script>
-    let rowIndex = {{ count($sizeGuide) }};
+    // State initialization
+    let state = {
+        columns: @json($columns),
+        rows: @json($rows)
+    };
 
-    function addSizeRow() {
-        // Add to desktop table
+    function escapeHtml(str) {
+        if (typeof str !== 'string') return '';
+        return str.replace(/&/g, "&amp;")
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;")
+                  .replace(/"/g, "&quot;")
+                  .replace(/'/g, "&#039;");
+    }
+
+    function renderTable() {
+        // Render columns list in settings panel
+        const columnsContainer = document.getElementById('columns-container');
+        columnsContainer.innerHTML = '';
+        state.columns.forEach((column, colIndex) => {
+            const div = document.createElement('div');
+            div.className = 'column-item flex items-center bg-white border border-slate-200 rounded-xl pl-3 pr-1 py-1 gap-2 shadow-sm animate-fade-in';
+            div.innerHTML = `
+                <span class="text-xs font-semibold text-slate-400">${colIndex + 1}</span>
+                <input type="text" name="columns[]" value="${escapeHtml(column)}" required
+                       class="column-input border-0 p-0 text-xs font-bold text-slate-700 focus:ring-0 focus:outline-none w-28 bg-transparent"
+                       placeholder="Nama Kolom..."
+                       oninput="updateColumnName(${colIndex}, this.value)">
+                <button type="button" onclick="removeColumn(${colIndex})" class="text-rose-500 hover:text-rose-700 p-1 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+            `;
+            columnsContainer.appendChild(div);
+        });
+
+        // Render desktop table headers
+        const theadTr = document.querySelector('#size-guide-table thead tr');
+        theadTr.innerHTML = '';
+        state.columns.forEach((column, colIndex) => {
+            const th = document.createElement('th');
+            th.className = 'py-3 px-4 text-xs font-semibold text-slate-500 text-left size-header-' + colIndex;
+            th.textContent = column || `Kolom ${colIndex + 1}`;
+            theadTr.appendChild(th);
+        });
+        const thAction = document.createElement('th');
+        thAction.className = 'py-3 px-4 w-16 text-center text-xs font-semibold text-slate-500';
+        thAction.textContent = 'Aksi';
+        theadTr.appendChild(thAction);
+
+        // Render desktop table body
         const tbody = document.getElementById('size-guide-body');
-        const tr = document.createElement('tr');
-        tr.className = 'size-row hover:bg-slate-50/50 transition-colors animate-fade-in';
-        tr.innerHTML = `
-            <td class="py-2.5 px-4">
-                <input type="text" name="sizes[${rowIndex}][size]" required
-                       class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
-                       placeholder="Contoh: 2-3 Tahun">
-            </td>
-            <td class="py-2.5 px-4">
-                <input type="text" name="sizes[${rowIndex}][height]" required
-                       class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
-                       placeholder="Contoh: 86 - 92 cm">
-            </td>
-            <td class="py-2.5 px-4">
-                <input type="text" name="sizes[${rowIndex}][weight]" required
-                       class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
-                       placeholder="Contoh: 13.6 - 15 kg">
-            </td>
-            <td class="py-2.5 px-4 text-center">
-                <button type="button" onclick="removeSizeRow(this)" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-1.5 rounded-lg transition-all cursor-pointer">
+        tbody.innerHTML = '';
+        state.rows.forEach((row, rowIndex) => {
+            const tr = document.createElement('tr');
+            tr.className = 'size-row hover:bg-slate-50/50 transition-colors';
+            
+            // Render a cell for each column
+            state.columns.forEach((_, colIndex) => {
+                const cellVal = row[colIndex] || '';
+                const td = document.createElement('td');
+                td.className = 'py-2.5 px-4';
+                td.innerHTML = `
+                    <input type="text" name="rows[${rowIndex}][]" value="${escapeHtml(cellVal)}" required
+                           class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
+                           placeholder="Isi data..."
+                           oninput="updateCellValue(${rowIndex}, ${colIndex}, this.value)">
+                `;
+                tr.appendChild(td);
+            });
+
+            const tdAction = document.createElement('td');
+            tdAction.className = 'py-2.5 px-4 text-center';
+            tdAction.innerHTML = `
+                <button type="button" onclick="removeRow(${rowIndex})" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-1.5 rounded-lg transition-all cursor-pointer">
                     <i class="fa-solid fa-trash-can text-xs"></i>
                 </button>
-            </td>
-        `;
-        tbody.appendChild(tr);
+            `;
+            tr.appendChild(tdAction);
+            tbody.appendChild(tr);
+        });
 
-        // Add to mobile cards
+        // Render mobile cards
         const mobileContainer = document.getElementById('size-guide-mobile');
-        const card = document.createElement('div');
-        card.className = 'size-row-mobile bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3 relative animate-fade-in';
-        card.innerHTML = `
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Ukuran</label>
-                <input type="text" name="sizes[${rowIndex}][size]" required
-                       class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all bg-white"
-                       placeholder="Contoh: 2-3 Tahun">
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Tinggi Badan</label>
-                    <input type="text" name="sizes[${rowIndex}][height]" required
-                           class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all bg-white"
-                           placeholder="86 - 92 cm">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Berat Badan</label>
-                    <input type="text" name="sizes[${rowIndex}][weight]" required
-                           class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all bg-white"
-                           placeholder="13.6 - 15 kg">
-                </div>
-            </div>
-            <button type="button" onclick="removeSizeRowMobile(this)" class="w-full flex items-center justify-center gap-1.5 text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 py-2 rounded-lg transition-all cursor-pointer text-xs font-semibold">
-                <i class="fa-solid fa-trash-can text-[10px]"></i>
-                <span>Hapus Baris</span>
-            </button>
-        `;
-        mobileContainer.appendChild(card);
+        mobileContainer.innerHTML = '';
+        state.rows.forEach((row, rowIndex) => {
+            const card = document.createElement('div');
+            card.className = 'size-row-mobile bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3 relative';
+            
+            let fieldsHtml = '';
+            state.columns.forEach((column, colIndex) => {
+                const cellVal = row[colIndex] || '';
+                const columnName = column || `Kolom ${colIndex + 1}`;
+                fieldsHtml += `
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 col-label-${colIndex}">${escapeHtml(columnName)}</label>
+                        <input type="text" name="rows[${rowIndex}][]" value="${escapeHtml(cellVal)}" required
+                               class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all bg-white"
+                               placeholder="Isi data..."
+                               oninput="updateCellValue(${rowIndex}, ${colIndex}, this.value)">
+                    </div>
+                `;
+            });
 
-        rowIndex++;
-        // Focus on first input of new row (responsive)
+            card.innerHTML = `
+                ${fieldsHtml}
+                <button type="button" onclick="removeRow(${rowIndex})" class="w-full flex items-center justify-center gap-1.5 text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 py-2 rounded-lg transition-all cursor-pointer text-xs font-semibold">
+                    <i class="fa-solid fa-trash-can text-[10px]"></i>
+                    <span>Hapus Baris</span>
+                </button>
+            `;
+            mobileContainer.appendChild(card);
+        });
+    }
+
+    function updateColumnName(colIndex, value) {
+        state.columns[colIndex] = value;
+        // Update header & label texts without full redraw to avoid losing cursor focus
+        const th = document.querySelector(`.size-header-${colIndex}`);
+        if (th) {
+            th.textContent = value || `Kolom ${colIndex + 1}`;
+        }
+        const labels = document.querySelectorAll(`.col-label-${colIndex}`);
+        labels.forEach(lbl => {
+            lbl.textContent = value || `Kolom ${colIndex + 1}`;
+        });
+    }
+
+    function updateCellValue(rowIndex, colIndex, value) {
+        // Ensure rows entry exists and has enough length
+        if (!state.rows[rowIndex]) {
+            state.rows[rowIndex] = [];
+        }
+        state.rows[rowIndex][colIndex] = value;
+
+        // Synchronize in real-time between desktop inputs and mobile inputs
+        // to prevent inputs diverging if viewport changes or both are checked.
+        const rowInputs = document.querySelectorAll(`#size-guide-body tr:nth-child(${rowIndex + 1}) input`);
+        if (rowInputs[colIndex] && rowInputs[colIndex].value !== value) {
+            rowInputs[colIndex].value = value;
+        }
+        const cardInputs = document.querySelectorAll(`#size-guide-mobile > div:nth-child(${rowIndex + 1}) input`);
+        if (cardInputs[colIndex] && cardInputs[colIndex].value !== value) {
+            cardInputs[colIndex].value = value;
+        }
+    }
+
+    function addColumn() {
+        state.columns.push('');
+        state.rows.forEach(row => {
+            row.push('');
+        });
+        renderTable();
+        
+        // Focus the newly added column name input
+        const columnInputs = document.querySelectorAll('#columns-container .column-input');
+        if (columnInputs.length > 0) {
+            columnInputs[columnInputs.length - 1].focus();
+        }
+    }
+
+    function removeColumn(colIndex) {
+        if (state.columns.length <= 1) {
+            alert('Minimal harus ada 1 kolom.');
+            return;
+        }
+        if (!confirm('Apakah Anda yakin ingin menghapus kolom ini? Seluruh data dalam kolom ini akan ikut terhapus di setiap baris.')) {
+            return;
+        }
+        
+        state.columns.splice(colIndex, 1);
+        state.rows.forEach(row => {
+            row.splice(colIndex, 1);
+        });
+        renderTable();
+    }
+
+    function addRow() {
+        const newRow = Array(state.columns.length).fill('');
+        state.rows.push(newRow);
+        renderTable();
+
+        // Focus first cell of new row (depending on viewport)
         if (window.innerWidth >= 640) {
-            tr.querySelector('input').focus();
+            const inputs = document.querySelectorAll(`#size-guide-body tr:last-child input`);
+            if (inputs.length > 0) inputs[0].focus();
         } else {
-            card.querySelector('input').focus();
+            const inputs = document.querySelectorAll(`#size-guide-mobile > div:last-child input`);
+            if (inputs.length > 0) inputs[0].focus();
         }
     }
 
-    function removeSizeRow(btn) {
-        const row = btn.closest('tr');
-        const tbody = document.getElementById('size-guide-body');
-        if (tbody.querySelectorAll('.size-row').length <= 1) {
+    function removeRow(rowIndex) {
+        if (state.rows.length <= 1) {
             alert('Minimal harus ada 1 baris ukuran.');
             return;
         }
-        // Also remove corresponding mobile card
-        const index = Array.from(tbody.querySelectorAll('.size-row')).indexOf(row);
-        const mobileCards = document.querySelectorAll('#size-guide-mobile .size-row-mobile');
-        if (mobileCards[index]) {
-            mobileCards[index].style.opacity = '0';
-            mobileCards[index].style.transform = 'translateX(-10px)';
-            mobileCards[index].style.transition = 'all 0.2s ease';
-            setTimeout(() => mobileCards[index].remove(), 200);
-        }
-        row.style.opacity = '0';
-        row.style.transform = 'translateX(-10px)';
-        row.style.transition = 'all 0.2s ease';
-        setTimeout(() => row.remove(), 200);
+        state.rows.splice(rowIndex, 1);
+        renderTable();
     }
 
-    function removeSizeRowMobile(btn) {
-        const card = btn.closest('.size-row-mobile');
-        const mobileContainer = document.getElementById('size-guide-mobile');
-        if (mobileContainer.querySelectorAll('.size-row-mobile').length <= 1) {
-            alert('Minimal harus ada 1 baris ukuran.');
-            return;
-        }
-        // Also remove corresponding desktop row
-        const index = Array.from(mobileContainer.querySelectorAll('.size-row-mobile')).indexOf(card);
-        const desktopRows = document.querySelectorAll('#size-guide-body .size-row');
-        if (desktopRows[index]) {
-            desktopRows[index].remove();
-        }
-        card.style.opacity = '0';
-        card.style.transform = 'translateX(-10px)';
-        card.style.transition = 'all 0.2s ease';
-        setTimeout(() => card.remove(), 200);
-    }
+    // Initial load
+    document.addEventListener('DOMContentLoaded', () => {
+        renderTable();
+    });
 </script>
 @endsection

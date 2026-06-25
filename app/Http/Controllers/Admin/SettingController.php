@@ -122,34 +122,74 @@ class SettingController extends Controller
 
     public function panduanUkuran()
     {
-        $defaultSizeGuide = [
-            ['size' => 'Newborn', 'height' => 's/d 55 cm', 'weight' => 's/d 4 kg'],
-            ['size' => '0-3m / S', 'height' => '55 - 61 cm', 'weight' => '4 - 5.7 kg'],
-            ['size' => '3-6m / M', 'height' => '61 - 67 cm', 'weight' => '5.7 - 7.5 kg'],
-            ['size' => '6-9m / L', 'height' => '67 - 72 cm', 'weight' => '7.5 - 9.3 kg'],
-            ['size' => '9-12m / XL', 'height' => '72 - 78 cm', 'weight' => '9.3 - 11.1 kg'],
-            ['size' => '12-18m / XXL', 'height' => '78 - 83 cm', 'weight' => '11.1 - 12.5 kg'],
-            ['size' => '18-24m', 'height' => '83 - 86 cm', 'weight' => '12.5 - 13.6 kg'],
+        $defaultColumns = ['Ukuran', 'Tinggi Badan', 'Berat Badan'];
+        $defaultRows = [
+            ['Newborn', 's/d 55 cm', 's/d 4 kg'],
+            ['0-3m / S', '55 - 61 cm', '4 - 5.7 kg'],
+            ['3-6m / M', '61 - 67 cm', '5.7 - 7.5 kg'],
+            ['6-9m / L', '67 - 72 cm', '7.5 - 9.3 kg'],
+            ['9-12m / XL', '72 - 78 cm', '9.3 - 11.1 kg'],
+            ['12-18m / XXL', '78 - 83 cm', '11.1 - 12.5 kg'],
+            ['18-24m', '83 - 86 cm', '12.5 - 13.6 kg'],
         ];
 
-        $sizeGuide = Setting::get('size_guide', $defaultSizeGuide);
+        $columns = Setting::get('size_guide_columns');
+        $rawRows = Setting::get('size_guide');
+
+        if (empty($columns)) {
+            $sizeGuideTitleSize = Setting::get('size_guide_title_size', 'Ukuran');
+            $sizeGuideTitleHeight = Setting::get('size_guide_title_height', 'Tinggi Badan');
+            $sizeGuideTitleWeight = Setting::get('size_guide_title_weight', 'Berat Badan');
+            $columns = [$sizeGuideTitleSize, $sizeGuideTitleHeight, $sizeGuideTitleWeight];
+        }
+
+        $rows = [];
+        if (empty($rawRows)) {
+            $rows = $defaultRows;
+        } else {
+            foreach ($rawRows as $row) {
+                if (isset($row['size']) || isset($row['height']) || isset($row['weight'])) {
+                    $rows[] = [
+                        $row['size'] ?? '',
+                        $row['height'] ?? '',
+                        $row['weight'] ?? ''
+                    ];
+                } else {
+                    $rows[] = is_array($row) ? array_values($row) : [];
+                }
+            }
+        }
+
         $sizeGuideNote = Setting::get('size_guide_note', '*Ukuran di atas adalah estimasi rata-rata standar. Disarankan mengukur tinggi dan berat badan anak terlebih dahulu sebelum melakukan pemesanan.');
 
-        return view('admin.settings.panduan-ukuran', compact('sizeGuide', 'sizeGuideNote'));
+        return view('admin.settings.panduan-ukuran', compact(
+            'columns', 
+            'rows', 
+            'sizeGuideNote'
+        ));
     }
 
     public function updatePanduanUkuran(Request $request)
     {
         $request->validate([
-            'sizes' => 'required|array|min:1',
-            'sizes.*.size' => 'required|string|max:50',
-            'sizes.*.height' => 'required|string|max:50',
-            'sizes.*.weight' => 'required|string|max:50',
+            'columns' => 'required|array|min:1',
+            'columns.*' => 'required|string|max:50',
+            'rows' => 'required|array|min:1',
+            'rows.*' => 'required|array',
+            'rows.*.*' => 'required|string|max:50',
             'note' => 'nullable|string|max:500',
         ]);
 
-        Setting::set('size_guide', $request->input('sizes'));
+        Setting::set('size_guide_columns', $request->input('columns'));
+        Setting::set('size_guide', $request->input('rows'));
         Setting::set('size_guide_note', $request->input('note', ''));
+
+        // Clear cache so Laravel reads the new settings immediately
+        try {
+            \Illuminate\Support\Facades\Cache::flush();
+        } catch (\Exception $e) {
+            // Ignore if cache flushing fails
+        }
 
         return redirect()->route('admin.settings.panduanUkuran')
             ->with('success', 'Panduan ukuran berhasil diperbarui!');
