@@ -56,12 +56,13 @@
         @vite(['resources/js/app.js', 'resources/css/app.css'])
     @endif
     
-    <!-- PWA Manifest -->
+    <!-- PWA Manifest & Icons -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#4f46e5">
     <link rel="apple-touch-icon" href="/logo.webp">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="icon" type="image/webp" sizes="32x32" href="/logo.webp">
+    <link rel="icon" type="image/webp" sizes="96x96" href="/icon-96.webp">
+    <link rel="icon" type="image/webp" sizes="192x192" href="/icon-192.webp">
 
     <!-- FontAwesome for icons (asynchronous load to prevent render blocking) -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
