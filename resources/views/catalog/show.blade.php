@@ -23,7 +23,103 @@
             ]);
         }
     }
+
+    // JSON-LD SEO Schema Markup Data Preparation
+    $schemaImages = [];
+    if ($product->images->isNotEmpty()) {
+        foreach($product->images as $img) {
+            $schemaImages[] = asset('storage/' . $img->image_path);
+        }
+    } else {
+        $schemaImages[] = asset('storage/assets/product_baju.webp');
+    }
+    foreach($uniqueVariantImages as $vImg) {
+        $schemaImages[] = asset('storage/' . $vImg->image_path);
+    }
+    $schemaImages = array_values(array_unique($schemaImages));
+
+    $overallAvailability = $product->status === 'ready' || $product->status === 'po' 
+        ? 'https://schema.org/InStock' 
+        : 'https://schema.org/OutOfStock';
+
+    $schemaData = [
+        '@context' => 'https://schema.org',
+        '@type' => 'Product',
+        'name' => $product->name,
+        'image' => $schemaImages,
+        'description' => strip_tags($product->description ?: 'Beli ' . $product->name . ' berkualitas tinggi dengan harga terjangkau di Berkah Mulia.'),
+        'brand' => [
+            '@type' => 'Brand',
+            'name' => 'Berkah Mulia'
+        ],
+        'category' => $product->category->name,
+    ];
+
+    if ($product->sku) {
+        $schemaData['sku'] = $product->sku;
+        $schemaData['mpn'] = $product->sku;
+    }
+
+    if ($product->variants && $product->variants->isNotEmpty()) {
+        $offersList = [];
+        $pricesList = [];
+        foreach ($product->variants as $variant) {
+            $vPrice = ($variant->price !== null && $variant->price !== '') ? (float) $variant->price : (float) $product->price;
+            $pricesList[] = $vPrice;
+            
+            $vAvail = ($variant->stock > 0 && $product->status !== 'sold_out') 
+                ? 'https://schema.org/InStock' 
+                : 'https://schema.org/OutOfStock';
+                
+            $offerItem = [
+                '@type' => 'Offer',
+                'price' => $vPrice,
+                'priceCurrency' => 'IDR',
+                'availability' => $vAvail,
+                'url' => route('catalog.show', $product->slug),
+                'priceValidUntil' => date('Y-12-31', strtotime('+1 year')),
+            ];
+            
+            $itemOfferedName = $product->name;
+            if ($variant->size || $variant->color) {
+                $itemOfferedName .= ' - ' . implode(' / ', array_filter([$variant->size, $variant->color]));
+            }
+            $offerItem['itemOffered'] = [
+                '@type' => 'Product',
+                'name' => $itemOfferedName,
+                'sku' => $product->sku ? ($product->sku . '-' . $variant->id) : ('PRD-' . $product->id . '-' . $variant->id),
+            ];
+            
+            $offersList[] = $offerItem;
+        }
+        
+        $minSchemaPrice = min($pricesList);
+        $maxSchemaPrice = max($pricesList);
+        
+        $schemaData['offers'] = [
+            '@type' => 'AggregateOffer',
+            'priceCurrency' => 'IDR',
+            'lowPrice' => $minSchemaPrice,
+            'highPrice' => $maxSchemaPrice,
+            'offerCount' => count($offersList),
+            'offers' => $offersList
+        ];
+    } else {
+        $schemaData['offers'] = [
+            '@type' => 'Offer',
+            'price' => (float) $product->price,
+            'priceCurrency' => 'IDR',
+            'availability' => $overallAvailability,
+            'url' => route('catalog.show', $product->slug),
+            'priceValidUntil' => date('Y-12-31', strtotime('+1 year')),
+        ];
+    }
 @endphp
+
+<!-- Product Schema JSON-LD for Google AI Search & SEO -->
+<script type="application/ld+json">
+    {!! json_encode($schemaData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
 <div class="bg-slate-50 border-b border-slate-100 py-3">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav class="flex text-xs text-slate-400 mb-2 gap-2">
@@ -127,8 +223,25 @@
                     </h1>
 
                     <!-- Price -->
+                    @php
+                        $basePrice = $product->price;
+                        $prices = [];
+                        if ($product->variants && $product->variants->isNotEmpty()) {
+                            foreach ($product->variants as $variant) {
+                                $prices[] = ($variant->price !== null && $variant->price !== '') ? (float) $variant->price : (float) $basePrice;
+                            }
+                        } else {
+                            $prices[] = (float) $basePrice;
+                        }
+                        $minPrice = min($prices);
+                        $maxPrice = max($prices);
+                    @endphp
                     <p id="product-price-display" class="text-2xl font-extrabold text-primary-500 mb-6">
-                        Rp {{ number_format($product->price, 0, ',', '.') }}
+                        @if($minPrice === $maxPrice)
+                            Rp {{ number_format($minPrice, 0, ',', '.') }}
+                        @else
+                            Rp {{ number_format($minPrice, 0, ',', '.') }} - Rp {{ number_format($maxPrice, 0, ',', '.') }}
+                        @endif
                     </p>
 
                     <!-- Description -->
@@ -347,20 +460,30 @@
                     ];
                 }
 
+                $columnsCount = count($columns);
                 $rows = [];
                 if (empty($rawRows)) {
                     $rows = $defaultRows;
                 } else {
                     foreach ($rawRows as $row) {
                         if (isset($row['size']) || isset($row['height']) || isset($row['weight'])) {
-                            $rows[] = [
+                            $rowValues = [
                                 $row['size'] ?? '',
                                 $row['height'] ?? '',
                                 $row['weight'] ?? ''
                             ];
                         } else {
-                            $rows[] = is_array($row) ? array_values($row) : [];
+                            $rowValues = is_array($row) ? array_values($row) : [];
                         }
+                        
+                        // Pad or slice to match columnsCount exactly
+                        if (count($rowValues) < $columnsCount) {
+                            $rowValues = array_pad($rowValues, $columnsCount, '');
+                        } elseif (count($rowValues) > $columnsCount) {
+                            $rowValues = array_slice($rowValues, 0, $columnsCount);
+                        }
+                        
+                        $rows[] = $rowValues;
                     }
                 }
                 
@@ -418,6 +541,8 @@
     // Product details for cart
     const productId = {{ $product->id }};
     const productPrice = {{ $product->price }};
+    const minPrice = {{ $minPrice }};
+    const maxPrice = {{ $maxPrice }};
     const productSku = "{{ $product->sku ?: 'BM-' . $product->id }}";
     const productImage = "{{ $product->images->isNotEmpty() ? $product->images->first()->image_path : '' }}";
 
@@ -552,7 +677,15 @@
         // Update displayed price based on selected variant custom price
         const priceDisplay = document.getElementById('product-price-display');
         if (priceDisplay) {
-            priceDisplay.textContent = 'Rp ' + formatRupiah(currentPrice);
+            if (variantFound) {
+                priceDisplay.textContent = 'Rp ' + formatRupiah(currentPrice);
+            } else {
+                if (minPrice === maxPrice) {
+                    priceDisplay.textContent = 'Rp ' + formatRupiah(minPrice);
+                } else {
+                    priceDisplay.textContent = 'Rp ' + formatRupiah(minPrice) + ' - Rp ' + formatRupiah(maxPrice);
+                }
+            }
         }
 
         // Update variant image if set

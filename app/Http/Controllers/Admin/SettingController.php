@@ -143,20 +143,30 @@ class SettingController extends Controller
             $columns = [$sizeGuideTitleSize, $sizeGuideTitleHeight, $sizeGuideTitleWeight];
         }
 
+        $columnsCount = count($columns);
         $rows = [];
         if (empty($rawRows)) {
             $rows = $defaultRows;
         } else {
             foreach ($rawRows as $row) {
                 if (isset($row['size']) || isset($row['height']) || isset($row['weight'])) {
-                    $rows[] = [
+                    $rowValues = [
                         $row['size'] ?? '',
                         $row['height'] ?? '',
                         $row['weight'] ?? ''
                     ];
                 } else {
-                    $rows[] = is_array($row) ? array_values($row) : [];
+                    $rowValues = is_array($row) ? array_values($row) : [];
                 }
+                
+                // Pad or slice to match columnsCount exactly
+                if (count($rowValues) < $columnsCount) {
+                    $rowValues = array_pad($rowValues, $columnsCount, '');
+                } elseif (count($rowValues) > $columnsCount) {
+                    $rowValues = array_slice($rowValues, 0, $columnsCount);
+                }
+                
+                $rows[] = $rowValues;
             }
         }
 

@@ -34,7 +34,7 @@
         }
 
         /* Fix mobile scale/blur rendering bug on transformed modals and backdrop filter */
-        #product-modal-panel, 
+        #product-modal-panel,
         #edit-product-modal-panel,
         #variant-quick-action-panel,
         #product-detail-modal-panel {
@@ -42,6 +42,17 @@
             backface-visibility: hidden;
             transform: translate3d(0, 0, 0);
             will-change: transform, opacity;
+        }
+
+        /* Show Change Photo button on mobile only when variant image is uploaded */
+        .variant-image-upload.has-image+.variant-change-photo-btn {
+            display: inline-flex;
+        }
+
+        @media (min-width: 768px) {
+            .variant-image-upload.has-image+.variant-change-photo-btn {
+                display: none !important;
+            }
         }
     </style>
     @php
@@ -924,7 +935,8 @@
                 class="flex flex-col flex-1 min-h-0 overflow-hidden">
                 @csrf
                 <!-- Modal Body (Two columns on desktop, independent scroll, clean layout) -->
-                <div class="flex-1 min-h-0 overflow-y-auto thin-scrollbar overscroll-contain modal-touch-scroll md:overflow-hidden flex flex-col md:flex-row gap-5 md:gap-6">
+                <div
+                    class="flex-1 min-h-0 overflow-y-auto thin-scrollbar overscroll-contain modal-touch-scroll md:overflow-hidden flex flex-col md:flex-row gap-5 md:gap-6">
 
                     <!-- Left Column: Media & Info Dasar Cepat -->
                     <div
@@ -1101,7 +1113,8 @@
 
                     <!-- Right Column: Manajemen Varian -->
                     <div class="flex-1 flex flex-col min-h-0 min-w-0 md:overflow-hidden">
-                        <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between border-b border-slate-100 pb-3 shrink-0">
+                        <div
+                            class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between border-b border-slate-100 pb-3 shrink-0">
                             <div>
                                 <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wider">Manajemen Varian</h4>
                                 <p class="text-[10px] text-slate-400 mt-0.5">Input data stok dan harga per kombinasi varian.
@@ -1114,16 +1127,18 @@
                             </button>
                         </div>
 
-                        <div class="mt-3 md:flex-1 md:min-h-0 md:overflow-y-auto thin-scrollbar md:rounded-xl md:border md:border-slate-200 md:bg-white md:shadow-sm">
+                        <div
+                            class="mt-3 md:flex-1 md:min-h-0 md:overflow-y-auto thin-scrollbar md:rounded-xl md:border md:border-slate-200 md:bg-white md:shadow-sm">
                             <!-- Header (Desktop Only) -->
                             <div
                                 class="hidden md:grid md:grid-cols-12 gap-2 px-4 py-2.5 bg-slate-50 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-500 select-none sticky top-0 z-10">
                                 <div class="col-span-1 text-center">No</div>
                                 <div class="col-span-3">Ukuran</div>
                                 <div class="col-span-2">Warna</div>
-                                <div class="col-span-1 text-center">Stok *</div>
-                                <div class="col-span-3">Harga (Opsional)</div>
-                                <div class="col-span-2 text-center">Gambar</div>
+                                <div class="col-span-2 text-center">Stok *</div>
+                                <div class="col-span-2">Harga (Opsional)</div>
+                                <div class="col-span-1 text-center">Gambar</div>
+                                <div class="col-span-1 text-center">Aksi</div>
                             </div>
 
                             <!-- Body (Cards on Mobile, Grid Rows on Desktop) -->
@@ -1132,59 +1147,91 @@
                                     class="variant-row grid grid-cols-2 md:grid-cols-12 gap-x-3 gap-y-2.5 md:gap-2 p-3.5 md:px-4 md:py-2.5 bg-white md:bg-transparent border border-slate-200 md:border-none rounded-2xl md:rounded-none shadow-sm md:shadow-none relative items-start md:items-center animate-fade-in md:hover:bg-slate-50/40 md:transition-colors">
                                     <div class="col-span-2 md:col-span-1 md:hidden flex items-center justify-between">
                                         <div class="flex items-center gap-2 min-w-0">
-                                            <span class="row-number inline-flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-50 text-indigo-700 text-[11px] font-bold shrink-0">1</span>
-                                            <span class="variant-mobile-title text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">Varian #1</span>
+                                            <span
+                                                class="row-number inline-flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-50 text-indigo-700 text-[11px] font-bold shrink-0">1</span>
+                                            <span
+                                                class="variant-mobile-title text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">Varian
+                                                #1</span>
                                         </div>
-                                        <button type="button" onclick="removeVariantRow(this)" class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-lg transition-all cursor-pointer shrink-0" title="Hapus varian">
+                                        <button type="button" onclick="removeVariantRow(this)"
+                                            class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-lg transition-all cursor-pointer shrink-0"
+                                            title="Hapus varian">
                                             <i class="fa-solid fa-trash-can text-xs"></i>
                                         </button>
                                     </div>
-                                    <div class="hidden md:flex md:col-span-1 items-center justify-center text-slate-400 font-semibold text-xs row-number">1</div>
+                                    <div
+                                        class="hidden md:flex md:col-span-1 items-center justify-center text-slate-400 font-semibold text-xs row-number">
+                                        1</div>
                                     <div class="col-span-1 md:col-span-3">
-                                        <label class="block md:hidden text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ukuran *</label>
-                                        <input type="text" name="variants[0][size]" placeholder="S (0-1 Tahun)" required value="S (0-1 Tahun)"
+                                        <label
+                                            class="block md:hidden text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ukuran
+                                            *</label>
+                                        <input type="text" name="variants[0][size]" placeholder="S (0-1 Tahun)" required
+                                            value="S (0-1 Tahun)"
                                             class="w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 px-2.5 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all">
                                     </div>
                                     <div class="col-span-1 md:col-span-2">
-                                        <label class="block md:hidden text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Warna</label>
+                                        <label
+                                            class="block md:hidden text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Warna</label>
                                         <input type="text" name="variants[0][color]" placeholder="Kuning" value="Kuning"
                                             class="w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 px-2.5 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all">
                                     </div>
-                                    <div class="col-span-1 md:col-span-1">
-                                        <label class="block md:hidden text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Stok *</label>
+                                    <div class="col-span-1 md:col-span-2">
+                                        <label
+                                            class="block md:hidden text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Stok
+                                            *</label>
                                         <input type="number" name="variants[0][stock]" value="15" min="0" required
-                                            class="w-full md:max-w-[4.25rem] md:mx-auto bg-slate-50 md:bg-white border border-slate-200 text-slate-700 px-2.5 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold text-center focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all tabular-nums">
+                                            style="width: 14ch" oninput="adjustStockWidth(this)"
+                                            class="max-w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 px-2.5 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold text-left md:text-center focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all tabular-nums">
                                     </div>
-                                    <div class="col-span-1 md:col-span-3">
-                                        <label class="block md:hidden text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Harga</label>
+                                    <div class="col-span-1 md:col-span-2">
+                                        <label
+                                            class="block md:hidden text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Harga</label>
                                         <div class="relative flex items-center">
-                                            <span class="absolute left-2.5 text-[9px] font-bold text-slate-400 select-none uppercase">IDR</span>
-                                            <input type="number" name="variants[0][price]" placeholder="Default" min="0" step="any" value="78000"
-                                                class="w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 pl-8 pr-3 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all tabular-nums">
+                                            <span
+                                                class="absolute left-2.5 text-[9px] font-bold text-slate-400 select-none uppercase">IDR</span>
+                                            <input type="number" name="variants[0][price]" placeholder="Harga Utama" min="0"
+                                                step="any" value="78000" style="width: 14ch"
+                                                oninput="adjustPriceWidth(this)"
+                                                class="max-w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 pl-8 pr-3 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all tabular-nums">
                                         </div>
                                     </div>
-                                    <div class="col-span-2 md:col-span-2">
-                                        <label class="block md:hidden text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Gambar Varian</label>
+                                    <div class="col-span-2 md:col-span-1">
+                                        <label
+                                            class="block md:hidden text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Gambar
+                                            Varian</label>
                                         <div class="flex items-center gap-2 md:gap-1.5 justify-start">
                                             <label
                                                 class="variant-image-upload group relative w-14 h-14 md:w-12 md:h-12 rounded-xl border-2 border-dashed border-slate-200 bg-gradient-to-br from-slate-50 to-white hover:border-indigo-300 hover:from-indigo-50/40 hover:to-white transition-all flex items-center justify-center cursor-pointer shrink-0 overflow-hidden shadow-sm"
                                                 title="Pilih gambar varian">
-                                                <img class="variant-thumb-preview absolute inset-0 w-full h-full object-cover hidden" src="" alt="">
-                                                <div class="variant-placeholder flex flex-col items-center justify-center gap-0.5 text-slate-400 group-hover:text-indigo-500 transition-colors">
+                                                <img class="variant-thumb-preview absolute inset-0 w-full h-full object-cover hidden"
+                                                    src="" alt="">
+                                                <div
+                                                    class="variant-placeholder flex flex-col items-center justify-center gap-0.5 text-slate-400 group-hover:text-indigo-500 transition-colors">
                                                     <i class="fa-solid fa-image text-sm"></i>
-                                                    <span class="text-[7px] font-bold uppercase tracking-wide leading-none">Foto</span>
+                                                    <span
+                                                        class="text-[7px] font-bold uppercase tracking-wide leading-none">Foto</span>
                                                 </div>
-                                                <div class="variant-thumb-overlay absolute inset-0 bg-slate-900/45 flex items-center justify-center opacity-0 transition-opacity pointer-events-none">
+                                                <div
+                                                    class="variant-thumb-overlay absolute inset-0 bg-slate-900/45 flex items-center justify-center opacity-0 transition-opacity pointer-events-none">
                                                     <i class="fa-solid fa-pen text-white text-[10px]"></i>
                                                 </div>
                                                 <input type="file" name="variants[0][image]" accept="image/*"
                                                     class="sr-only variant-file-input" onchange="previewVariantImage(this)">
                                             </label>
-                                            <button type="button" onclick="removeVariantRow(this)"
-                                                class="hidden md:flex text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-all text-xs cursor-pointer shrink-0" title="Hapus varian">
-                                                <i class="fa-solid fa-trash-can"></i>
+                                            <button type="button"
+                                                class="variant-change-photo-btn hidden text-[10px] font-bold text-indigo-650 bg-indigo-50 hover:bg-indigo-100 px-2 py-1.5 rounded-lg border border-indigo-100 transition-all select-none cursor-pointer"
+                                                onclick="this.previousElementSibling.click()">
+                                                <i class="fa-solid fa-pen-to-square mr-1"></i>Ubah
                                             </button>
                                         </div>
+                                    </div>
+                                    <div class="hidden md:flex md:col-span-1 items-center justify-center">
+                                        <button type="button" onclick="removeVariantRow(this)"
+                                            class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-all text-xs cursor-pointer shrink-0"
+                                            title="Hapus varian">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -1195,13 +1242,13 @@
                             class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center text-[10px] text-slate-500 font-bold select-none border-t border-slate-100 pt-3 mt-3 shrink-0">
                             <span class="uppercase tracking-wider text-slate-400 text-[9px] shrink-0">Aksi Cepat:</span>
                             <div class="flex flex-wrap items-center gap-2">
-                            <button type="button" onclick="openVariantQuickActionModal('stock', false)"
-                                class="text-indigo-600 hover:text-indigo-850 hover:underline transition-all cursor-pointer">Sesuai
-                                Stok Semua</button>
-                            <span class="text-slate-300 hidden sm:inline">|</span>
-                            <button type="button" onclick="openVariantQuickActionModal('price', false)"
-                                class="text-indigo-600 hover:text-indigo-850 hover:underline transition-all cursor-pointer">Samakan
-                                Harga</button>
+                                <button type="button" onclick="openVariantQuickActionModal('stock', false)"
+                                    class="text-indigo-600 hover:text-indigo-850 hover:underline transition-all cursor-pointer">Sesuai
+                                    Stok Semua</button>
+                                <span class="text-slate-300 hidden sm:inline">|</span>
+                                <button type="button" onclick="openVariantQuickActionModal('price', false)"
+                                    class="text-indigo-600 hover:text-indigo-850 hover:underline transition-all cursor-pointer">Samakan
+                                    Harga</button>
                             </div>
                         </div>
                     </div>
@@ -1254,7 +1301,8 @@
                 @method('PUT')
                 <input type="hidden" name="redirect_url" value="{{ request()->fullUrl() }}">
                 <!-- Modal Body (Two columns on desktop, independent scroll, clean layout) -->
-                <div class="flex-1 min-h-0 overflow-y-auto thin-scrollbar overscroll-contain modal-touch-scroll md:overflow-hidden flex flex-col md:flex-row gap-5 md:gap-6">
+                <div
+                    class="flex-1 min-h-0 overflow-y-auto thin-scrollbar overscroll-contain modal-touch-scroll md:overflow-hidden flex flex-col md:flex-row gap-5 md:gap-6">
 
                     <!-- Left Column: Media & Info Dasar Cepat -->
                     <div
@@ -1424,7 +1472,8 @@
 
                     <!-- Right Column: Manajemen Varian -->
                     <div class="flex-1 flex flex-col min-h-0 min-w-0 md:overflow-hidden">
-                        <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between border-b border-slate-100 pb-3 shrink-0">
+                        <div
+                            class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between border-b border-slate-100 pb-3 shrink-0">
                             <div>
                                 <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wider">Manajemen Varian</h4>
                                 <p class="text-[10px] text-slate-400 mt-0.5">Input data stok dan harga per kombinasi varian.
@@ -1437,16 +1486,18 @@
                             </button>
                         </div>
 
-                        <div class="mt-3 md:flex-1 md:min-h-0 md:overflow-y-auto thin-scrollbar md:rounded-xl md:border md:border-slate-200 md:bg-white md:shadow-sm">
+                        <div
+                            class="mt-3 md:flex-1 md:min-h-0 md:overflow-y-auto thin-scrollbar md:rounded-xl md:border md:border-slate-200 md:bg-white md:shadow-sm">
                             <!-- Header (Desktop Only) -->
                             <div
                                 class="hidden md:grid md:grid-cols-12 gap-2 px-4 py-2.5 bg-slate-50 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-500 select-none sticky top-0 z-10">
                                 <div class="col-span-1 text-center">No</div>
                                 <div class="col-span-3">Ukuran</div>
                                 <div class="col-span-2">Warna</div>
-                                <div class="col-span-1 text-center">Stok *</div>
-                                <div class="col-span-3">Harga (Opsional)</div>
-                                <div class="col-span-2 text-center">Gambar</div>
+                                <div class="col-span-2 text-center">Stok *</div>
+                                <div class="col-span-2">Harga (Opsional)</div>
+                                <div class="col-span-1 text-center">Gambar</div>
+                                <div class="col-span-1 text-center">Aksi</div>
                             </div>
 
                             <!-- Body (Cards on Mobile, Grid Rows on Desktop) -->
@@ -1460,13 +1511,13 @@
                             class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center text-[10px] text-slate-500 font-bold select-none border-t border-slate-100 pt-3 mt-3 shrink-0">
                             <span class="uppercase tracking-wider text-slate-400 text-[9px] shrink-0">Aksi Cepat:</span>
                             <div class="flex flex-wrap items-center gap-2">
-                            <button type="button" onclick="openVariantQuickActionModal('stock', true)"
-                                class="text-indigo-600 hover:text-indigo-850 hover:underline transition-all cursor-pointer">Sesuai
-                                Stok Semua</button>
-                            <span class="text-slate-300 hidden sm:inline">|</span>
-                            <button type="button" onclick="openVariantQuickActionModal('price', true)"
-                                class="text-indigo-600 hover:text-indigo-850 hover:underline transition-all cursor-pointer">Samakan
-                                Harga</button>
+                                <button type="button" onclick="openVariantQuickActionModal('stock', true)"
+                                    class="text-indigo-600 hover:text-indigo-850 hover:underline transition-all cursor-pointer">Sesuai
+                                    Stok Semua</button>
+                                <span class="text-slate-300 hidden sm:inline">|</span>
+                                <button type="button" onclick="openVariantQuickActionModal('price', true)"
+                                    class="text-indigo-600 hover:text-indigo-850 hover:underline transition-all cursor-pointer">Samakan
+                                    Harga</button>
                             </div>
                         </div>
                     </div>
@@ -1614,19 +1665,22 @@
                 : '';
 
             return `
-                <label class="variant-image-upload group relative w-14 h-14 md:w-12 md:h-12 rounded-xl border-2 border-dashed border-slate-200 bg-gradient-to-br from-slate-50 to-white hover:border-indigo-300 hover:from-indigo-50/40 hover:to-white transition-all flex items-center justify-center cursor-pointer shrink-0 overflow-hidden shadow-sm ${hasImage ? 'has-image' : ''}" title="Pilih gambar varian">
-                    <img class="variant-thumb-preview absolute inset-0 w-full h-full object-cover ${hasImage ? '' : 'hidden'}" src="${imageSrc}" alt="">
-                    <div class="variant-placeholder flex flex-col items-center justify-center gap-0.5 text-slate-400 group-hover:text-indigo-500 transition-colors">
-                        <i class="fa-solid fa-image text-sm"></i>
-                        <span class="text-[7px] font-bold uppercase tracking-wide leading-none">Foto</span>
-                    </div>
-                    <div class="variant-thumb-overlay absolute inset-0 bg-slate-900/45 flex items-center justify-center opacity-0 transition-opacity pointer-events-none">
-                        <i class="fa-solid fa-pen text-white text-[10px]"></i>
-                    </div>
-                    <input type="file" name="variants[${index}][image]" accept="image/*" class="sr-only variant-file-input" onchange="previewVariantImage(this)">
-                    ${hiddenPathInput}
-                </label>
-            `;
+                    <label class="variant-image-upload group relative w-14 h-14 md:w-12 md:h-12 rounded-xl border-2 border-dashed border-slate-200 bg-gradient-to-br from-slate-50 to-white hover:border-indigo-300 hover:from-indigo-50/40 hover:to-white transition-all flex items-center justify-center cursor-pointer shrink-0 overflow-hidden shadow-sm ${hasImage ? 'has-image' : ''}" title="Pilih gambar varian">
+                        <img class="variant-thumb-preview absolute inset-0 w-full h-full object-cover ${hasImage ? '' : 'hidden'}" src="${imageSrc}" alt="">
+                        <div class="variant-placeholder flex flex-col items-center justify-center gap-0.5 text-slate-400 group-hover:text-indigo-500 transition-colors">
+                            <i class="fa-solid fa-image text-sm"></i>
+                            <span class="text-[7px] font-bold uppercase tracking-wide leading-none">Foto</span>
+                        </div>
+                        <div class="variant-thumb-overlay absolute inset-0 bg-slate-900/45 flex items-center justify-center opacity-0 transition-opacity pointer-events-none">
+                            <i class="fa-solid fa-pen text-white text-[10px]"></i>
+                        </div>
+                        <input type="file" name="variants[${index}][image]" accept="image/*" class="sr-only variant-file-input" onchange="previewVariantImage(this)">
+                        ${hiddenPathInput}
+                    </label>
+                    <button type="button" class="variant-change-photo-btn hidden text-[10px] font-bold text-indigo-650 bg-indigo-50 hover:bg-indigo-100 px-2 py-1.5 rounded-lg border border-indigo-100 transition-all select-none cursor-pointer" onclick="this.previousElementSibling.click()">
+                        <i class="fa-solid fa-pen-to-square mr-1"></i>Ubah
+                    </button>
+                `;
         }
 
         function variantRowClassName(baseClass) {
@@ -1647,53 +1701,62 @@
                 colorPlaceholder = 'Kuning',
                 defaultStock = 10,
             } = options;
-
             const removeFn = isEdit ? 'removeEditVariantRow' : 'removeVariantRow';
             const stockValue = stock !== undefined && stock !== '' ? stock : defaultStock;
             const priceValue = price !== undefined && price !== null ? price : '';
-            const fieldClass = 'w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 px-2.5 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all';
+            const stockWidth = Math.max(stockValue.toString().length + 4, 14);
+            const priceWidth = Math.max(priceValue.toString().length + 6, 14);
+            const fieldClass = 'max-w-full bg-slate-50 md:bg-white border border-slate-200 text-slate-700 px-2.5 py-2 md:py-1.5 rounded-xl md:rounded-lg text-base md:text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-300 focus:bg-white transition-all';
             const labelClass = 'block md:hidden text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1';
 
             return `
-                <div class="col-span-2 md:col-span-1 md:hidden flex items-center justify-between">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <span class="row-number inline-flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-50 text-indigo-700 text-[11px] font-bold shrink-0">${rowNumber}</span>
-                        <span class="variant-mobile-title text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">Varian #${rowNumber}</span>
+                    <div class="col-span-2 md:col-span-1 md:hidden flex items-center justify-between">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="row-number inline-flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-50 text-indigo-700 text-[11px] font-bold shrink-0">${rowNumber}</span>
+                            <span class="variant-mobile-title text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">Varian #${rowNumber}</span>
+                        </div>
+                        <button type="button" onclick="${removeFn}(this)" class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-lg transition-all cursor-pointer shrink-0" title="Hapus varian">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
                     </div>
-                    <button type="button" onclick="${removeFn}(this)" class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-lg transition-all cursor-pointer shrink-0" title="Hapus varian">
-                        <i class="fa-solid fa-trash-can text-xs"></i>
-                    </button>
-                </div>
-                <div class="hidden md:flex md:col-span-1 items-center justify-center text-slate-400 font-semibold text-xs row-number">${rowNumber}</div>
-                <div class="col-span-1 md:col-span-3">
-                    <label class="${labelClass}">Ukuran *</label>
-                    <input type="text" name="variants[${index}][size]" value="${size || ''}" placeholder="${sizePlaceholder}" required class="${fieldClass}">
-                </div>
-                <div class="col-span-1 md:col-span-2">
-                    <label class="${labelClass}">Warna</label>
-                    <input type="text" name="variants[${index}][color]" value="${color || ''}" placeholder="${colorPlaceholder}" class="${fieldClass}">
-                </div>
-                <div class="col-span-1 md:col-span-1">
-                    <label class="${labelClass}">Stok *</label>
-                    <input type="number" name="variants[${index}][stock]" value="${stockValue}" min="0" required class="${fieldClass} md:max-w-[4.25rem] md:mx-auto text-center tabular-nums">
-                </div>
-                <div class="col-span-1 md:col-span-3">
-                    <label class="${labelClass}">Harga</label>
-                    <div class="relative flex items-center">
-                        <span class="absolute left-2.5 text-[9px] font-bold text-slate-400 select-none uppercase">IDR</span>
-                        <input type="number" name="variants[${index}][price]" value="${priceValue}" placeholder="Default" min="0" step="any" class="${fieldClass} pl-8 pr-3 tabular-nums">
+                    <div class="hidden md:flex md:col-span-1 items-center justify-center text-slate-400 font-semibold text-xs row-number">${rowNumber}</div>
+                    <div class="col-span-1 md:col-span-3">
+                        <label class="${labelClass}">Ukuran *</label>
+                        <input type="text" name="variants[${index}][size]" value="${size || ''}" placeholder="${sizePlaceholder}" required class="${fieldClass} w-full">
                     </div>
-                </div>
-                <div class="col-span-2 md:col-span-2">
-                    <label class="${labelClass}">Gambar Varian</label>
-                    <div class="flex items-center gap-2 md:gap-1.5 justify-start">
-                        ${variantImageUploadMarkup(index, imagePath)}
-                        <button type="button" onclick="${removeFn}(this)" class="hidden md:flex text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-all text-xs cursor-pointer shrink-0" title="Hapus varian">
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="${labelClass}">Warna</label>
+                        <input type="text" name="variants[${index}][color]" value="${color || ''}" placeholder="${colorPlaceholder}" class="${fieldClass} w-full">
+                    </div>
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="${labelClass}">Stok *</label>
+                        <input type="number" name="variants[${index}][stock]" value="${stockValue}" min="0" required 
+                               style="width: ${stockWidth}ch"
+                               oninput="adjustStockWidth(this)"
+                               class="${fieldClass} md:mx-auto text-left md:text-center tabular-nums">
+                    </div>
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="${labelClass}">Harga</label>
+                        <div class="relative flex items-center">
+                            <span class="absolute left-2.5 text-[9px] font-bold text-slate-400 select-none uppercase">IDR</span>
+                            <input type="number" name="variants[${index}][price]" value="${priceValue}" placeholder="Harga Utama" min="0" step="any" 
+                                   style="width: ${priceWidth}ch"
+                                   oninput="adjustPriceWidth(this)"
+                                   class="${fieldClass} pl-8 pr-3 tabular-nums">
+                        </div>
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="${labelClass}">Gambar Varian</label>
+                        <div class="flex items-center gap-2 md:gap-1.5 justify-start">
+                            ${variantImageUploadMarkup(index, imagePath)}
+                        </div>
+                    </div>
+                    <div class="hidden md:flex md:col-span-1 items-center justify-center">
+                        <button type="button" onclick="${removeFn}(this)" class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-all text-xs cursor-pointer shrink-0" title="Hapus varian">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
-                </div>
-            `;
+                `;
         }
 
         // Open Add Modal with animation
@@ -1771,18 +1834,18 @@
                     const imgDiv = document.createElement('div');
                     imgDiv.className = 'relative bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden aspect-square flex flex-col justify-between p-1.5';
                     imgDiv.innerHTML = `
-                        <div class="relative flex-1 rounded-xl overflow-hidden bg-slate-50">
-                            <img src="/storage/${img.image_path}" alt="" class="w-full h-full object-cover rounded-xl" 
-                                 onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
-                            <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
-                                <i class="fa-regular fa-image text-lg"></i>
+                            <div class="relative flex-1 rounded-xl overflow-hidden bg-slate-50">
+                                <img src="/storage/${img.image_path}" alt="" class="w-full h-full object-cover rounded-xl" 
+                                     onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                                <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
+                                    <i class="fa-regular fa-image text-lg"></i>
+                                </div>
                             </div>
-                        </div>
-                        <label class="flex items-center justify-center gap-1 mt-1 cursor-pointer select-none">
-                            <input type="checkbox" name="delete_images[]" value="${img.id}" onchange="toggleExistingImageStrike(this)" class="rounded text-rose-600 focus:ring-rose-400 w-3 h-3 border-slate-355 cursor-pointer">
-                            <span class="text-[9px] font-bold text-rose-600 uppercase tracking-wider">Hapus</span>
-                        </label>
-                    `;
+                            <label class="flex items-center justify-center gap-1 mt-1 cursor-pointer select-none">
+                                <input type="checkbox" name="delete_images[]" value="${img.id}" onchange="toggleExistingImageStrike(this)" class="rounded text-rose-600 focus:ring-rose-400 w-3 h-3 border-slate-355 cursor-pointer">
+                                <span class="text-[9px] font-bold text-rose-600 uppercase tracking-wider">Hapus</span>
+                            </label>
+                        `;
                     existingImagesList.appendChild(imgDiv);
                 });
             }
@@ -1901,14 +1964,14 @@
                     const imgDiv = document.createElement('div');
                     imgDiv.className = 'relative bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden aspect-square flex flex-col justify-between p-1.5';
                     imgDiv.innerHTML = `
-                        <div class="relative flex-1 rounded-xl overflow-hidden bg-slate-50">
-                            <img src="${e.target.result}" alt="" class="w-full h-full object-cover rounded-xl" />
-                        </div>
-                        <button type="button" onclick="removeQueuedFile(${index}, ${isEdit})" class="flex items-center justify-center gap-1 mt-1 cursor-pointer select-none text-[9px] font-bold text-rose-600 uppercase hover:text-rose-800 tracking-wider">
-                            <i class="fa-solid fa-trash-can text-[8px]"></i>
-                            <span>Batal</span>
-                        </button>
-                    `;
+                            <div class="relative flex-1 rounded-xl overflow-hidden bg-slate-50">
+                                <img src="${e.target.result}" alt="" class="w-full h-full object-cover rounded-xl" />
+                            </div>
+                            <button type="button" onclick="removeQueuedFile(${index}, ${isEdit})" class="flex items-center justify-center gap-1 mt-1 cursor-pointer select-none text-[9px] font-bold text-rose-600 uppercase hover:text-rose-800 tracking-wider">
+                                <i class="fa-solid fa-trash-can text-[8px]"></i>
+                                <span>Batal</span>
+                            </button>
+                        `;
                     list.appendChild(imgDiv);
                 }
                 reader.readAsDataURL(file);
@@ -1974,7 +2037,19 @@
             @elseif($errors->any() || request('add'))
                 openProductModal();
             @endif
-        });
+            });
+
+        function adjustStockWidth(input) {
+            if (!input) return;
+            const len = input.value ? input.value.toString().length : 0;
+            input.style.width = Math.max(len + 4, 14) + 'ch';
+        }
+
+        function adjustPriceWidth(input) {
+            if (!input) return;
+            const len = input.value ? input.value.toString().length : 0;
+            input.style.width = Math.max(len + 6, 14) + 'ch';
+        }
 
         let variantIndex = 1;     // Add a new row to variants table (Add modal)
         function addVariantRow() {
@@ -2136,7 +2211,10 @@
                 }
                 rows.forEach(row => {
                     const input = row.querySelector('input[name*="[stock]"]');
-                    if (input) input.value = num;
+                    if (input) {
+                        input.value = num;
+                        adjustStockWidth(input);
+                    }
                 });
             } else {
                 let priceValue = rawValue;
@@ -2145,7 +2223,10 @@
                 }
                 rows.forEach(row => {
                     const input = row.querySelector('input[name*="[price]"]');
-                    if (input) input.value = priceValue;
+                    if (input) {
+                        input.value = priceValue;
+                        adjustPriceWidth(input);
+                    }
                 });
             }
 
@@ -2518,18 +2599,18 @@
                     const thumb = document.createElement('button');
                     thumb.type = 'button';
                     thumb.className = `aspect-square rounded-xl border overflow-hidden bg-slate-50 relative cursor-pointer focus:outline-none transition-all ${index === 0 ? 'border-indigo-500 ring-2 ring-indigo-400/20' : 'border-slate-200 hover:border-slate-400'}`;
-                    
-                    const labelBadge = img.label 
+
+                    const labelBadge = img.label
                         ? `<div class="absolute bottom-0 inset-x-0 bg-slate-900/65 text-[7px] font-bold text-white uppercase tracking-wider py-0.5 px-1 truncate" title="${img.label}">${img.label}</div>`
                         : '';
 
                     thumb.innerHTML = `
-                        <img src="/storage/${img.image_path}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
-                        <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
-                            <i class="fa-regular fa-image text-xs"></i>
-                        </div>
-                        ${labelBadge}
-                    `;
+                            <img src="/storage/${img.image_path}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                            <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
+                                <i class="fa-regular fa-image text-xs"></i>
+                            </div>
+                            ${labelBadge}
+                        `;
                     thumb.onclick = () => {
                         mainImg.src = '/storage/' + img.image_path;
                         mainImg.classList.remove('hidden');
@@ -2560,20 +2641,20 @@
                     let imgMarkup = '';
                     if (variant.image_path) {
                         imgMarkup = `
-                            <div class="w-8 h-8 rounded-lg border border-slate-200 overflow-hidden bg-slate-50 cursor-pointer hover:border-indigo-400 transition-colors relative" 
-                                 onclick="document.getElementById('detail-main-img').src = '/storage/${variant.image_path}'; document.getElementById('detail-main-img').classList.remove('hidden'); document.getElementById('detail-img-fallback').classList.add('hidden');">
-                                <img src="/storage/${variant.image_path}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
-                                <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
-                                    <i class="fa-regular fa-image text-[10px]"></i>
+                                <div class="w-8 h-8 rounded-lg border border-slate-200 overflow-hidden bg-slate-50 cursor-pointer hover:border-indigo-400 transition-colors relative" 
+                                     onclick="document.getElementById('detail-main-img').src = '/storage/${variant.image_path}'; document.getElementById('detail-main-img').classList.remove('hidden'); document.getElementById('detail-img-fallback').classList.add('hidden');">
+                                    <img src="/storage/${variant.image_path}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                                    <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
+                                        <i class="fa-regular fa-image text-[10px]"></i>
+                                    </div>
                                 </div>
-                            </div>
-                        `;
+                            `;
                     } else {
                         imgMarkup = `
-                            <div class="w-8 h-8 rounded-lg border border-slate-150 bg-slate-50 flex items-center justify-center text-slate-400 select-none">
-                                <i class="fa-regular fa-image text-xs"></i>
-                            </div>
-                        `;
+                                <div class="w-8 h-8 rounded-lg border border-slate-150 bg-slate-50 flex items-center justify-center text-slate-400 select-none">
+                                    <i class="fa-regular fa-image text-xs"></i>
+                                </div>
+                            `;
                     }
 
                     // Variant Price Markup
@@ -2587,17 +2668,17 @@
                         : `<span class="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block mr-1.5"></span>`;
 
                     tr.innerHTML = `
-                        <td class="py-2.5 px-3">${imgMarkup}</td>
-                        <td class="py-2.5 px-3 font-bold text-slate-700">${variant.size || '-'}</td>
-                        <td class="py-2.5 px-3 text-slate-655 font-medium">${variant.color || '-'}</td>
-                        <td class="py-2.5 px-3">${priceMarkup}</td>
-                        <td class="py-2.5 px-3 font-bold text-slate-700">
-                            <div class="flex items-center">
-                                ${stockDot}
-                                <span>${variant.stock}</span>
-                            </div>
-                        </td>
-                    `;
+                            <td class="py-2.5 px-3">${imgMarkup}</td>
+                            <td class="py-2.5 px-3 font-bold text-slate-700">${variant.size || '-'}</td>
+                            <td class="py-2.5 px-3 text-slate-655 font-medium">${variant.color || '-'}</td>
+                            <td class="py-2.5 px-3">${priceMarkup}</td>
+                            <td class="py-2.5 px-3 font-bold text-slate-700">
+                                <div class="flex items-center">
+                                    ${stockDot}
+                                    <span>${variant.stock}</span>
+                                </div>
+                            </td>
+                        `;
                     variantsBody.appendChild(tr);
                 });
             } else {

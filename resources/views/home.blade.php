@@ -373,13 +373,36 @@
                 <div class="grow rounded-2xl overflow-hidden relative">
                     @if($storeMapIframe)
                         <iframe 
-                            src="{{ $storeMapIframe }}" 
-                            class="w-full h-full rounded-2xl border-0" 
+                            data-src="{{ $storeMapIframe }}" 
+                            class="w-full h-full rounded-2xl border-0 lazy-map-iframe" 
                             title="Peta Lokasi Toko Berkah Mulia"
                             allowfullscreen="" 
                             loading="lazy" 
                             referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                let mapLoaded = false;
+                                function loadMap() {
+                                    if (mapLoaded) return;
+                                    mapLoaded = true;
+                                    const iframe = document.querySelector('.lazy-map-iframe');
+                                    if (iframe) {
+                                        const src = iframe.getAttribute('data-src');
+                                        if (src) {
+                                            iframe.setAttribute('src', src);
+                                        }
+                                    }
+                                    window.removeEventListener('scroll', loadMap);
+                                    document.removeEventListener('mousemove', loadMap);
+                                    document.removeEventListener('touchstart', loadMap);
+                                }
+                                window.addEventListener('scroll', loadMap, { passive: true });
+                                document.addEventListener('mousemove', loadMap, { passive: true });
+                                document.addEventListener('touchstart', loadMap, { passive: true });
+                                setTimeout(loadMap, 4000);
+                            });
+                        </script>
                     @else
                         <div class="w-full h-full rounded-2xl bg-slate-50 flex flex-col items-center justify-center text-slate-400">
                             <i class="fa-solid fa-map-marked-alt text-4xl mb-2"></i>

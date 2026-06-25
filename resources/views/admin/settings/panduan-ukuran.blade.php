@@ -57,8 +57,24 @@
             </button>
         </div>
 
+        <!-- Toggle View (Mobile Only) -->
+        <div class="flex sm:hidden justify-end mb-4">
+            <div class="inline-flex rounded-xl p-0.5 bg-slate-100 border border-slate-200">
+                <button type="button" onclick="setViewMode('grid')" id="btn-view-grid"
+                        class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 bg-white text-indigo-600 shadow-sm">
+                    <i class="fa-solid fa-grip text-[10px]"></i>
+                    <span>Grid</span>
+                </button>
+                <button type="button" onclick="setViewMode('table')" id="btn-view-table"
+                        class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 text-slate-500 hover:text-slate-700">
+                    <i class="fa-solid fa-table text-[10px]"></i>
+                    <span>Tabel</span>
+                </button>
+            </div>
+        </div>
+
         <!-- Size Guide Table (Desktop) -->
-        <div class="hidden sm:block overflow-x-auto rounded-xl border border-slate-200 mb-5">
+        <div id="size-guide-table-container" class="hidden sm:block overflow-x-auto rounded-xl border border-slate-200 mb-5">
             <table class="min-w-full text-sm" id="size-guide-table">
                 <thead>
                     <tr class="border-b border-slate-100 text-xs font-semibold text-slate-500 text-left">
@@ -92,6 +108,36 @@
         </div>
     </div>
 </form>
+
+<!-- Custom Confirm Delete Column Modal -->
+<div id="delete-column-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity animate-fade-in" onclick="closeDeleteColumnModal()"></div>
+    
+    <!-- Modal Content -->
+    <div class="relative z-10 bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-all duration-300 ease-out flex flex-col items-center text-center">
+        <!-- Warning Icon -->
+        <div class="w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center mb-3">
+            <i class="fa-solid fa-triangle-exclamation text-rose-500 text-lg"></i>
+        </div>
+        
+        <h3 class="text-sm font-bold text-slate-800 mb-2">Hapus Kolom</h3>
+        <p class="text-[11px] text-slate-500 leading-relaxed px-2">
+            Apakah Anda yakin ingin menghapus kolom ini? Seluruh data dalam kolom ini akan ikut terhapus di setiap baris.
+        </p>
+        
+        <div class="flex gap-2 w-full mt-5">
+            <button type="button" onclick="closeDeleteColumnModal()" 
+                    class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-2 rounded-lg text-xs transition-all cursor-pointer">
+                Batal
+            </button>
+            <button type="button" onclick="confirmDeleteColumn()"
+                    class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 rounded-lg text-xs transition-all cursor-pointer">
+                Ya, Hapus
+            </button>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -141,7 +187,7 @@
             theadTr.appendChild(th);
         });
         const thAction = document.createElement('th');
-        thAction.className = 'py-3 px-4 w-16 text-center text-xs font-semibold text-slate-500';
+        thAction.className = 'py-3 px-4 w-16 min-w-[64px] text-center text-xs font-semibold text-slate-500';
         thAction.textContent = 'Aksi';
         theadTr.appendChild(thAction);
 
@@ -157,17 +203,19 @@
                 const cellVal = row[colIndex] || '';
                 const td = document.createElement('td');
                 td.className = 'py-2.5 px-4';
+                const widthCh = Math.max(cellVal.length + 3, 12);
                 td.innerHTML = `
                     <input type="text" name="rows[${rowIndex}][]" value="${escapeHtml(cellVal)}" required
-                           class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
+                           style="width: ${widthCh}ch"
+                           class="border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
                            placeholder="Isi data..."
-                           oninput="updateCellValue(${rowIndex}, ${colIndex}, this.value)">
+                           oninput="updateCellValue(${rowIndex}, ${colIndex}, this.value); adjustInputWidth(this)">
                 `;
                 tr.appendChild(td);
             });
 
             const tdAction = document.createElement('td');
-            tdAction.className = 'py-2.5 px-4 text-center';
+            tdAction.className = 'py-2.5 px-4 text-center min-w-[64px]';
             tdAction.innerHTML = `
                 <button type="button" onclick="removeRow(${rowIndex})" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-1.5 rounded-lg transition-all cursor-pointer">
                     <i class="fa-solid fa-trash-can text-xs"></i>
@@ -191,7 +239,7 @@
                 fieldsHtml += `
                     <div>
                         <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 col-label-${colIndex}">${escapeHtml(columnName)}</label>
-                        <input type="text" name="rows[${rowIndex}][]" value="${escapeHtml(cellVal)}" required
+                         <input type="text" value="${escapeHtml(cellVal)}" required
                                class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all bg-white"
                                placeholder="Isi data..."
                                oninput="updateCellValue(${rowIndex}, ${colIndex}, this.value)">
@@ -223,6 +271,12 @@
         });
     }
 
+    function adjustInputWidth(input) {
+        if (!input) return;
+        const len = input.value ? input.value.length : 0;
+        input.style.width = Math.max(len + 3, 12) + 'ch';
+    }
+
     function updateCellValue(rowIndex, colIndex, value) {
         // Ensure rows entry exists and has enough length
         if (!state.rows[rowIndex]) {
@@ -235,6 +289,7 @@
         const rowInputs = document.querySelectorAll(`#size-guide-body tr:nth-child(${rowIndex + 1}) input`);
         if (rowInputs[colIndex] && rowInputs[colIndex].value !== value) {
             rowInputs[colIndex].value = value;
+            adjustInputWidth(rowInputs[colIndex]);
         }
         const cardInputs = document.querySelectorAll(`#size-guide-mobile > div:nth-child(${rowIndex + 1}) input`);
         if (cardInputs[colIndex] && cardInputs[colIndex].value !== value) {
@@ -256,20 +311,42 @@
         }
     }
 
+    let pendingDeleteColIndex = null;
+
     function removeColumn(colIndex) {
         if (state.columns.length <= 1) {
             alert('Minimal harus ada 1 kolom.');
             return;
         }
-        if (!confirm('Apakah Anda yakin ingin menghapus kolom ini? Seluruh data dalam kolom ini akan ikut terhapus di setiap baris.')) {
-            return;
+        pendingDeleteColIndex = colIndex;
+        openDeleteColumnModal();
+    }
+
+    function openDeleteColumnModal() {
+        const modal = document.getElementById('delete-column-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
         }
-        
-        state.columns.splice(colIndex, 1);
-        state.rows.forEach(row => {
-            row.splice(colIndex, 1);
-        });
-        renderTable();
+    }
+
+    function closeDeleteColumnModal() {
+        const modal = document.getElementById('delete-column-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+        pendingDeleteColIndex = null;
+    }
+
+    function confirmDeleteColumn() {
+        if (pendingDeleteColIndex !== null) {
+            const colIndex = pendingDeleteColIndex;
+            state.columns.splice(colIndex, 1);
+            state.rows.forEach(row => {
+                row.splice(colIndex, 1);
+            });
+            renderTable();
+            closeDeleteColumnModal();
+        }
     }
 
     function addRow() {
@@ -294,6 +371,31 @@
         }
         state.rows.splice(rowIndex, 1);
         renderTable();
+    }
+
+    let currentViewMode = 'grid'; // default on mobile
+    function setViewMode(mode) {
+        currentViewMode = mode;
+        const gridBtn = document.getElementById('btn-view-grid');
+        const tableBtn = document.getElementById('btn-view-table');
+        const tableContainer = document.getElementById('size-guide-table-container');
+        const mobileContainer = document.getElementById('size-guide-mobile');
+
+        if (!gridBtn || !tableBtn || !tableContainer || !mobileContainer) return;
+
+        if (mode === 'grid') {
+            gridBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 bg-white text-indigo-600 shadow-sm";
+            tableBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 text-slate-500 hover:text-slate-700";
+            
+            tableContainer.className = "hidden sm:block overflow-x-auto rounded-xl border border-slate-200 mb-5";
+            mobileContainer.className = "sm:hidden space-y-3 mb-5";
+        } else {
+            gridBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 text-slate-500 hover:text-slate-700";
+            tableBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 bg-white text-indigo-600 shadow-sm";
+            
+            tableContainer.className = "block overflow-x-auto rounded-xl border border-slate-200 mb-5";
+            mobileContainer.className = "hidden";
+        }
     }
 
     // Initial load
