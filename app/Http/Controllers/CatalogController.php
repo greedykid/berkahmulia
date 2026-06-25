@@ -46,6 +46,7 @@ class CatalogController extends Controller
                         'name' => $prod->name,
                         'slug' => $prod->slug,
                         'price' => $prod->price,
+                        'formatted_price' => $prod->formatted_price,
                         'status' => $prod->status,
                         'sku' => $prod->sku,
                         'category' => [
