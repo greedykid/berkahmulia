@@ -6,6 +6,24 @@
 @section('canonical_url', route('catalog.show', $product->slug))
 
 @section('content')
+@php
+    $galleryImages = collect();
+    foreach($product->images as $img) {
+        $galleryImages->push([
+            'url' => asset('storage/' . $img->image_path),
+            'path' => $img->image_path,
+        ]);
+    }
+    $uniqueVariantImages = $product->variants->whereNotNull('image_path')->unique('image_path');
+    foreach($uniqueVariantImages as $variant) {
+        if (!$galleryImages->contains('path', $variant->image_path)) {
+            $galleryImages->push([
+                'url' => asset('storage/' . $variant->image_path),
+                'path' => $variant->image_path,
+            ]);
+        }
+    }
+@endphp
 <div class="bg-slate-50 border-b border-slate-100 py-3">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav class="flex text-xs text-slate-400 mb-2 gap-2">
@@ -54,7 +72,7 @@
                     </div>
 
                     <!-- Left/Right Carousel Controls -->
-                    @if($product->images->count() > 1)
+                    @if($galleryImages->count() > 1)
                         <button type="button" onclick="event.stopPropagation(); prevImage();" 
                                 class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white text-slate-800 w-10 h-10 rounded-full shadow-md flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:scale-110 active:scale-95 transition-all duration-200 z-10 cursor-pointer"
                                 aria-label="Gambar sebelumnya">
@@ -75,12 +93,12 @@
                 </div>
 
                 <!-- Gallery Thumbnails -->
-                @if($product->images->count() > 1)
+                @if($galleryImages->count() > 1)
                     <div id="gallery-thumbnails" class="flex gap-3 overflow-x-auto pb-1 no-scrollbar">
-                        @foreach($product->images as $index => $img)
-                            <button type="button" onclick="changeImage('{{ asset('storage/' . $img->image_path) }}', this)"
+                        @foreach($galleryImages as $index => $img)
+                            <button type="button" onclick="changeImage('{{ $img['url'] }}', this)"
                                     class="w-20 h-20 rounded-xl border-2 border-slate-100 overflow-hidden shrink-0 focus:outline-none transition-all relative {{ $index === 0 ? 'thumbnail-active' : '' }}">
-                                <img src="{{ asset('storage/' . $img->image_path) }}" alt="Preview" width="80" height="80" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
+                                <img src="{{ $img['url'] }}" alt="Preview" width="80" height="80" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.replace('hidden', 'flex');">
                                 <div class="hidden absolute inset-0 items-center justify-center bg-slate-100 text-slate-400">
                                     <i class="fa-regular fa-image text-lg"></i>
                                 </div>
@@ -109,7 +127,7 @@
                     </h1>
 
                     <!-- Price -->
-                    <p class="text-2xl font-extrabold text-primary-500 mb-6">
+                    <p id="product-price-display" class="text-2xl font-extrabold text-primary-500 mb-6">
                         Rp {{ number_format($product->price, 0, ',', '.') }}
                     </p>
 
@@ -404,8 +422,8 @@
     const productImage = "{{ $product->images->isNotEmpty() ? $product->images->first()->image_path : '' }}";
 
     const productImages = [
-        @foreach($product->images as $img)
-            "{{ asset('storage/' . $img->image_path) }}",
+        @foreach($galleryImages as $img)
+            "{{ $img['url'] }}",
         @endforeach
     ];
     let currentImageIndex = 0;
@@ -508,6 +526,8 @@
         
         let stock = 0;
         let variantFound = false;
+        let currentPrice = productPrice;
+        let variantImage = null;
 
         // Search for matching variant in list
         if (sizeSelected && colorSelected) {
@@ -520,6 +540,60 @@
             if (match) {
                 stock = match.stock;
                 variantFound = true;
+                if (match.price !== null && match.price !== undefined) {
+                    currentPrice = parseFloat(match.price);
+                }
+                if (match.image_path) {
+                    variantImage = '/storage/' + match.image_path;
+                }
+            }
+        }
+
+        // Update displayed price based on selected variant custom price
+        const priceDisplay = document.getElementById('product-price-display');
+        if (priceDisplay) {
+            priceDisplay.textContent = 'Rp ' + formatRupiah(currentPrice);
+        }
+
+        // Update variant image if set
+        const mainImg = document.getElementById('main-image');
+        if (mainImg) {
+            if (variantImage) {
+                mainImg.src = variantImage;
+                
+                // Sync thumbnail active class when variant image is loaded
+                const idx = productImages.findIndex(img => img.endsWith(variantImage));
+                if (idx !== -1) {
+                    currentImageIndex = idx;
+                    const thumbnailContainer = document.getElementById('gallery-thumbnails');
+                    if (thumbnailContainer) {
+                        const thumbnails = thumbnailContainer.children;
+                        for (let i = 0; i < thumbnails.length; i++) {
+                            if (i === currentImageIndex) {
+                                thumbnails[i].classList.add('thumbnail-active');
+                                thumbnails[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+                            } else {
+                                thumbnails[i].classList.remove('thumbnail-active');
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Fallback to active gallery thumbnail image
+                mainImg.src = productImages[currentImageIndex] || (productImage ? '/storage/' + productImage : '');
+                
+                // Sync thumbnail active class when falling back
+                const thumbnailContainer = document.getElementById('gallery-thumbnails');
+                if (thumbnailContainer) {
+                    const thumbnails = thumbnailContainer.children;
+                    for (let i = 0; i < thumbnails.length; i++) {
+                        if (i === currentImageIndex) {
+                            thumbnails[i].classList.add('thumbnail-active');
+                        } else {
+                            thumbnails[i].classList.remove('thumbnail-active');
+                        }
+                    }
+                }
             }
         }
 
@@ -659,12 +733,14 @@
             } else {
                 cart[existingIndex].qty = newQty;
             }
+            // Update cart item price to use current variant price
+            cart[existingIndex].price = match && match.price !== null && match.price !== undefined ? parseFloat(match.price) : productPrice;
         } else {
             const newItem = {
                 id: productId,
                 name: productName,
                 qty: qtyToAdd,
-                price: productPrice,
+                price: match && match.price !== null && match.price !== undefined ? parseFloat(match.price) : productPrice,
                 size: sizeVal,
                 color: colorVal,
                 sku: productSku,
@@ -756,7 +832,7 @@
     </button>
     
     <!-- Lightbox Left/Right Controls -->
-    @if($product->images->count() > 1)
+    @if($galleryImages->count() > 1)
         <button type="button" onclick="event.stopPropagation(); prevLightboxImage();" 
                 class="absolute left-6 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 z-101 cursor-pointer"
                 aria-label="Gambar sebelumnya">

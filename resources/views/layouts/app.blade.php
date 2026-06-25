@@ -1014,6 +1014,7 @@
 
             const stockIndicator = document.getElementById("quick-stock-indicator");
             const submitBtn = document.getElementById("quick-add-submit-btn");
+            const quickImg = document.getElementById("quick-product-image");
 
             if (sizeSelected && colorSelected) {
                 const sizeVal = quickSelectedSize || '-';
@@ -1027,6 +1028,18 @@
 
                 if (match) {
                     const stock = match.stock;
+                    let currentPrice = quickProduct.price;
+                    if (match.price !== null && match.price !== undefined) {
+                        currentPrice = parseFloat(match.price);
+                    }
+                    document.getElementById("quick-product-price").textContent = "Rp " + formatRupiah(currentPrice);
+
+                    if (match.image_path) {
+                        quickImg.src = "/storage/" + match.image_path;
+                    } else {
+                        quickImg.src = quickProduct.image ? "/storage/" + quickProduct.image : '';
+                    }
+
                     if (stock > 0) {
                         stockIndicator.innerHTML = `<span class="text-emerald-600 font-bold"><i class="fa-solid fa-circle-check mr-1"></i>Stok: ${stock} pcs</span>`;
                         submitBtn.disabled = false;
@@ -1037,11 +1050,15 @@
                         submitBtn.classList.add("opacity-50", "pointer-events-none");
                     }
                 } else {
+                    document.getElementById("quick-product-price").textContent = "Rp " + formatRupiah(quickProduct.price);
+                    quickImg.src = quickProduct.image ? "/storage/" + quickProduct.image : '';
                     stockIndicator.innerHTML = `<span class="text-amber-500 font-semibold"><i class="fa-solid fa-circle-exclamation mr-1"></i>Tidak Tersedia</span>`;
                     submitBtn.disabled = true;
                     submitBtn.classList.add("opacity-50", "pointer-events-none");
                 }
             } else {
+                document.getElementById("quick-product-price").textContent = "Rp " + formatRupiah(quickProduct.price);
+                quickImg.src = quickProduct.image ? "/storage/" + quickProduct.image : '';
                 stockIndicator.innerHTML = `<span class="text-slate-400 font-medium">Pilih varian...</span>`;
                 submitBtn.disabled = true;
                 submitBtn.classList.add("opacity-50", "pointer-events-none");
@@ -1092,12 +1109,14 @@
                 } else {
                     cart[existingIndex].qty = newQty;
                 }
+                // Update cart item price to use current variant price
+                cart[existingIndex].price = match && match.price !== null && match.price !== undefined ? parseFloat(match.price) : quickProduct.price;
             } else {
                 const newItem = {
                     id: quickProduct.id,
                     name: quickProduct.name,
                     qty: qtyToAdd,
-                    price: quickProduct.price,
+                    price: match && match.price !== null && match.price !== undefined ? parseFloat(match.price) : quickProduct.price,
                     size: sizeVal,
                     color: colorVal,
                     sku: quickProduct.sku,

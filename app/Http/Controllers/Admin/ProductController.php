@@ -119,13 +119,23 @@ class ProductController extends Controller
 
         // Save variants
         if ($request->has('variants')) {
-            foreach ($request->variants as $variantData) {
+            foreach ($request->variants as $index => $variantData) {
                 if (!empty($variantData['size']) || !empty($variantData['color'])) {
+                    $variantImagePath = null;
+                    if ($request->hasFile("variants.{$index}.image")) {
+                        $variantImageFile = $request->file("variants.{$index}.image");
+                        if ($variantImageFile->isValid()) {
+                            $variantImagePath = ImageHelper::storeCompressed($variantImageFile, 'products');
+                        }
+                    }
+
                     ProductVariant::create([
                         'product_id' => $product->id,
                         'size' => $variantData['size'],
                         'color' => $variantData['color'],
                         'stock' => $variantData['stock'],
+                        'price' => !empty($variantData['price']) ? $variantData['price'] : null,
+                        'image_path' => $variantImagePath,
                     ]);
                 }
             }
@@ -190,13 +200,25 @@ class ProductController extends Controller
         // Re-sync variants: Delete existing ones and create the new set
         $product->variants()->delete();
         if ($request->has('variants')) {
-            foreach ($request->variants as $variantData) {
+            foreach ($request->variants as $index => $variantData) {
                 if (!empty($variantData['size']) || !empty($variantData['color'])) {
+                    $variantImagePath = null;
+                    if ($request->hasFile("variants.{$index}.image")) {
+                        $variantImageFile = $request->file("variants.{$index}.image");
+                        if ($variantImageFile->isValid()) {
+                            $variantImagePath = ImageHelper::storeCompressed($variantImageFile, 'products');
+                        }
+                    } elseif (!empty($variantData['image_path'])) {
+                        $variantImagePath = $variantData['image_path'];
+                    }
+
                     ProductVariant::create([
                         'product_id' => $product->id,
                         'size' => $variantData['size'],
                         'color' => $variantData['color'],
                         'stock' => $variantData['stock'],
+                        'price' => !empty($variantData['price']) ? $variantData['price'] : null,
+                        'image_path' => $variantImagePath,
                     ]);
                 }
             }
