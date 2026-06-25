@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Beranda')
+@section('meta_description', 'Toko Berkah Mulia - Pusat grosir & eceran pakaian bayi, anak-anak, dan underwear berkualitas premium dengan harga terjangkau di Depok.')
 @section('canonical_url', route('home'))
 
 @section('content')
@@ -331,39 +332,91 @@
         $storeMapLink = \App\Models\Setting::get('store_map_link', 'https://maps.app.goo.gl/mYnJQ52kxqzy784y8');
         $storeImage = \App\Models\Setting::get('store_image');
         $storeImagePath = $storeImage ? asset('storage/' . $storeImage) : asset('storefront_location.webp');
+
+        // 1. Store Schema
+        $storeSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Store',
+            'name' => 'Berkah Mulia',
+            'image' => asset('logo.webp'),
+            '@id' => route('home'),
+            'url' => route('home'),
+            'telephone' => $storePhone,
+            'address' => [
+                '@type' => 'PostalAddress',
+                'streetAddress' => $storeAddress,
+                'addressLocality' => 'Depok',
+                'addressRegion' => 'Jawa Barat',
+                'addressCountry' => 'ID',
+            ],
+            'openingHoursSpecification' => [
+                '@type' => 'OpeningHoursSpecification',
+                'dayOfWeek' => [
+                    'Monday',
+                    'Tuesday',
+                    'Wednesday',
+                    'Thursday',
+                    'Friday',
+                    'Saturday',
+                ],
+                'opens' => '08:00',
+                'closes' => '17:00',
+            ],
+        ];
+
+        // 2. WebSite Schema for Sitelinks Search Box
+        $websiteSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            'name' => 'Berkah Mulia',
+            'url' => route('home'),
+            'potentialAction' => [
+                '@type' => 'SearchAction',
+                'target' => route('catalog.index') . '?search={search_term_string}',
+                'query-input' => 'required name=search_term_string',
+            ],
+        ];
+
+        // 3. Organization Schema for Knowledge Graph
+        $instagramUrl = \App\Models\Setting::get('instagram_url', '');
+        $tiktokUrl = \App\Models\Setting::get('tiktok_url', '');
+        $shopeeUrl = \App\Models\Setting::get('shopee_url', '');
+        
+        $sameAs = [];
+        if (!empty($instagramUrl)) $sameAs[] = $instagramUrl;
+        if (!empty($tiktokUrl)) $sameAs[] = $tiktokUrl;
+        if (!empty($shopeeUrl)) $sameAs[] = $shopeeUrl;
+
+        $orgSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => 'Berkah Mulia',
+            'url' => route('home'),
+            'logo' => asset('logo.webp'),
+            'contactPoint' => [
+                '@type' => 'ContactPoint',
+                'telephone' => '+' . preg_replace('/[^0-9]/', '', $storePhone),
+                'contactType' => 'customer service',
+            ],
+        ];
+        if (!empty($sameAs)) {
+            $orgSchema['sameAs'] = $sameAs;
+        }
     @endphp
     
     <!-- JSON-LD Store Schema for Local SEO -->
     <script type="application/ld+json">
-    {
-      "@@context": "https://schema.org",
-      "@@type": "Store",
-      "name": "Berkah Mulia",
-      "image": "{{ asset('logo.webp') }}",
-      "@@id": "{{ route('home') }}",
-      "url": "{{ route('home') }}",
-      "telephone": "{{ $storePhone }}",
-      "address": {
-        "@@type": "PostalAddress",
-        "streetAddress": "{{ $storeAddress }}",
-        "addressLocality": "Depok",
-        "addressRegion": "Jawa Barat",
-        "addressCountry": "ID"
-      },
-      "openingHoursSpecification": {
-        "@@type": "OpeningHoursSpecification",
-        "dayOfWeek": [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday"
-        ],
-        "opens": "08:00",
-        "closes": "17:00"
-      }
-    }
+    {!! json_encode($storeSchema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+
+    <!-- JSON-LD WebSite Schema for Search Box -->
+    <script type="application/ld+json">
+    {!! json_encode($websiteSchema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+
+    <!-- JSON-LD Organization Schema -->
+    <script type="application/ld+json">
+    {!! json_encode($orgSchema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
     </script>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

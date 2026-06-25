@@ -10,10 +10,51 @@
         $canonicalParams['categories'] = request('categories');
     }
     $canonicalUrl = route('catalog.index', $canonicalParams);
+
+    // Meta Description
+    $metaDescription = 'Temukan koleksi pakaian bayi, anak-anak, dan underwear premium dengan harga grosir bersahabat di katalog Berkah Mulia.';
+    if (request()->has('category')) {
+        $metaDescription = 'Katalog pakaian kategori ' . request('category') . ' - Temukan koleksi pakaian berkualitas premium di Berkah Mulia.';
+    }
+
+    // BreadcrumbList Schema
+    $breadcrumbs = [
+        [
+            '@type' => 'ListItem',
+            'position' => 1,
+            'name' => 'Beranda',
+            'item' => route('home'),
+        ],
+        [
+            '@type' => 'ListItem',
+            'position' => 2,
+            'name' => 'Katalog',
+            'item' => route('catalog.index'),
+        ]
+    ];
+    if (request()->has('category')) {
+        $breadcrumbs[] = [
+            '@type' => 'ListItem',
+            'position' => 3,
+            'name' => request('category'),
+            'item' => request()->fullUrl(),
+        ];
+    }
+    $breadcrumbSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => $breadcrumbs,
+    ];
 @endphp
 @section('canonical_url', $canonicalUrl)
+@section('meta_description', $metaDescription)
 
 @section('content')
+<!-- JSON-LD Breadcrumb Schema for SEO -->
+<script type="application/ld+json">
+{!! json_encode($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+
 <div class="bg-slate-50 border-b border-slate-100 py-6">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav class="flex text-xs text-slate-400 mb-2 gap-2">

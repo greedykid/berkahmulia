@@ -2,5 +2,4 @@ User-agent: *
 Disallow: /admin/
 Disallow: /admin
 
-# Silakan ubah URL sitemap di bawah dengan domain produksi Anda saat dideploy online
-Sitemap: http://127.0.0.1:8000/sitemap.xml
+Sitemap: https://bmberkahmulia.com/sitemap.xml

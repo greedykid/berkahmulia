@@ -114,11 +114,48 @@
             'priceValidUntil' => date('Y-12-31', strtotime('+1 year')),
         ];
     }
+
+    // Breadcrumb schema
+    $breadcrumbList = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            [
+                '@type' => 'ListItem',
+                'position' => 1,
+                'name' => 'Beranda',
+                'item' => route('home'),
+            ],
+            [
+                '@type' => 'ListItem',
+                'position' => 2,
+                'name' => 'Katalog',
+                'item' => route('catalog.index'),
+            ],
+            [
+                '@type' => 'ListItem',
+                'position' => 3,
+                'name' => $product->category->name,
+                'item' => route('catalog.index', ['category' => $product->category->slug]),
+            ],
+            [
+                '@type' => 'ListItem',
+                'position' => 4,
+                'name' => $product->name,
+                'item' => route('catalog.show', $product->slug),
+            ]
+        ]
+    ];
 @endphp
 
 <!-- Product Schema JSON-LD for Google AI Search & SEO -->
 <script type="application/ld+json">
     {!! json_encode($schemaData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+
+<!-- Breadcrumb Schema JSON-LD -->
+<script type="application/ld+json">
+    {!! json_encode($breadcrumbList, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
 </script>
 <div class="bg-slate-50 border-b border-slate-100 py-3">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1009,29 +1046,4 @@
         animation: zoom-in 0.25s ease-out forwards;
     }
 </style>
-<script type="application/ld+json">
-{
-  "@@context": "https://schema.org/",
-  "@type": "Product",
-  "name": "{{ $product->name }}",
-  "image": [
-    "{{ $product->images->isNotEmpty() ? asset('storage/' . $product->images->first()->image_path) : asset('storage/assets/product_baju.webp') }}"
-  ],
-  "description": "{{ strip_tags($product->description ?: 'Pakaian berkualitas untuk bayi dan anak-anak di Berkah Mulia.') }}",
-  "sku": "{{ $product->sku ?: 'BM-' . $product->id }}",
-  "brand": {
-    "@type": "Brand",
-    "name": "Berkah Mulia"
-  },
-  "offers": {
-    "@type": "Offer",
-    "url": "{{ url()->current() }}",
-    "priceCurrency": "IDR",
-    "price": "{{ $product->price }}",
-    "priceValidUntil": "{{ \Carbon\Carbon::now()->addYear()->format('Y-m-d') }}",
-    "itemCondition": "https://schema.org/NewCondition",
-    "availability": "{{ $product->status === 'ready' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}"
-  }
-}
-</script>
 @endsection
