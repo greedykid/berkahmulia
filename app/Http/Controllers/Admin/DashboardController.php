@@ -47,4 +47,12 @@ class DashboardController extends Controller
             'lowStockVariants'
         ));
     }
+
+    /**
+     * Display admin guide/help page
+     */
+    public function guide()
+    {
+        return view('admin.guide');
+    }
 }

@@ -160,6 +160,12 @@
                 </div>
                 
                 <hr class="border-slate-800 my-4">
+
+                <a href="{{ route('admin.guide') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all {{ request()->routeIs('admin.guide') ? 'bg-indigo-600 text-white shadow-sm' : 'hover:bg-slate-800 hover:text-white' }}">
+                    <i class="fa-solid fa-book-open text-lg w-5 text-center shrink-0"></i>
+                    <span>Panduan Admin</span>
+                </a>
                 
                 <a href="{{ route('home') }}" target="_blank"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all hover:bg-slate-800 hover:text-white">
@@ -274,6 +280,12 @@
                 </div>
                 
                 <hr class="border-slate-800 my-4">
+
+                <a href="{{ route('admin.guide') }}" title="Panduan Admin"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all {{ request()->routeIs('admin.guide') ? 'bg-indigo-600 text-white shadow-sm' : 'hover:bg-slate-800 hover:text-white' }}">
+                    <i class="fa-solid fa-book-open text-lg w-5 text-center shrink-0"></i>
+                    <span class="sidebar-expanded-only truncate">Panduan Admin</span>
+                </a>
                 
                 <a href="{{ route('home') }}" target="_blank" title="Lihat Halaman Toko"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all hover:bg-slate-800 hover:text-white">
