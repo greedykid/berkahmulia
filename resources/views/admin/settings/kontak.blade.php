@@ -141,6 +141,46 @@
                         </div>
                     </div>
 
+                    <!-- TikTok Link Field -->
+                    <div>
+                        <label for="tiktok_url" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Link TikTok</label>
+                        <input type="url" name="tiktok_url" id="tiktok_url" 
+                               value="{{ old('tiktok_url', $contact['tiktok_url'] ?? '') }}"
+                               class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
+                               placeholder="Contoh: https://tiktok.com/@username">
+                        <span class="block text-[10px] text-slate-400 mt-1.5">
+                            *Masukkan link lengkap ke profil TikTok toko Anda (kosongkan untuk menyembunyikan).
+                        </span>
+                    </div>
+
+                    <!-- TikTok Name Field -->
+                    <div>
+                        <label for="tiktok_name" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Nama Akun TikTok (Opsional)</label>
+                        <input type="text" name="tiktok_name" id="tiktok_name" 
+                               value="{{ old('tiktok_name', $contact['tiktok_name'] ?? '') }}"
+                               class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
+                               placeholder="Contoh: Berkah Mulia">
+                        <span class="block text-[10px] text-slate-400 mt-1.5">
+                            *Nama tampilan akun di footer (kosongkan untuk otomatis menampilkan username dari link).
+                        </span>
+                    </div>
+
+                    <!-- Toggle Show TikTok in Navbar -->
+                    <div class="flex items-center bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 hover:bg-slate-100/50 transition-all">
+                        <div class="flex items-center h-5">
+                            <input type="checkbox" name="show_tiktok_nav" id="show_tiktok_nav" value="1"
+                                   {{ old('show_tiktok_nav', $contact['show_tiktok_nav'] ?? true) ? 'checked' : '' }}
+                                   class="w-4 h-4 rounded border-slate-300 text-indigo-650 focus:ring-indigo-400 cursor-pointer">
+                        </div>
+                        <div class="ms-3 text-xs select-none">
+                            <label for="show_tiktok_nav" class="font-bold text-slate-700 cursor-pointer flex items-center gap-1.5">
+                                <i class="fa-brands fa-tiktok text-slate-800 text-[10px]"></i>
+                                Tampilkan TikTok di Navbar
+                            </label>
+                            <p class="text-[10px] text-slate-500 mt-0.5">Aktifkan untuk menampilkan ikon TikTok di bagian atas navigasi (navbar) utama.</p>
+                        </div>
+                    </div>
+
                     <!-- Shopee Link Field -->
                     <div>
                         <label for="shopee_url" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Link Shopee</label>
@@ -185,6 +225,10 @@
                        class="hidden flex items-center justify-center w-9 h-9 bg-pink-50 rounded-full border border-pink-200 pointer-events-none">
                         <i class="fa-brands fa-instagram text-base" style="color: #e1306c;"></i>
                     </a>
+                    <a id="preview-tiktok-nav" href="#" target="_blank"
+                       class="hidden flex items-center justify-center w-9 h-9 bg-slate-50 text-slate-800 rounded-full border border-slate-200 pointer-events-none">
+                        <i class="fa-brands fa-tiktok text-base text-black"></i>
+                    </a>
                     <a id="preview-shopee-nav" href="#" target="_blank"
                        class="hidden flex items-center justify-center w-9 h-9 bg-orange-50 text-orange-700 rounded-full border border-orange-200 pointer-events-none">
                         <svg viewBox="0 0 109.59 122.88" class="w-4.5 h-4.5 fill-[#EE4D2D]">
@@ -221,6 +265,12 @@
                                 Instagram
                             </span>
                         </li>
+                        <li id="preview-tiktok-footer-item" class="hidden flex items-center gap-2">
+                            <i class="fa-brands fa-tiktok text-sm text-white"></i>
+                            <span id="preview-tiktok-footer-text" class="hover:text-primary-400 transition-colors">
+                                TikTok
+                            </span>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -237,6 +287,8 @@
         const inputEmail = document.getElementById('admin_email');
         const inputTemplate = document.getElementById('whatsapp_message_template');
         const inputInstagram = document.getElementById('instagram_url');
+        const inputTiktok = document.getElementById('tiktok_url');
+        const inputTiktokName = document.getElementById('tiktok_name');
         const inputShopee = document.getElementById('shopee_url');
 
         const previewWhatsappNav = document.getElementById('preview-whatsapp-nav');
@@ -246,7 +298,11 @@
         const previewEmailText = document.getElementById('preview-email-text');
         const previewInstagramFooterItem = document.getElementById('preview-instagram-footer-item');
         const previewInstagramFooterText = document.getElementById('preview-instagram-footer-text');
+        const previewTiktokFooterItem = document.getElementById('preview-tiktok-footer-item');
+        const previewTiktokFooterText = document.getElementById('preview-tiktok-footer-text');
+        const previewTiktokNav = document.getElementById('preview-tiktok-nav');
         const inputShowInstagramNav = document.getElementById('show_instagram_nav');
+        const inputShowTiktokNav = document.getElementById('show_tiktok_nav');
         const inputShowWhatsappNav = document.getElementById('show_whatsapp_nav');
         const inputShowWhatsappFloating = document.getElementById('show_whatsapp_floating');
 
@@ -348,6 +404,68 @@
                 }
             }
 
+            // Sync TikTok Preview
+            let tiktok = inputTiktok ? inputTiktok.value : '';
+            let tiktokName = inputTiktokName ? inputTiktokName.value : '';
+            if (tiktok) {
+                if (previewTiktokFooterItem) {
+                    previewTiktokFooterItem.classList.remove('hidden');
+                    let tiktokUsername = tiktokName;
+                    if (!tiktokUsername) {
+                        tiktokUsername = 'TikTok';
+                        try {
+                            const parsedUrl = new URL(tiktok);
+                            let path = parsedUrl.pathname.replace(/^\/|\/$/g, '');
+                            let segments = path.split('/');
+                            let firstSegment = segments[0] || '';
+                            if (firstSegment && !['explore', 'p', 'reels', 'stories', 'share', 't'].includes(firstSegment.toLowerCase())) {
+                                if (firstSegment.startsWith('@')) {
+                                    tiktokUsername = firstSegment;
+                                } else {
+                                    tiktokUsername = '@' + firstSegment;
+                                }
+                            }
+                        } catch (e) {
+                            if (tiktok.includes('tiktok.com/')) {
+                                let parts = tiktok.split('tiktok.com/');
+                                if (parts[1]) {
+                                      let path = parts[1].replace(/^\/|\/$/g, '');
+                                      let segments = path.split('/');
+                                      let firstSegment = segments[0] || '';
+                                      if (firstSegment && !['explore', 'p', 'reels', 'stories', 'share', 't'].includes(firstSegment.toLowerCase())) {
+                                          if (firstSegment.startsWith('@')) {
+                                              tiktokUsername = firstSegment;
+                                          } else {
+                                              tiktokUsername = '@' + firstSegment;
+                                          }
+                                      }
+                                }
+                            }
+                        }
+                    }
+                    if (previewTiktokFooterText) {
+                        previewTiktokFooterText.textContent = tiktokUsername;
+                    }
+                }
+            } else {
+                if (previewTiktokFooterItem) {
+                    previewTiktokFooterItem.classList.add('hidden');
+                }
+            }
+
+            // Sync TikTok Nav Preview
+            const showTiktokNavVal = inputShowTiktokNav ? inputShowTiktokNav.checked : true;
+            if (tiktok && showTiktokNavVal) {
+                if (previewTiktokNav) {
+                    previewTiktokNav.classList.remove('hidden');
+                    previewTiktokNav.href = tiktok;
+                }
+            } else {
+                if (previewTiktokNav) {
+                    previewTiktokNav.classList.add('hidden');
+                }
+            }
+
             // Sync Shopee Preview
             if (shopee) {
                 if (previewShopeeNav) {
@@ -366,8 +484,11 @@
         if (inputEmail) inputEmail.addEventListener('input', updateLivePreview);
         if (inputTemplate) inputTemplate.addEventListener('input', updateLivePreview);
         if (inputInstagram) inputInstagram.addEventListener('input', updateLivePreview);
+        if (inputTiktok) inputTiktok.addEventListener('input', updateLivePreview);
+        if (inputTiktokName) inputTiktokName.addEventListener('input', updateLivePreview);
         if (inputShopee) inputShopee.addEventListener('input', updateLivePreview);
         if (inputShowInstagramNav) inputShowInstagramNav.addEventListener('change', updateLivePreview);
+        if (inputShowTiktokNav) inputShowTiktokNav.addEventListener('change', updateLivePreview);
         if (inputShowWhatsappNav) inputShowWhatsappNav.addEventListener('change', updateLivePreview);
         if (inputShowWhatsappFloating) inputShowWhatsappFloating.addEventListener('change', updateLivePreview);
 

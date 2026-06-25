@@ -53,8 +53,11 @@ class SettingController extends Controller
             'admin_email' => Setting::get('admin_email', config('app.admin_email', 'admin@bmberkahmulia.com')),
             'whatsapp_message_template' => Setting::get('whatsapp_message_template', 'Halo Admin Berkah Mulia, saya ingin bertanya mengenai produk...'),
             'instagram_url' => Setting::get('instagram_url', 'https://www.instagram.com'),
+            'tiktok_url' => Setting::get('tiktok_url', 'https://www.tiktok.com'),
+            'tiktok_name' => Setting::get('tiktok_name', ''),
             'shopee_url' => Setting::get('shopee_url', 'https://shopee.co.id'),
             'show_instagram_nav' => Setting::get('show_instagram_nav', true),
+            'show_tiktok_nav' => Setting::get('show_tiktok_nav', true),
             'show_whatsapp_nav' => Setting::get('show_whatsapp_nav', true),
             'show_whatsapp_floating' => Setting::get('show_whatsapp_floating', true),
         ];
@@ -82,10 +85,13 @@ class SettingController extends Controller
             'admin_email' => 'required|email|max:255',
             'whatsapp_message_template' => 'nullable|string',
             'instagram_url' => 'nullable|url|max:255',
+            'tiktok_url' => 'nullable|url|max:255',
+            'tiktok_name' => 'nullable|string|max:100',
             'shopee_url' => 'nullable|url|max:255',
         ], [
             'whatsapp_number.regex' => 'Format nomor WhatsApp harus diawali dengan angka 8 dan berisi 9-13 digit angka (contoh: 82112619691).',
             'instagram_url.url' => 'Format Link Instagram tidak valid. Pastikan diawali dengan http:// atau https://.',
+            'tiktok_url.url' => 'Format Link TikTok tidak valid. Pastikan diawali dengan http:// atau https://.',
             'shopee_url.url' => 'Format Link Shopee tidak valid. Pastikan diawali dengan http:// atau https://.',
         ]);
 
@@ -95,8 +101,11 @@ class SettingController extends Controller
         Setting::set('admin_email', $request->input('admin_email'));
         Setting::set('whatsapp_message_template', $request->input('whatsapp_message_template'));
         Setting::set('instagram_url', $request->input('instagram_url'));
+        Setting::set('tiktok_url', $request->input('tiktok_url'));
+        Setting::set('tiktok_name', $request->input('tiktok_name'));
         Setting::set('shopee_url', $request->input('shopee_url'));
         Setting::set('show_instagram_nav', $request->boolean('show_instagram_nav'));
+        Setting::set('show_tiktok_nav', $request->boolean('show_tiktok_nav'));
         Setting::set('show_whatsapp_nav', $request->boolean('show_whatsapp_nav'));
         Setting::set('show_whatsapp_floating', $request->boolean('show_whatsapp_floating'));
 

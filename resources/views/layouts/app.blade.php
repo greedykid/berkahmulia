@@ -58,8 +58,12 @@
             $whatsappLink .= '?text=' . urlencode($whatsappTemplate);
         }
         $instagramUrl = \App\Models\Setting::get('instagram_url', '');
+        $tiktokUrl = \App\Models\Setting::get('tiktok_url', '');
+        $tiktokName = \App\Models\Setting::get('tiktok_name', '');
         $shopeeUrl = \App\Models\Setting::get('shopee_url', '');
         $showInstagramNav = \App\Models\Setting::get('show_instagram_nav', true);
+        $showTiktokNav = \App\Models\Setting::get('show_tiktok_nav', true);
+        $storeAddress = \App\Models\Setting::get('store_address', 'Jl. Poin Mas 40, Sawangan , Kota Depok, Jawa Barat');
     @endphp
 
     <!-- Top Announcement Bar -->
@@ -144,6 +148,14 @@
                     <a href="{{ $instagramUrl }}" target="_blank" aria-label="Instagram Berkah Mulia"
                        class="flex items-center justify-center w-11 h-11 bg-pink-50 rounded-full border border-pink-200 transition-all hover:scale-105 shrink-0">
                         <i class="fa-brands fa-instagram text-lg" style="color: #e1306c;"></i>
+                    </a>
+                    @endif
+
+                    <!-- TikTok CTA -->
+                    @if(!empty($tiktokUrl) && $showTiktokNav)
+                    <a href="{{ $tiktokUrl }}" target="_blank" aria-label="TikTok Berkah Mulia"
+                       class="flex items-center justify-center w-11 h-11 bg-slate-50 text-slate-800 hover:bg-slate-100 rounded-full border border-slate-200 transition-all hover:scale-105 shrink-0">
+                        <i class="fa-brands fa-tiktok text-lg text-black"></i>
                     </a>
                     @endif
 
@@ -283,7 +295,7 @@
                     <ul class="space-y-3 text-sm">
                         <li class="flex items-start gap-2">
                             <i class="fa-solid fa-location-dot mt-0.5 text-primary-400 shrink-0"></i>
-                            <span>Jl. Raya Berkah Mulia No. 123, Indonesia</span>
+                            <span>{{ $storeAddress }}</span>
                         </li>
                         <li class="flex items-center gap-2">
                             <i class="fa-solid fa-envelope text-primary-400"></i>
@@ -312,6 +324,32 @@
                             <i class="fa-brands fa-instagram text-lg" style="color: #e1306c;"></i>
                             <a href="{{ $instagramUrl }}" target="_blank" class="hover:text-primary-400 transition-colors">
                                 {{ $instagramUsername }}
+                            </a>
+                        </li>
+                        @endif
+                        @if(!empty($tiktokUrl))
+                        @php
+                            $tiktokUsername = !empty($tiktokName) ? $tiktokName : 'TikTok';
+                            if (empty($tiktokName)) {
+                                $parsedUrl = parse_url($tiktokUrl);
+                                if (isset($parsedUrl['path'])) {
+                                    $path = trim($parsedUrl['path'], '/');
+                                    $segments = explode('/', $path);
+                                    $firstSegment = isset($segments[0]) ? trim($segments[0]) : '';
+                                    if (!empty($firstSegment) && !in_array(strtolower($firstSegment), ['explore', 'p', 'reels', 'stories', 'share', 't'])) {
+                                        if (strpos($firstSegment, '@') !== 0) {
+                                            $tiktokUsername = '@' . $firstSegment;
+                                        } else {
+                                            $tiktokUsername = $firstSegment;
+                                        }
+                                    }
+                                }
+                            }
+                        @endphp
+                        <li class="flex items-center gap-2">
+                            <i class="fa-brands fa-tiktok text-lg text-white"></i>
+                            <a href="{{ $tiktokUrl }}" target="_blank" class="hover:text-primary-400 transition-colors">
+                                {{ $tiktokUsername }}
                             </a>
                         </li>
                         @endif

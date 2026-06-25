@@ -108,4 +108,39 @@ class SettingKontakTest extends TestCase
 
         $response->assertSessionHasErrors(['whatsapp_number']);
     }
+
+    public function test_admin_can_save_valid_tiktok_url()
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        $response = $this->actingAs($admin)
+            ->post(route('admin.settings.updateKontak'), [
+                'whatsapp_number' => '82112619691',
+                'admin_email' => 'testadmin@bmberkahmulia.com',
+                'tiktok_url' => 'https://www.tiktok.com/@berkahmulia',
+                'tiktok_name' => 'Berkah Mulia Shop',
+                'show_tiktok_nav' => '1',
+            ]);
+
+        $response->assertRedirect(route('admin.settings.kontak'));
+        $response->assertSessionHas('success');
+
+        $this->assertEquals('https://www.tiktok.com/@berkahmulia', \App\Models\Setting::get('tiktok_url'));
+        $this->assertEquals('Berkah Mulia Shop', \App\Models\Setting::get('tiktok_name'));
+        $this->assertTrue(\App\Models\Setting::get('show_tiktok_nav'));
+    }
+
+    public function test_validation_fails_for_invalid_tiktok_url()
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        $response = $this->actingAs($admin)
+            ->post(route('admin.settings.updateKontak'), [
+                'whatsapp_number' => '82112619691',
+                'admin_email' => 'testadmin@bmberkahmulia.com',
+                'tiktok_url' => 'not-a-valid-url',
+            ]);
+
+        $response->assertSessionHasErrors(['tiktok_url']);
+    }
 }
