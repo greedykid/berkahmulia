@@ -18,7 +18,7 @@ class UpdateProductRequest extends FormRequest
         return [
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
-            'sku' => 'nullable|string|max:100|unique:products,sku,' . $productId,
+            'sku' => 'nullable|string|max:100|unique:products,sku,' . $productId . ',id,deleted_at,NULL',
             'price' => 'required|numeric|min:0',
             'status' => 'required|in:ready,sold_out,po',
             'description' => 'nullable|string',
