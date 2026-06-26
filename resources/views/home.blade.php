@@ -158,10 +158,10 @@
                 </button>
  
                 <!-- Carousel Indicators (Dots) -->
-                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-0.5 z-20 bg-slate-900/35 backdrop-blur-xs px-3 py-1 rounded-full border border-white/10 select-none">
+                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-0.5 z-20 select-none">
                     @foreach($slides as $index => $slide)
                         <button type="button" onclick="goToHeroSlide({{ $index }})" class="flex items-center justify-center w-7 h-7 cursor-pointer group" aria-label="Lihat slide {{ $index + 1 }}">
-                            <span class="hero-dot w-2 h-2 rounded-full bg-white/50 group-hover:bg-white transition-all duration-300"></span>
+                            <span class="hero-dot {{ $loop->first ? 'w-5 bg-white' : 'w-2 bg-white/50' }} h-2 rounded-full group-hover:bg-white transition-all duration-300 shadow-[0_1.5px_3px_rgba(0,0,0,0.4)]"></span>
                         </button>
                     @endforeach
                 </div>
