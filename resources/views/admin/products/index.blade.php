@@ -1616,6 +1616,13 @@
             }
         }
 
+        window.showDetailMainFallback = function () {
+            const mainImg = document.getElementById('detail-main-img');
+            const fallbackImg = document.getElementById('detail-img-fallback');
+            if (mainImg) mainImg.classList.add('hidden');
+            if (fallbackImg) fallbackImg.classList.remove('hidden');
+        };
+
         const categoriesList = {!! json_encode($categories) !!};
         const statusLabels = {
             'ready': 'Ready',
@@ -2499,13 +2506,6 @@
 
         // Product Detail Modal functions
         const productDetailModal = document.getElementById('product-detail-modal');
-
-        window.showDetailMainFallback = function () {
-            const mainImg = document.getElementById('detail-main-img');
-            const fallbackImg = document.getElementById('detail-img-fallback');
-            if (mainImg) mainImg.classList.add('hidden');
-            if (fallbackImg) fallbackImg.classList.remove('hidden');
-        };
 
         function handleProductRowClick(event, element) {
             const interactiveSelector = 'button, input, a, form, label, select, textarea, .custom-dropdown, [onclick]';

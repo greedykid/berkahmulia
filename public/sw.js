@@ -60,6 +60,11 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  // Bypass service worker caching for external third-party requests (prevent CORS issues)
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
   // Determine caching strategy
   const isHtml = event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html');
   
