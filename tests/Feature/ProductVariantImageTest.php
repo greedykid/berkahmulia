@@ -165,4 +165,23 @@ class ProductVariantImageTest extends TestCase
         $this->assertNotNull($variant->image_path);
         Storage::disk('public')->assertExists($variant->image_path);
     }
+
+    public function test_admin_product_show_redirects_to_index_with_edit_parameter()
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        $product = Product::create([
+            'category_id' => $this->category->id,
+            'name' => 'Test Product',
+            'slug' => 'test-product',
+            'sku' => 'TP-001',
+            'price' => 10000,
+            'status' => 'ready',
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->get(route('admin.products.show', $product->id));
+
+        $response->assertRedirect(route('admin.products.index', ['edit' => $product->id]));
+    }
 }

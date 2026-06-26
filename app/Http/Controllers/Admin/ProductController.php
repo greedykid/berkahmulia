@@ -146,6 +146,14 @@ class ProductController extends Controller
     }
 
     /**
+     * Display the specified product (graceful redirect to edit modal)
+     */
+    public function show(Product $product)
+    {
+        return redirect()->route('admin.products.index', ['edit' => $product->id]);
+    }
+
+    /**
      * Show edit form
      */
     public function edit(Product $product)
