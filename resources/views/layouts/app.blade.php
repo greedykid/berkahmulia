@@ -37,7 +37,7 @@
     <noscript><link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
     
     <!-- Preload Logo for faster LCP -->
-    <link rel="preload" href="/logo.webp" as="image" type="image/webp">
+    <link rel="preload" href="/icon-96.webp" as="image" type="image/webp">
     
     <!-- Compiled Tailwind CSS & JS -->
     @php
@@ -119,7 +119,7 @@
                 <!-- Logo -->
                 <div class="shrink-0" id="header-logo">
                     <a href="{{ route('home') }}" class="flex items-center gap-2 sm:gap-3">
-                        <img src="/logo.webp" alt="Berkah Mulia Logo" width="48" height="48" fetchpriority="high" class="h-10 sm:h-12 w-auto rounded-xl shadow-sm border border-slate-100 object-cover">
+                        <img src="/icon-96.webp" alt="Berkah Mulia Logo" width="48" height="48" fetchpriority="high" class="h-10 sm:h-12 w-auto rounded-xl shadow-sm border border-slate-100 object-cover">
                         <div class="hidden sm:flex flex-col">
                             <span class="flex items-center gap-0.5 text-base sm:text-2xl tracking-tight leading-none select-none">
                                 <span class="logo-letter text-apricot-cream-300">B</span>
@@ -264,7 +264,7 @@
                 <!-- About -->
                 <div class="space-y-4">
                     <div class="flex items-center gap-3">
-                        <img src="/logo.webp" alt="Berkah Mulia Logo" width="40" height="40" loading="lazy" class="h-10 w-auto rounded-lg shadow-sm border border-slate-700 object-cover">
+                        <img src="/icon-96.webp" alt="Berkah Mulia Logo" width="40" height="40" loading="lazy" class="h-10 w-auto rounded-lg shadow-sm border border-slate-700 object-cover">
                         <span class="flex items-center gap-0.5 text-lg tracking-tight leading-none select-none">
                             <span class="logo-letter text-apricot-cream-300">B</span>
                             <span class="logo-letter text-pearl-aqua-300">e</span>
