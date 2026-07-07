@@ -5,7 +5,7 @@
 
 @section('content')
 <!-- Stats Grid -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 animate-fade-in">
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8 animate-fade-in">
     <!-- Total Products -->
     <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
         <div>
@@ -25,6 +25,17 @@
         </div>
         <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-sm sm:text-base">
             <i class="fa-solid fa-tags text-emerald-600"></i>
+        </div>
+    </div>
+
+    <!-- Total Visits -->
+    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Total Kunjungan</p>
+            <h3 class="text-xl font-bold text-slate-800">{{ number_format($siteVisits, 0, ',', '.') }}</h3>
+        </div>
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-sky-50 flex items-center justify-center text-sm sm:text-base">
+            <i class="fa-solid fa-eye text-sky-600"></i>
         </div>
     </div>
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Setting;
 
 class DashboardController extends Controller
 {
@@ -16,6 +17,9 @@ class DashboardController extends Controller
     {
         $totalProducts = Product::count();
         $totalCategories = Category::count();
+
+        // Total public site visits (session-based, bot-filtered)
+        $siteVisits = (int) Setting::get('site_visits', 0);
 
         // Low stock warning: variants with stock <= 5
         $lowStockCount = ProductVariant::where('stock', '>', 0)
@@ -41,6 +45,7 @@ class DashboardController extends Controller
         return view('admin.dashboard', compact(
             'totalProducts',
             'totalCategories',
+            'siteVisits',
             'lowStockCount',
             'outOfStockCount',
             'latestProducts',

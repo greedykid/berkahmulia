@@ -9,10 +9,12 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SettingController;
 use Illuminate\Support\Facades\Route;
 
-// Public Routes
-Route::get('/', [CatalogController::class, 'home'])->name('home');
-Route::get('/katalog', [CatalogController::class, 'index'])->name('catalog.index');
-Route::get('/katalog/{slug}', [CatalogController::class, 'show'])->name('catalog.show');
+// Public Routes (visits tracked on main catalog pages only)
+Route::middleware('track.visits')->group(function () {
+    Route::get('/', [CatalogController::class, 'home'])->name('home');
+    Route::get('/katalog', [CatalogController::class, 'index'])->name('catalog.index');
+    Route::get('/katalog/{slug}', [CatalogController::class, 'show'])->name('catalog.show');
+});
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Admin Authentication Routes
