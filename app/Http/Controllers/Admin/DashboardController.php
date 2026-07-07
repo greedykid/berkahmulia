@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Setting;
+use App\Models\Visit;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -51,6 +53,56 @@ class DashboardController extends Controller
             'latestProducts',
             'lowStockVariants'
         ));
+    }
+
+    /**
+     * Return bucketed visit counts as JSON for the dashboard trend chart.
+     * Ranges: 4h (per 30 min), 1d (per hour), 1w (per day).
+     */
+    public function visitStats(Request $request)
+    {
+        $range = $request->query('range', '1d');
+
+        // [interval in minutes, number of buckets, label format]
+        [$intervalMinutes, $count, $labelFormat] = match ($range) {
+            '4h' => [30, 8, 'H:i'],
+            '1w' => [60 * 24, 7, 'd M'],
+            default => [60, 24, 'H:i'],
+        };
+        if (!in_array($range, ['4h', '1d', '1w'], true)) {
+            $range = '1d';
+        }
+
+        // Align the most recent bucket to an interval boundary starting from midnight.
+        $now = now();
+        $minutesToday = $now->hour * 60 + $now->minute;
+        $flooredMinutes = intdiv($minutesToday, $intervalMinutes) * $intervalMinutes;
+        $lastBucketStart = $now->copy()->startOfDay()->addMinutes($flooredMinutes);
+
+        // Build the ordered list of bucket start times (oldest first).
+        $buckets = [];
+        for ($i = $count - 1; $i >= 0; $i--) {
+            $buckets[] = $lastBucketStart->copy()->subMinutes($i * $intervalMinutes);
+        }
+        $windowStart = $buckets[0]->copy();
+
+        $data = array_fill(0, $count, 0);
+        $visits = Visit::where('visited_at', '>=', $windowStart)->pluck('visited_at');
+        foreach ($visits as $visitedAt) {
+            $index = intdiv((int) floor($windowStart->diffInMinutes($visitedAt)), $intervalMinutes);
+            if ($index >= 0 && $index < $count) {
+                $data[$index]++;
+            }
+        }
+
+        $labels = array_map(fn ($bucket) => $bucket->format($labelFormat), $buckets);
+
+        return response()->json([
+            'range' => $range,
+            'labels' => $labels,
+            'data' => $data,
+            'total' => array_sum($data),
+        ]);
     }
 
     /**

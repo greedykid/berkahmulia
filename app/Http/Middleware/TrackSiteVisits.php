@@ -3,12 +3,18 @@
 namespace App\Http\Middleware;
 
 use App\Models\Setting;
+use App\Models\Visit;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TrackSiteVisits
 {
+    /**
+     * How many days of per-visit rows to keep for the trend chart.
+     */
+    private const RETENTION_DAYS = 30;
+
     /**
      * Bot/crawler signatures to ignore when counting visits.
      */
@@ -27,8 +33,14 @@ class TrackSiteVisits
         if ($this->shouldCount($request)) {
             $request->session()->put('has_visited', true);
 
+            // Lifetime running total (for the stats card)
             $current = (int) Setting::get('site_visits', 0);
             Setting::set('site_visits', $current + 1);
+
+            // Timestamped row (for the trend chart)
+            Visit::create(['visited_at' => now()]);
+
+            $this->pruneOldVisits();
         }
 
         return $next($request);
@@ -48,6 +60,17 @@ class TrackSiteVisits
         }
 
         return !$this->isBot($request->userAgent());
+    }
+
+    /**
+     * Occasionally drop visit rows older than the retention window so the
+     * table stays small without needing a scheduled task.
+     */
+    private function pruneOldVisits(): void
+    {
+        if (random_int(1, 100) === 1) {
+            Visit::where('visited_at', '<', now()->subDays(self::RETENTION_DAYS))->delete();
+        }
     }
 
     /**

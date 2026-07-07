@@ -26,6 +26,7 @@ Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.log
 // Admin Dashboard Routes (Protected by auth middleware)
 Route::middleware(['auth', 'admin', 'throttle:30,1'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/visits-stats', [DashboardController::class, 'visitStats'])->name('visits.stats');
     Route::get('/panduan', [DashboardController::class, 'guide'])->name('guide');
     
     // Category Management

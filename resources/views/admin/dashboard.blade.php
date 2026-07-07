@@ -62,8 +62,41 @@
     </div>
 </div>
 
-<!-- Quick Actions -->
-<div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm mb-6">
+<!-- Visits Chart + Quick Actions -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 items-stretch">
+
+    <!-- Visits Line Chart (left) -->
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm lg:col-span-2 flex flex-col">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
+            <div class="flex items-center gap-3 flex-1">
+                <div class="w-10 h-10 rounded-xl bg-sky-50 flex items-center justify-center">
+                    <i class="fa-solid fa-chart-line text-sky-600"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Statistik Kunjungan</h4>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Total Kunjungan: <span class="font-bold text-slate-700">{{ number_format($siteVisits, 0, ',', '.') }}</span></p>
+                </div>
+            </div>
+            <!-- Range Filter -->
+            <div id="visit-range-filter" class="inline-flex bg-slate-100 rounded-xl p-1 text-[11px] font-bold self-start select-none">
+                <button type="button" data-range="4h" class="visit-range-btn px-3 py-1.5 rounded-lg text-slate-500 transition-all">4 Jam</button>
+                <button type="button" data-range="1d" class="visit-range-btn px-3 py-1.5 rounded-lg text-slate-500 transition-all">1 Hari</button>
+                <button type="button" data-range="1w" class="visit-range-btn px-3 py-1.5 rounded-lg text-slate-500 transition-all">1 Minggu</button>
+            </div>
+        </div>
+        <div class="relative flex-1 min-h-[220px]">
+            <canvas id="visitsChart"></canvas>
+            <div id="visitsChartEmpty" class="absolute inset-0 hidden items-center justify-center text-center">
+                <div class="text-slate-400">
+                    <i class="fa-solid fa-chart-line text-2xl mb-2 block"></i>
+                    <p class="text-xs">Belum ada data kunjungan pada rentang ini.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions (right) -->
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm lg:col-span-1">
     <div class="flex items-center gap-3 mb-5">
         <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
             <i class="fa-solid fa-bolt text-indigo-600"></i>
@@ -73,7 +106,7 @@
             <p class="text-[11px] text-slate-500 mt-0.5">Pintasan untuk tugas yang sering dilakukan.</p>
         </div>
     </div>
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <div class="grid grid-cols-2 gap-3">
         <a href="{{ route('admin.products.index', ['add' => 1]) }}" onclick="event.preventDefault(); window.location='{{ route('admin.products.index') }}';" class="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all group cursor-pointer">
             <div class="w-10 h-10 rounded-xl bg-indigo-50 group-hover:bg-indigo-100 flex items-center justify-center transition-colors">
                 <i class="fa-solid fa-plus text-indigo-600 text-sm"></i>
@@ -98,6 +131,7 @@
             </div>
             <span class="text-xs font-semibold text-slate-600 group-hover:text-sky-700 text-center">Export CSV</span>
         </a>
+    </div>
     </div>
 </div>
 
@@ -270,4 +304,107 @@
         </div>
     </div> <!-- end sidebar -->
 </div>
+@endsection
+
+@section('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+(function () {
+    const canvas = document.getElementById('visitsChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    const emptyEl = document.getElementById('visitsChartEmpty');
+    const buttons = document.querySelectorAll('#visit-range-filter .visit-range-btn');
+    const statsUrl = @json(route('admin.visits.stats'));
+    const activeClasses = ['bg-white', 'text-sky-600', 'shadow-sm'];
+
+    let chart = null;
+
+    function setActive(range) {
+        buttons.forEach(function (btn) {
+            const on = btn.dataset.range === range;
+            btn.classList.toggle('text-slate-500', !on);
+            activeClasses.forEach(function (c) { btn.classList.toggle(c, on); });
+        });
+    }
+
+    function renderChart(labels, data) {
+        if (chart) {
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = data;
+            chart.update();
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 240);
+        gradient.addColorStop(0, 'rgba(2, 132, 199, 0.25)');
+        gradient.addColorStop(1, 'rgba(2, 132, 199, 0)');
+
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Kunjungan',
+                    data: data,
+                    borderColor: '#0284c7',
+                    backgroundColor: gradient,
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#0284c7',
+                    pointHoverRadius: 5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { backgroundColor: '#0f172a', padding: 10, cornerRadius: 8, displayColors: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { precision: 0, color: '#94a3b8', font: { size: 10 } },
+                        grid: { color: 'rgba(148,163,184,0.15)' }
+                    },
+                    x: {
+                        ticks: { color: '#94a3b8', font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+
+    function load(range) {
+        setActive(range);
+        fetch(statsUrl + '?range=' + encodeURIComponent(range), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (payload) {
+            const labels = payload.labels || [];
+            const data = payload.data || [];
+            const total = data.reduce(function (a, b) { return a + b; }, 0);
+            if (emptyEl) {
+                emptyEl.classList.toggle('hidden', total > 0);
+                emptyEl.classList.toggle('flex', total === 0);
+            }
+            canvas.style.opacity = total > 0 ? '1' : '0.15';
+            renderChart(labels, data);
+        })
+        .catch(function () {});
+    }
+
+    buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () { load(btn.dataset.range); });
+    });
+
+    load('1d');
+})();
+</script>
 @endsection
