@@ -1099,12 +1099,19 @@
 
                                 <!-- Description -->
                                 <div>
-                                    <label for="description"
-                                        class="block text-[10px] font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Deskripsi
-                                        Lengkap</label>
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <label for="description"
+                                            class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Deskripsi
+                                            Lengkap</label>
+                                        <button type="button" onclick="toggleDescExpand(this, 'description')"
+                                            class="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-500 hover:text-indigo-700 transition-colors">
+                                            <span class="desc-expand-label">Perluas</span>
+                                            <i class="fa-solid fa-chevron-down text-[8px] desc-expand-icon transition-transform"></i>
+                                        </button>
+                                    </div>
                                     <textarea name="description" id="description" rows="3"
                                         placeholder="Tuliskan detail bahan..."
-                                        class="w-full bg-slate-50 border border-slate-200 text-slate-700 px-3 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white text-base md:text-xs transition-all font-medium">{{ old('description') }}</textarea>
+                                        class="w-full bg-slate-50 border border-slate-200 text-slate-700 px-3 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white text-base md:text-xs transition-all font-medium resize-y">{{ old('description') }}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -1460,12 +1467,19 @@
 
                                 <!-- Description -->
                                 <div>
-                                    <label for="edit_description"
-                                        class="block text-[10px] font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Deskripsi
-                                        Lengkap</label>
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <label for="edit_description"
+                                            class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Deskripsi
+                                            Lengkap</label>
+                                        <button type="button" onclick="toggleDescExpand(this, 'edit_description')"
+                                            class="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-500 hover:text-indigo-700 transition-colors">
+                                            <span class="desc-expand-label">Perluas</span>
+                                            <i class="fa-solid fa-chevron-down text-[8px] desc-expand-icon transition-transform"></i>
+                                        </button>
+                                    </div>
                                     <textarea name="description" id="edit_description" rows="3"
                                         placeholder="Tuliskan detail bahan..."
-                                        class="w-full bg-slate-50 border border-slate-200 text-slate-700 px-3 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white text-base md:text-xs transition-all font-medium"></textarea>
+                                        class="w-full bg-slate-50 border border-slate-200 text-slate-700 px-3 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white text-base md:text-xs transition-all font-medium resize-y"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -1629,6 +1643,54 @@
             'po': 'Pre-Order',
             'sold_out': 'Habis'
         };
+
+        // Expand/collapse the description textarea to fit its content
+        function toggleDescExpand(btn, textareaId) {
+            const ta = document.getElementById(textareaId);
+            if (!ta) return;
+            const icon = btn.querySelector('.desc-expand-icon');
+            const label = btn.querySelector('.desc-expand-label');
+            const expanded = ta.dataset.expanded === '1';
+
+            if (expanded) {
+                ta.style.height = '';
+                ta.dataset.expanded = '0';
+                if (icon) icon.classList.remove('rotate-180');
+                if (label) label.textContent = 'Perluas';
+            } else {
+                ta.style.height = 'auto';
+                ta.style.height = (ta.scrollHeight + 2) + 'px';
+                ta.dataset.expanded = '1';
+                if (icon) icon.classList.add('rotate-180');
+                if (label) label.textContent = 'Ciutkan';
+            }
+        }
+
+        // Reset a description field back to its collapsed state
+        function resetDescExpand(textareaId) {
+            const ta = document.getElementById(textareaId);
+            if (!ta) return;
+            ta.style.height = '';
+            ta.dataset.expanded = '0';
+            const wrap = ta.parentElement;
+            const btn = wrap ? wrap.querySelector('button') : null;
+            const icon = btn ? btn.querySelector('.desc-expand-icon') : null;
+            const label = btn ? btn.querySelector('.desc-expand-label') : null;
+            if (icon) icon.classList.remove('rotate-180');
+            if (label) label.textContent = 'Perluas';
+        }
+
+        // Keep an expanded description growing as the user types
+        ['description', 'edit_description'].forEach(function (id) {
+            const ta = document.getElementById(id);
+            if (!ta) return;
+            ta.addEventListener('input', function () {
+                if (ta.dataset.expanded === '1') {
+                    ta.style.height = 'auto';
+                    ta.style.height = (ta.scrollHeight + 2) + 'px';
+                }
+            });
+        });
 
         // Toggle Custom Dropdown Visibility
         function toggleCustomDropdown(menuId) {
@@ -1834,6 +1896,7 @@
             document.getElementById('edit_is_popular').checked = !!product.is_popular;
 
             document.getElementById('edit_description').value = product.description || '';
+            resetDescExpand('edit_description');
 
             // Set SKU in header subtitle
             const modalSubtitle = document.getElementById('edit-modal-subtitle');
