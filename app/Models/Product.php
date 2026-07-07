@@ -33,16 +33,27 @@ class Product extends Model
             \Illuminate\Support\Facades\Cache::forget('featured_products');
         });
 
-        static::deleted(function () {
-            \Illuminate\Support\Facades\Cache::forget('featured_products');
+        static::deleting(function ($product) {
+            // Reclaim disk space for product and variant images on delete.
+            // Runs for both soft and force deletes (there is no restore flow),
+            // and covers every caller (single, bulk, cascade) in one place.
+            $product->loadMissing('images', 'variants');
+
+            foreach ($product->images as $img) {
+                if ($img->image_path) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($img->image_path);
+                }
+            }
+
+            foreach ($product->variants as $variant) {
+                if ($variant->image_path) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($variant->image_path);
+                }
+            }
         });
 
-        static::forceDeleting(function ($product) {
+        static::deleted(function () {
             \Illuminate\Support\Facades\Cache::forget('featured_products');
-            // Delete all actual image files from disk when permanently deleted
-            foreach ($product->images as $img) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($img->image_path);
-            }
         });
     }
 

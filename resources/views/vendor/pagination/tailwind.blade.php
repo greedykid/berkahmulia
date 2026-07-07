@@ -53,28 +53,46 @@
                         </a>
                     @endif
 
-                    {{-- Pagination Elements --}}
-                    @foreach ($elements as $element)
-                        {{-- "Three Dots" Separator --}}
-                        @if (is_string($element))
-                            <span class="relative inline-flex items-center justify-center w-9 h-9 text-xs font-bold text-slate-400 cursor-default">
-                                {{ $element }}
-                            </span>
-                        @endif
+                    {{-- Pagination Elements (compact window: first … current±1 … last) --}}
+                    @php
+                        $current = $paginator->currentPage();
+                        $last = $paginator->lastPage();
+                        $onEachSide = 1;
+                        $start = max(1, $current - $onEachSide);
+                        $end = min($last, $current + $onEachSide);
 
-                        {{-- Array Of Links --}}
-                        @if (is_array($element))
-                            @foreach ($element as $page => $url)
-                                @if ($page == $paginator->currentPage())
-                                    <span aria-current="page" class="relative inline-flex items-center justify-center w-9 h-9 text-xs font-extrabold text-white bg-primary-500 border border-primary-500 rounded-xl shadow-md shadow-primary-500/20 cursor-default transition-all duration-300">
-                                        {{ $page }}
-                                    </span>
-                                @else
-                                    <a href="{{ $url }}" class="relative inline-flex items-center justify-center w-9 h-9 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-primary-50 hover:text-primary-600 hover:border-primary-200 active:scale-95 transition-all duration-300">
-                                        {{ $page }}
-                                    </a>
-                                @endif
-                            @endforeach
+                        $pages = [];
+                        if ($start > 1) {
+                            $pages[] = 1;
+                            if ($start > 2) {
+                                $pages[] = '...';
+                            }
+                        }
+                        for ($p = $start; $p <= $end; $p++) {
+                            $pages[] = $p;
+                        }
+                        if ($end < $last) {
+                            if ($end < $last - 1) {
+                                $pages[] = '...';
+                            }
+                            $pages[] = $last;
+                        }
+                    @endphp
+
+                    @foreach ($pages as $page)
+                        @if ($page === '...')
+                            {{-- "Three Dots" Separator --}}
+                            <span class="relative inline-flex items-center justify-center w-9 h-9 text-xs font-bold text-slate-400 cursor-default">
+                                &hellip;
+                            </span>
+                        @elseif ($page == $current)
+                            <span aria-current="page" class="relative inline-flex items-center justify-center w-9 h-9 text-xs font-extrabold text-white bg-primary-500 border border-primary-500 rounded-xl shadow-md shadow-primary-500/20 cursor-default transition-all duration-300">
+                                {{ $page }}
+                            </span>
+                        @else
+                            <a href="{{ $paginator->url($page) }}" class="relative inline-flex items-center justify-center w-9 h-9 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-primary-50 hover:text-primary-600 hover:border-primary-200 active:scale-95 transition-all duration-300">
+                                {{ $page }}
+                            </a>
                         @endif
                     @endforeach
 

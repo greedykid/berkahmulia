@@ -158,12 +158,18 @@ class CatalogController extends Controller
             }
         }
 
-        // Price filters
+        // Effective price: the product's own price, or the lowest priced variant
+        // when the product price is 0 (matches how prices are displayed).
+        $effectivePrice = 'CASE WHEN products.price > 0 THEN products.price '
+            . 'ELSE COALESCE((SELECT MIN(pv.price) FROM product_variants pv '
+            . 'WHERE pv.product_id = products.id AND pv.price > 0), 0) END';
+
+        // Price filters (CAST keeps the comparison numeric across MySQL and SQLite)
         if ($request->has('price_min') && is_numeric($request->price_min)) {
-            $query->where('price', '>=', $request->price_min);
+            $query->whereRaw("($effectivePrice) >= CAST(? AS DECIMAL(12,2))", [$request->price_min]);
         }
         if ($request->has('price_max') && is_numeric($request->price_max)) {
-            $query->where('price', '<=', $request->price_max);
+            $query->whereRaw("($effectivePrice) <= CAST(? AS DECIMAL(12,2))", [$request->price_max]);
         }
 
         // Size filter
@@ -177,9 +183,9 @@ class CatalogController extends Controller
         // Sort option
         $sort = $request->input('sort', 'latest');
         if ($sort === 'price_asc') {
-            $query->orderBy('price', 'asc');
+            $query->orderByRaw("($effectivePrice) asc")->latest();
         } elseif ($sort === 'price_desc') {
-            $query->orderBy('price', 'desc');
+            $query->orderByRaw("($effectivePrice) desc")->latest();
         } else {
             $query->latest();
         }

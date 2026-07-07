@@ -24,14 +24,14 @@ class UpdateProductRequest extends FormRequest
             'description' => 'nullable|string',
             'is_popular' => 'nullable|boolean',
             'images' => 'nullable|array',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg,bmp,tiff,heic,heif|max:10240',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,bmp,tiff,heic,heif|max:10240',
             'delete_images' => 'nullable|array',
             'delete_images.*' => 'integer|exists:product_images,id',
             'variants.*.size' => 'nullable|string|max:100',
             'variants.*.color' => 'nullable|string|max:100',
             'variants.*.stock' => 'required|integer|min:0',
             'variants.*.price' => 'nullable|numeric|min:0',
-            'variants.*.image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg,bmp,tiff,heic,heif|max:10240',
+            'variants.*.image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,bmp,tiff,heic,heif|max:10240',
             'variants.*.image_path' => 'nullable|string',
         ];
     }
@@ -45,7 +45,7 @@ class UpdateProductRequest extends FormRequest
             'status.required' => 'Status produk wajib dipilih.',
             'sku.unique' => 'SKU sudah digunakan oleh produk lain.',
             'images.*.max' => 'Ukuran gambar maksimal 10MB.',
-            'images.*.mimes' => 'Format gambar harus jpeg, png, jpg, webp, gif, svg, bmp, tiff, heic, heif.',
+            'images.*.mimes' => 'Format gambar harus jpeg, png, jpg, webp, gif, bmp, tiff, heic, heif.',
         ];
     }
 }

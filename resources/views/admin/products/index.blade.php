@@ -2399,6 +2399,26 @@
             }
         });
 
+        // Active listing filters, forwarded to bulk actions when "select all" is used
+        // so those actions only touch the currently filtered products.
+        const currentFilters = {
+            filter_search: @json(request('search')),
+            filter_category: @json(request('category')),
+            filter_status: @json(request('status')),
+        };
+
+        function appendFilterInputs(form) {
+            Object.entries(currentFilters).forEach(([name, value]) => {
+                if (value !== null && value !== '') {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = name;
+                    input.value = value;
+                    form.appendChild(input);
+                }
+            });
+        }
+
         function applyBulkStatus(status) {
             const ids = getSelectedIds();
             if (ids.length === 0 && !bulkSelectAll) return;
@@ -2421,6 +2441,7 @@
                         ids.forEach(id => { html += `<input type="hidden" name="ids[]" value="${id}">`; });
                     }
                     form.innerHTML = html;
+                    if (bulkSelectAll) appendFilterInputs(form);
                     document.body.appendChild(form);
                     form.submit();
                 }
@@ -2455,6 +2476,7 @@
                         ids.forEach(id => { html += `<input type="hidden" name="ids[]" value="${id}">`; });
                     }
                     form.innerHTML = html;
+                    if (bulkSelectAll) appendFilterInputs(form);
                     document.body.appendChild(form);
                     form.submit();
                 }

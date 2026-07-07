@@ -119,8 +119,16 @@ class ProductController extends Controller
 
         // Save variants
         if ($request->has('variants')) {
+            $seenVariants = [];
             foreach ($request->variants as $index => $variantData) {
                 if (!empty($variantData['size']) || !empty($variantData['color'])) {
+                    // Skip duplicate size/color combinations within this submission
+                    $variantKey = $this->variantKey($variantData);
+                    if (isset($seenVariants[$variantKey])) {
+                        continue;
+                    }
+                    $seenVariants[$variantKey] = true;
+
                     $variantImagePath = null;
                     if ($request->hasFile("variants.{$index}.image")) {
                         $variantImageFile = $request->file("variants.{$index}.image");
@@ -208,8 +216,16 @@ class ProductController extends Controller
         // Re-sync variants: Delete existing ones and create the new set
         $product->variants()->delete();
         if ($request->has('variants')) {
+            $seenVariants = [];
             foreach ($request->variants as $index => $variantData) {
                 if (!empty($variantData['size']) || !empty($variantData['color'])) {
+                    // Skip duplicate size/color combinations within this submission
+                    $variantKey = $this->variantKey($variantData);
+                    if (isset($seenVariants[$variantKey])) {
+                        continue;
+                    }
+                    $seenVariants[$variantKey] = true;
+
                     $variantImagePath = null;
                     if ($request->hasFile("variants.{$index}.image")) {
                         $variantImageFile = $request->file("variants.{$index}.image");
@@ -232,8 +248,8 @@ class ProductController extends Controller
             }
         }
 
-        $redirectUrl = $request->input('redirect_url');
-        if ($redirectUrl && filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
+        $redirectUrl = $this->safeRedirectUrl($request->input('redirect_url'));
+        if ($redirectUrl) {
             return redirect($redirectUrl)->with('success', 'Produk berhasil diperbarui!');
         }
 
@@ -247,10 +263,11 @@ class ProductController extends Controller
     public function destroy(Request $request, Product $product)
     {
         // Delete product (SoftDeletes is handled by Eloquent; database cascade will trigger on permanent delete)
+        // Image files are cleaned up by the Product "deleting" model event.
         $product->delete();
 
-        $redirectUrl = $request->input('redirect_url');
-        if ($redirectUrl && filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
+        $redirectUrl = $this->safeRedirectUrl($request->input('redirect_url'));
+        if ($redirectUrl) {
             return redirect($redirectUrl)->with('success', 'Produk berhasil dihapus!');
         }
 
@@ -489,11 +506,10 @@ class ProductController extends Controller
         ]);
 
         if ($request->input('select_all')) {
-            $query = Product::query();
-            if ($request->search) $query->where('name', 'like', '%'.$request->search.'%');
-            if ($request->category) $query->where('category_id', $request->category);
-            if ($request->filter_status) $query->where('status', $request->filter_status);
-            $count = $query->update(['status' => $request->status]);
+            // Apply the same filters that are active on the listing so "select all"
+            // only affects the products the admin is actually looking at.
+            $count = $this->applyBulkFilters(Product::query(), $request)
+                ->update(['status' => $request->status]);
         } else {
             $request->validate(['ids' => 'required|array', 'ids.*' => 'integer']);
             Product::whereIn('id', $request->ids)->update(['status' => $request->status]);
@@ -512,7 +528,8 @@ class ProductController extends Controller
     public function bulkDelete(Request $request)
     {
         if ($request->input('select_all')) {
-            $products = Product::all();
+            // Respect the active listing filters instead of deleting every product.
+            $products = $this->applyBulkFilters(Product::query(), $request)->get();
         } else {
             $request->validate(['ids' => 'required|array', 'ids.*' => 'integer']);
             $products = Product::whereIn('id', $request->ids)->get();
@@ -520,15 +537,71 @@ class ProductController extends Controller
 
         $count = $products->count();
         foreach ($products as $product) {
-            foreach ($product->images as $img) {
-                Storage::disk('public')->delete($img->image_path);
-            }
+            // Image files are removed by the Product "deleting" model event.
             $product->delete();
         }
         \Illuminate\Support\Facades\Cache::forget('featured_products');
 
         return redirect()->route('admin.products.index')
             ->with('success', "$count produk berhasil dihapus.");
+    }
+
+    /**
+     * Apply the listing filters (search / category / status) to a bulk-action query.
+     * Filters are passed under dedicated names to avoid clashing with action params
+     * such as the target status of a bulk status change.
+     */
+    private function applyBulkFilters($query, Request $request)
+    {
+        if ($request->filled('filter_search')) {
+            $searchTerm = $request->input('filter_search');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('sku', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        if ($request->filled('filter_category')) {
+            $query->where('category_id', $request->input('filter_category'));
+        }
+
+        if ($request->filled('filter_status')) {
+            $query->where('status', $request->input('filter_status'));
+        }
+
+        return $query;
+    }
+
+    /**
+     * Validate a post-action redirect target, allowing only same-host http(s)
+     * or relative URLs to prevent open redirects. Returns null when unsafe.
+     */
+    private function safeRedirectUrl(?string $url): ?string
+    {
+        if (empty($url)) {
+            return null;
+        }
+
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        if ($scheme !== null && !in_array(strtolower($scheme), ['http', 'https'], true)) {
+            return null;
+        }
+
+        $host = parse_url($url, PHP_URL_HOST);
+        if ($host !== null && $host !== request()->getHost()) {
+            return null;
+        }
+
+        return $url;
+    }
+
+    /**
+     * Build a normalized key for a variant's size/color pair, used to detect
+     * duplicate variants submitted for the same product.
+     */
+    private function variantKey(array $variantData): string
+    {
+        return mb_strtolower(trim($variantData['size'] ?? '')) . '|' . mb_strtolower(trim($variantData['color'] ?? ''));
     }
 
     /**
