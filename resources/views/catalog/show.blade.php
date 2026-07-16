@@ -80,16 +80,9 @@
                 'priceValidUntil' => date('Y-12-31', strtotime('+1 year')),
             ];
             
-            $itemOfferedName = $product->name;
-            if ($variant->size || $variant->color) {
-                $itemOfferedName .= ' - ' . implode(' / ', array_filter([$variant->size, $variant->color]));
-            }
-            $offerItem['itemOffered'] = [
-                '@type' => 'Product',
-                'name' => $itemOfferedName,
-                'sku' => $product->sku ? ($product->sku . '-' . $variant->id) : ('PRD-' . $product->id . '-' . $variant->id),
-            ];
-            
+            // No nested "itemOffered" Product: Google treats it as a separate
+            // Product entity and would require its own offers/review/rating.
+            // The parent Product + AggregateOffer already covers the rich result.
             $offersList[] = $offerItem;
         }
         
