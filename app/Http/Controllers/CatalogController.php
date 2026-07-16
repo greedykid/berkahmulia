@@ -193,6 +193,15 @@ class CatalogController extends Controller
         // Paginate products (12 items per page)
         $products = $query->paginate(12)->withQueryString();
 
+        // Infinite scroll: return just the next batch of cards.
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('catalog.partials.product-cards', compact('products'))->render(),
+                'hasMore' => $products->hasMorePages(),
+                'nextPage' => $products->currentPage() + 1,
+            ]);
+        }
+
         // Get all unique sizes for the filter sidebar
         $availableSizes = \App\Models\ProductVariant::whereNotNull('size')
             ->select('size')
