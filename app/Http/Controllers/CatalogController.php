@@ -190,18 +190,26 @@ class CatalogController extends Controller
             $query->latest();
         }
 
-        // Paginate products (10 per batch: 10 on load, one auto-loaded batch on
-        // scroll reaches 20, after which the "load more" button takes over)
-        $products = $query->paginate(10)->withQueryString();
-
-        // Infinite scroll: return just the next batch of cards.
+        // Scroll / "load more": return just the requested batch of cards.
+        // Offset-based so batch size can differ (10 while auto-scrolling,
+        // 30 per click of the load-more button).
         if ($request->ajax()) {
+            $offset = max(0, (int) $request->query('offset', 0));
+            $limit = max(1, min((int) $request->query('limit', 10), 60));
+
+            $total = (clone $query)->reorder()->count();
+            $items = (clone $query)->skip($offset)->take($limit)->get();
+
             return response()->json([
-                'html' => view('catalog.partials.product-cards', compact('products'))->render(),
-                'hasMore' => $products->hasMorePages(),
-                'nextPage' => $products->currentPage() + 1,
+                'html' => view('catalog.partials.product-cards', ['products' => $items])->render(),
+                'hasMore' => ($offset + $items->count()) < $total,
+                'total' => $total,
             ]);
         }
+
+        // Initial render: 10 products, one auto-loaded batch on scroll reaches 20,
+        // after which the "load more" button takes over.
+        $products = $query->paginate(10)->withQueryString();
 
         // Get all unique sizes for the filter sidebar
         $availableSizes = \App\Models\ProductVariant::whereNotNull('size')

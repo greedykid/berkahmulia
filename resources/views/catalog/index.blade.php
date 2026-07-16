@@ -210,7 +210,7 @@
                     <div class="flex items-center gap-2 text-slate-500 text-xs sm:text-sm">
                         <i class="fa-solid fa-circle-info text-slate-400 text-sm"></i>
                         <span>
-                            Menampilkan <span class="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-lg text-xs font-mono">{{ $products->firstItem() ?? 0 }}-{{ $products->lastItem() ?? 0 }}</span> dari <span class="font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-lg text-xs font-mono">{{ $products->total() }}</span> produk
+                            Menampilkan <span id="products-range" class="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-lg text-xs font-mono">{{ $products->firstItem() ?? 0 }}-{{ $products->lastItem() ?? 0 }}</span> dari <span class="font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-lg text-xs font-mono">{{ $products->total() }}</span> produk
                             @if(request('search'))
                                 untuk "<span class="font-bold text-primary-550">{{ request('search') }}</span>"
                             @endif
@@ -412,13 +412,17 @@
         const skeleton = document.getElementById('products-skeleton');
         const endEl = document.getElementById('products-end');
         const btn = document.getElementById('load-more-btn');
+        const rangeEl = document.getElementById('products-range');
         if (!grid || !sentinel || !('IntersectionObserver' in window)) return;
 
         // Stop auto-loading once this many products are on screen; from then on
         // the visitor clicks to load each further batch (keeps the footer reachable).
         const AUTO_LOAD_LIMIT = 20;
+        const AUTO_BATCH = 10;
+        const MANUAL_BATCH = 30;
 
-        let nextPage = 2;
+        const firstItem = @json($products->firstItem() ?? 0);
+        let offset = @json($products->lastItem() ?? 0);
         let hasMore = @json($products->hasMorePages());
         let loading = false;
         let autoLoad = true;
@@ -440,9 +444,16 @@
             showBtn(!autoLoad);
         }
 
-        function pageUrl(page) {
+        function updateRange() {
+            if (!rangeEl || !firstItem) return;
+            rangeEl.textContent = firstItem + '-' + (firstItem + grid.children.length - 1);
+        }
+
+        function batchUrl(from, limit) {
             const url = new URL(window.location.href);
-            url.searchParams.set('page', page);
+            url.searchParams.delete('page');
+            url.searchParams.set('offset', from);
+            url.searchParams.set('limit', limit);
             return url.toString();
         }
 
@@ -454,7 +465,7 @@
             showBtn(false);
             if (skeleton) skeleton.classList.remove('hidden');
 
-            fetch(pageUrl(nextPage), {
+            fetch(batchUrl(offset, manual ? MANUAL_BATCH : AUTO_BATCH), {
                 headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
             })
             .then(function (res) {
@@ -464,15 +475,17 @@
             .then(function (data) {
                 const temp = document.createElement('div');
                 temp.innerHTML = (data.html || '').trim();
+                const added = temp.children.length;
 
                 Array.from(temp.children).forEach(function (card, i) {
                     // Stagger the entrance so cards cascade in instead of popping
-                    card.style.animationDelay = Math.min(i * 60, 400) + 'ms';
+                    card.style.animationDelay = Math.min(i * 40, 400) + 'ms';
                     grid.appendChild(card);
                 });
 
+                offset += added;
                 hasMore = !!data.hasMore;
-                nextPage = data.nextPage;
+                updateRange();
 
                 if (grid.children.length >= AUTO_LOAD_LIMIT) {
                     autoLoad = false;
