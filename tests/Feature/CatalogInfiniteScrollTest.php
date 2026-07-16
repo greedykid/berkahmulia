@@ -41,7 +41,9 @@ class CatalogInfiniteScrollTest extends TestCase
         $response->assertStatus(200)
             ->assertSee('products-grid')
             ->assertSee('scroll-sentinel')
-            ->assertSee('products-skeleton');
+            ->assertSee('products-skeleton')
+            ->assertSee('load-more-btn')
+            ->assertSee('Lihat Lebih Banyak');
     }
 
     public function test_ajax_request_returns_only_card_html_and_paging_flags()
@@ -55,8 +57,8 @@ class CatalogInfiniteScrollTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure(['html', 'hasMore', 'nextPage']);
 
-        // 20 products, 12 per page -> page 2 holds the remaining 8
-        $this->assertEquals(8, substr_count($response->json('html'), 'product-card-appear'));
+        // 20 products, 10 per batch -> page 2 is the last batch of 10
+        $this->assertEquals(10, substr_count($response->json('html'), 'product-card-appear'));
         $this->assertFalse($response->json('hasMore'));
 
         // The partial must not carry the full page layout
@@ -73,7 +75,24 @@ class CatalogInfiniteScrollTest extends TestCase
 
         $this->assertTrue($response->json('hasMore'));
         $this->assertEquals(2, $response->json('nextPage'));
-        $this->assertEquals(12, substr_count($response->json('html'), 'product-card-appear'));
+        $this->assertEquals(10, substr_count($response->json('html'), 'product-card-appear'));
+    }
+
+    public function test_first_page_plus_one_auto_batch_reaches_the_twenty_limit()
+    {
+        $this->makeProducts(50);
+
+        // Page 1 renders 10, so a single auto-loaded batch lands exactly on 20,
+        // which is where the JS stops auto-loading and shows the button.
+        $page1 = $this->get(route('catalog.index'));
+        $this->assertEquals(10, substr_count($page1->getContent(), 'product-card-appear'));
+
+        $page2 = $this->getJson(route('catalog.index', ['page' => 2]), [
+            'X-Requested-With' => 'XMLHttpRequest',
+        ]);
+        $this->assertEquals(10, substr_count($page2->json('html'), 'product-card-appear'));
+        $this->assertTrue($page2->json('hasMore'));
+        $this->assertEquals(3, $page2->json('nextPage'));
     }
 
     public function test_ajax_respects_active_filters()

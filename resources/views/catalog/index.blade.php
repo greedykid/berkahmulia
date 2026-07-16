@@ -374,6 +374,15 @@
                     <!-- Infinite scroll sentinel -->
                     <div id="scroll-sentinel" class="h-px w-full"></div>
 
+                    <!-- Load more button (takes over once auto-scroll hits its limit) -->
+                    <div class="pt-8 text-center">
+                        <button type="button" id="load-more-btn"
+                                class="hidden items-center gap-2 mx-auto bg-white border border-slate-200 hover:border-primary-300 hover:bg-primary-50/40 text-slate-700 hover:text-primary-600 font-bold px-7 py-3 rounded-2xl text-xs transition-all shadow-sm active:scale-95 cursor-pointer">
+                            <span>Lihat Lebih Banyak</span>
+                            <i class="fa-solid fa-arrow-down text-[10px]"></i>
+                        </button>
+                    </div>
+
                     <!-- End of results -->
                     <p id="products-end" class="hidden pt-8 text-center text-xs text-slate-400">
                         <i class="fa-solid fa-check text-emerald-500 mr-1"></i>
@@ -396,21 +405,39 @@
 
 @section('scripts')
 <script>
-    // Infinite scroll: append the next page of product cards as the user scrolls
+    // Product loading: auto-load on scroll up to a limit, then a manual button
     (function () {
         const grid = document.getElementById('products-grid');
         const sentinel = document.getElementById('scroll-sentinel');
         const skeleton = document.getElementById('products-skeleton');
         const endEl = document.getElementById('products-end');
+        const btn = document.getElementById('load-more-btn');
         if (!grid || !sentinel || !('IntersectionObserver' in window)) return;
+
+        // Stop auto-loading once this many products are on screen; from then on
+        // the visitor clicks to load each further batch (keeps the footer reachable).
+        const AUTO_LOAD_LIMIT = 20;
 
         let nextPage = 2;
         let hasMore = @json($products->hasMorePages());
         let loading = false;
+        let autoLoad = true;
 
-        if (!hasMore) {
-            if (endEl) endEl.classList.remove('hidden');
-            return;
+        function showBtn(show) {
+            if (!btn) return;
+            btn.classList.toggle('hidden', !show);
+            btn.classList.toggle('inline-flex', show);
+        }
+
+        function refreshControls() {
+            if (!hasMore) {
+                showBtn(false);
+                if (endEl) endEl.classList.remove('hidden');
+                observer.disconnect();
+                return;
+            }
+            // More results exist but auto-load is spent: hand over to the button
+            showBtn(!autoLoad);
         }
 
         function pageUrl(page) {
@@ -419,9 +446,12 @@
             return url.toString();
         }
 
-        function loadMore() {
+        function loadMore(manual) {
             if (loading || !hasMore) return;
+            if (!manual && !autoLoad) return;
+
             loading = true;
+            showBtn(false);
             if (skeleton) skeleton.classList.remove('hidden');
 
             fetch(pageUrl(nextPage), {
@@ -444,25 +474,34 @@
                 hasMore = !!data.hasMore;
                 nextPage = data.nextPage;
 
-                if (!hasMore && endEl) endEl.classList.remove('hidden');
+                if (grid.children.length >= AUTO_LOAD_LIMIT) {
+                    autoLoad = false;
+                    observer.disconnect();
+                }
             })
             .catch(function () {
-                // Leave hasMore untouched so the next scroll retries
+                // Leave hasMore untouched so a retry is still possible
             })
             .finally(function () {
                 if (skeleton) skeleton.classList.add('hidden');
                 loading = false;
+                refreshControls();
             });
         }
 
         // Start fetching a bit before the sentinel is actually visible
         const observer = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
-                if (entry.isIntersecting) loadMore();
+                if (entry.isIntersecting) loadMore(false);
             });
         }, { rootMargin: '400px 0px' });
 
-        observer.observe(sentinel);
+        if (btn) btn.addEventListener('click', function () { loadMore(true); });
+
+        // The first page may already meet the limit, or be the only page
+        if (grid.children.length >= AUTO_LOAD_LIMIT) autoLoad = false;
+        if (hasMore && autoLoad) observer.observe(sentinel);
+        refreshControls();
     })();
 
     // Handle filter checkbox changes

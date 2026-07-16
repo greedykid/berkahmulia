@@ -190,8 +190,9 @@ class CatalogController extends Controller
             $query->latest();
         }
 
-        // Paginate products (12 items per page)
-        $products = $query->paginate(12)->withQueryString();
+        // Paginate products (10 per batch: 10 on load, one auto-loaded batch on
+        // scroll reaches 20, after which the "load more" button takes over)
+        $products = $query->paginate(10)->withQueryString();
 
         // Infinite scroll: return just the next batch of cards.
         if ($request->ajax()) {
