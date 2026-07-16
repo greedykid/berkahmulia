@@ -210,7 +210,17 @@ class CatalogController extends Controller
     {
         $product = Product::with(['category', 'images', 'variants'])
             ->where('slug', $slug)
-            ->firstOrFail();
+            ->first();
+
+        if (!$product) {
+            // A product that existed but was deleted returns 410 Gone, which
+            // tells search engines to drop the URL faster than a plain 404.
+            if (Product::onlyTrashed()->where('slug', $slug)->exists()) {
+                abort(410);
+            }
+
+            abort(404);
+        }
 
         // Get related products from the same category
         $relatedProducts = Product::with(['category', 'images', 'variants'])

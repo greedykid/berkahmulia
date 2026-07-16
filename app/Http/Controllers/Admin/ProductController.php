@@ -176,11 +176,12 @@ class ProductController extends Controller
     {
         $validated = $request->validated();
 
-        // Update basic details
+        // Update basic details.
+        // The slug is intentionally left untouched: it is the public URL and
+        // regenerating it on every edit would 404 any already-indexed link.
         $product->update([
             'category_id' => $request->category_id,
             'name' => $request->name,
-            'slug' => Str::slug($request->name) . '-' . $product->id, // Re-generate safe slug
             'sku' => $request->sku,
             'price' => $request->price,
             'status' => $request->status,
